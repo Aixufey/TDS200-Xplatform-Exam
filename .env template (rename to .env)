@@ -1,0 +1,7 @@
+APIKEY=your_key
+AUTHDOMAIN=your_auth_domain
+PROJECTID=your_project_id
+STORAGEBUCKET=_your_storage_bucket
+MESSAGINGSENDERID=your_messaging_sender_id
+APPID=your_app_id
+MEASUREMENTID=your_measurement_id
