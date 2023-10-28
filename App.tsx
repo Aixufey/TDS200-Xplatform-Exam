@@ -1,7 +1,10 @@
+
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeView } from './src/components';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -39,20 +42,16 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}
-      onLayout={onLayoutRootView}
-    >
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <SafeView
+        onLayout={onLayoutRootView}
+        className='justify-center items-center border-2'
+      >
+        <View className='bg-[#000] w-full h-full justify-center items-center'>
+          <StatusBar style="auto" hidden />
+          <Text className='text-[#ff00AA] border-2 border-[#123] self-center'>Open up App.tsx to start working on your app!</Text>
+        </View>
+      </SafeView>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
