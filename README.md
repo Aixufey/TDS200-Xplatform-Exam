@@ -89,3 +89,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 ```
+
+## GitHooks 🪝
+ 
+- GitHooks is running a bash script named `post-checkout.sh` that does pulling from remote branch 
+asserting that you are always developing from the latest update.
+- This will reduce the merge conflict to a certain extent. 
+Developers will be able to branch out new features from the "developer" branch.
+- Hooks are running locally inside hidden folder .git/hooks when a git repository is initialized.
+- In order to provide the team with the hooks in their environment, a symbolic link has to be created.
+
+### Instructions
+1. Make sure you are in the root directory `pwd`  *~/TDS200-Xplatform-Exam*
+2. Create **two** Symbolic Links from the provided script `post-checkout.sh` using command: 
+3. `ln -s -f ../../githooks/post-checkout.sh .git/hooks/post-checkout`
+4. `ln -s -f ../../githooks/post-switch.sh .git/hooks/post-switch`<br />
+5. Make sure .sh has permissions `chmod +x .git/hooks/post-*`
+
+- The Hooks should be working now with both commands like `switch` or `checkout` whichever the developer prefers. It may be tested running `git checkout developer` and you should see a prompt "*Checked out developer branch, pulling latest from origin/developer...*"
+- `ln` links in Unix `-s` pointer to a file `-f` force override <br />
