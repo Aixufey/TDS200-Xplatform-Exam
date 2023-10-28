@@ -1,0 +1,23 @@
+name: Sync Developer with Main
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0                                # fetch all history so we can perform a rebase
+          token: ${{ secrets.MY_PAT }}
+      
+      - name: Rebase Developer with Main
+        run: |
+          git fetch origin                              # Fetch the latest changes from the repository
+          git checkout developer                        # Switch to the developer branch
+          git rebase origin/main                        # Rebase the developer branch with the latest changes from main
+          git push origin developer --force-with-lease  # Push the rebased developer branch to the remote repository
