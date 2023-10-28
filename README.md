@@ -93,6 +93,9 @@ const db = getFirestore(app);
 ### [Splash screen](https://docs.expo.dev/versions/latest/sdk/splash-screen/)
 **SplashScreen** module from the **expo-splash-screen** for preloading fonts and other gimmicks. Install via `npx expo install expo-splash-screen`
 
+---
+### [Safe Area](https://docs.expo.dev/develop/user-interface/safe-areas/)
+The Component **SafeAreaView** is unstable and the recommendation is to use the hook instead **useSafeAreaInsets**. `npx expo install react-native-safe-area-context`
 
 ## GitHooks 🪝
  
