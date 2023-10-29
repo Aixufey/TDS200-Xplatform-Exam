@@ -1,4 +1,4 @@
-declare module '@env' {
+declare module "@env" {
     export const APIKEY: string;
     export const AUTHDOMAIN: string;
     export const PROJECTID: string;
