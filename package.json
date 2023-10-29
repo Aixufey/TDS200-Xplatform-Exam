@@ -6,7 +6,10 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "version:major": "node versioning.js major",
+    "version:minor": "node versioning.js minor",
+    "version:patch": "node versioning.js patch"
   },
   "dependencies": {
     "expo": "~49.0.15",
