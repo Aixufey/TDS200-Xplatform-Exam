@@ -1,30 +1,28 @@
 {
-  "expo": {
-    "name": "TDS200-Xplatform-Exam",
-    "slug": "TDS200-Xplatform-Exam",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/2009.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/2009.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#000000"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "expo": {
+        "name": "TDS200-Xplatform-Exam",
+        "slug": "TDS200-Xplatform-Exam",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/2009.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "./assets/2009.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#000000"
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "supportsTablet": true
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#ffffff"
+            }
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        }
     }
-  }
 }

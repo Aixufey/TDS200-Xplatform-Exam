@@ -8,15 +8,10 @@ import {
     MESSAGINGSENDERID,
     PROJECTID,
     STORAGEBUCKET,
-} from "@env";
-import { FirebaseApp, initializeApp } from "firebase/app";
-import { Firestore, getFirestore } from "firebase/firestore";
-import {
-    FirebaseStorage,
-    StorageReference,
-    getStorage,
-    ref,
-} from "firebase/storage";
+} from '@env';
+import { FirebaseApp, initializeApp } from 'firebase/app';
+import { Firestore, getFirestore } from 'firebase/firestore';
+import { FirebaseStorage, StorageReference, getStorage, ref } from 'firebase/storage';
 
 // Optionally import the services that you want to use
 // import {...} from "firebase/auth";

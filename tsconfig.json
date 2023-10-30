@@ -1,12 +1,12 @@
 {
-  "extends": "expo/tsconfig.base", 
-  "compilerOptions": {
-    "strict": true,
-    // Express CommonJS modules
-    "allowJs": true,
-    "checkJs": false,
-    "esModuleInterop": true,
-    // Declarative modules *.d.ts files
-    "typeRoots": ["./src/types"]
-  }
+    "extends": "expo/tsconfig.base",
+    "compilerOptions": {
+        "strict": true,
+        // Express CommonJS modules
+        "allowJs": true,
+        "checkJs": false,
+        "esModuleInterop": true,
+        // Declarative modules *.d.ts files
+        "typeRoots": ["./src/types"]
+    }
 }

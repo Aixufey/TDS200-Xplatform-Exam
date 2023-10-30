@@ -1,1 +1,1 @@
-export * from "./useCustomFonts";
+export * from './useCustomFonts';
