@@ -1,4 +1,3 @@
-
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
@@ -50,7 +49,7 @@ export default function App() {
       >
         <View className='bg-[#000] w-full h-full justify-center items-center'>
           <StatusBar style="auto" hidden />
-          <Text className='text-[#ff00AA] border-2 border-[#123] self-center'>Open up App.tsx to start working on your app!</Text>
+          <Text className='text-[#ff00AA] border-2 border-[#123] self-center font-handjet-regular'>Open up App.tsx to start working on your app!</Text>
         </View>
       </SafeView>
     </SafeAreaProvider>
