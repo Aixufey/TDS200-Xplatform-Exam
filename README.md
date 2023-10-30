@@ -3,19 +3,20 @@
 This is the Exam 2023 in Cross-platform at Høyskolen Kristiania.<br />
 The project will fail to run if `.env` for **Firebase** is not configured. Rename the `.env template` and setup with your Firebase application configuration.
 
--   [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
-    -   [Issues \& bugs](#issues--bugs)
-    -   [Dependencies](#dependencies)
-        -   [Expo](#expo)
-        -   [TailWind \& NativeWind](#tailwind--nativewind)
-        -   [React Native dotenv](#react-native-dotenv)
-        -   [Firebase](#firebase)
-        -   [Splash screen](#splash-screen)
-        -   [Safe Area](#safe-area)
-        -   [Fonts](#fonts)
-        -   [Prettier](#prettier)
-    -   [GitHooks](#githooks)
-        -   [Instructions](#instructions)
+- [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
+  - [Issues \& bugs](#issues--bugs)
+  - [Dependencies](#dependencies)
+    - [Expo](#expo)
+    - [Firebase](#firebase)
+    - [Fonts](#fonts)
+    - [Navigation](#navigation)
+    - [Prettier](#prettier)
+    - [React Native dotenv](#react-native-dotenv)
+    - [Splash screen](#splash-screen)
+    - [Safe Area](#safe-area)
+    - [TailWind \& NativeWind](#tailwind--nativewind)
+  - [GitHooks](#githooks)
+    - [Instructions](#instructions)
 
 ## Issues & bugs
 
@@ -27,31 +28,77 @@ The bare bone is installed using **Expo Go** `npx create-expo-app -t` with TypeS
 
 ---
 
-### [TailWind & NativeWind](https://www.nativewind.dev/quick-starts/expo)
+### [Firebase](https://firebase.google.com/docs/web/setup)
 
-NativeWind uses Tailwind CSS as scripting language, Styled Components is using **StyleSheet.create** for native. The latest NativeWind is not fully supported so we have to explicit install version **3.3.2** `npm i tailwindcss@3.3.2 --save-dev`. Flag `--save-dev` will put dependencies into `devDependencies` and will not be part of the production build. Now we install NativeWind `npm i nativewind`.
-Then we have to declare the types for referencing NativeWind by creating a file `app.d.ts` with the following line
-
-```js
-/// <reference types="nativewind/types" />
-```
-
-Then setup the TailWind configuration `npx tailwindcss init`, and extend the content with the following line
+The Firebase comes with **FireStore** and **Realtime Database**. Both has to be activated and configured in order make requests. The difference is one is for `JSON` and the other is for `Media` objects. To install Firebase `npm i firebase`. To start using Firebase create a project and add the appropriate platform i.e. `iOS` or `Android`.&nbsp;&nbsp;<br />
+When the app has been registered, move the `google-services.json` file into root directory. Finally, create a **firebaseConfig.ts** file and configure the API accordingly
 
 ```js
-content: ["./App.{js,jsx,ts,tsx}", "./src/**/*.{js,jsx,ts,tsx}"],
-```
+// firebaseConfig.ts
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 
-Finally modify **babel.config.js** and add the line
-
-```js
-module.exports = function (api) {
-  api.cache(true);
-  return {
-    ...
-+   plugins: ["nativewind/babel"],
-  };
+// Replace the following with your app's Firebase project configuration
+const firebaseConfig = {
+    //...
 };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+```
+
+---
+
+### [Fonts](https://docs.expo.dev/versions/latest/sdk/font/)
+
+Using custom fonts with library **Expo Font** via `npx expo install expo-font`. &nbsp;&nbsp;'The Typeface is **Handjet** & **Ubuntu** from [Google Fonts](https://fonts.google.com/). To use the Typeface in TypeScript we need to declare a module with **.ttf** files as strings. For optimal performance we use a HOC to dynamically pass in the Typeface we want.
+
+---
+
+### [Navigation](https://reactnative.dev/docs/next/navigation)
+
+Navigation between screens is similar to web with links **\<a href='#Home'>** but on native we are using same technique with **navigation.navigate('Home')**.&nbsp;&nbsp;
+The gist is to wrap the entry of our Application with a container `NavigationContainer` then we can provide the navigation routes for different screens.
+Install the container `npm install @react-navigation/native` and then we need the navigation from `npm install @react-navigation/stack` &nbsp;&nbsp; which offers animations and gestures. There is also a **[native-stack](https://reactnavigation.org/docs/stack-navigator)** which use the navigation primitives.
+
+---
+
+### [Prettier](https://medium.com/@killerchip0/react-native-typescript-with-eslint-and-prettier-e98d50585627)
+
+Code structure formatter via `npx i --save-dev prettier` and add the following to **package.json**
+
+```json
+"scripts": {
+        ...
+        "prettier:write": "npx prettier --write **/*.{js,jsx,ts,tsx,json} && npx prettier --write *.{js,jsx,ts,tsx,json}"
+    }
+```
+
+Create a new file `.prettierrc` and add the following rules
+
+```json
+{
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "jsxSingleQuote": false,
+    "quoteProps": "as-needed",
+    "singleQuote": true,
+    "semi": true,
+    "printWidth": 100,
+    "useTabs": false,
+    "tabWidth": 4,
+    "trailingComma": "es5",
+    "endOfLine": "auto"
+}
+```
+
+Finally, we add VSCODE settings in `settings.json` under TypeScript to prettify on save
+
+```json
+"[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
 ```
 
 ---
@@ -101,27 +148,6 @@ Finally add the following in `tsconfig.json` to compile
 
 ---
 
-### [Firebase](https://firebase.google.com/docs/web/setup)
-
-The Firebase comes with **FireStore** and **Realtime Database**. Both has to be activated and configured in order make requests. The difference is one is for `JSON` and the other is for `Media` objects. To install Firebase `npm i firebase`. To start using Firebase create a project and add the appropriate platform i.e. `iOS` or `Android`.&nbsp;&nbsp;<br />
-When the app has been registered, move the `google-services.json` file into root directory. Finally, create a **firebaseConfig.ts** file and configure the API accordingly
-
-```js
-// firebaseConfig.ts
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-
-// Replace the following with your app's Firebase project configuration
-const firebaseConfig = {
-    //...
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-```
-
----
-
 ### [Splash screen](https://docs.expo.dev/versions/latest/sdk/splash-screen/)
 
 **SplashScreen** module from the **expo-splash-screen** for preloading fonts and other gimmicks. Install via `npx expo install expo-splash-screen`
@@ -134,47 +160,34 @@ The Component **SafeAreaView** is unstable and the recommendation is to use the 
 
 ---
 
-### [Fonts](https://docs.expo.dev/versions/latest/sdk/font/)
+### [TailWind & NativeWind](https://www.nativewind.dev/quick-starts/expo)
 
-Using custom fonts with library **Expo Font** via `npx expo install expo-font`. &nbsp;&nbsp;'The Typeface is **Handjet** & **Ubuntu** from [Google Fonts](https://fonts.google.com/). To use the Typeface in TypeScript we need to declare a module with **.ttf** files as strings. For optimal performance we use a HOC to dynamically pass in the Typeface we want.
+NativeWind uses Tailwind CSS as scripting language, Styled Components is using **StyleSheet.create** for native. The latest NativeWind is not fully supported so we have to explicit install version **3.3.2** `npm i tailwindcss@3.3.2 --save-dev`. Flag `--save-dev` will put dependencies into `devDependencies` and will not be part of the production build. Now we install NativeWind `npm i nativewind`.
+Then we have to declare the types for referencing NativeWind by creating a file `app.d.ts` with the following line
 
-### [Prettier](https://medium.com/@killerchip0/react-native-typescript-with-eslint-and-prettier-e98d50585627)
-
-Code structure formatter via `npx i --save-dev prettier` and add the following to **package.json**
-
-```json
-"scripts": {
-        ...
-        "prettier:write": "npx prettier --write **/*.{js,jsx,ts,tsx,json} && npx prettier --write *.{js,jsx,ts,tsx,json}"
-    }
+```js
+/// <reference types="nativewind/types" />
 ```
 
-Create a new file `.prettierrc` and add the following rules
+Then setup the TailWind configuration `npx tailwindcss init`, and extend the content with the following line
 
-```json
-{
-    "arrowParens": "always",
-    "bracketSpacing": true,
-    "jsxSingleQuote": false,
-    "quoteProps": "as-needed",
-    "singleQuote": true,
-    "semi": true,
-    "printWidth": 100,
-    "useTabs": false,
-    "tabWidth": 4,
-    "trailingComma": "es5",
-    "endOfLine": "auto"
-}
+```js
+content: ["./App.{js,jsx,ts,tsx}", "./src/**/*.{js,jsx,ts,tsx}"],
 ```
 
-Finally, we add VSCODE settings in `settings.json` under TypeScript to prettify on save
+Finally modify **babel.config.js** and add the line
 
-```json
-"[typescriptreact]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.formatOnSave": true
-    },
+```js
+module.exports = function (api) {
+  api.cache(true);
+  return {
+    ...
++   plugins: ["nativewind/babel"],
+  };
+};
 ```
+
+---
 
 ## GitHooks
 
