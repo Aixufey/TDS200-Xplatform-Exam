@@ -1,1 +1,1 @@
-export * from "./fontAssets";
+export * from './fontAssets';

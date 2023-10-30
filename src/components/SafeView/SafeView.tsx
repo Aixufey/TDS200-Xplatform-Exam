@@ -18,6 +18,6 @@ const SafeView: React.FC<ISafeViewProps> = ({ style, children, onLayout, classNa
         >
             {children}
         </View>
-    )
+    );
 };
 export default SafeView;

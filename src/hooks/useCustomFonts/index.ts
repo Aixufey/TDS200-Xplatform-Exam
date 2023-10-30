@@ -1,2 +1,2 @@
-import useCustomFonts from "./useCustomFonts";
+import useCustomFonts from './useCustomFonts';
 export { useCustomFonts };

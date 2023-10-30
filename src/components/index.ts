@@ -1,1 +1,1 @@
-export * from "./SafeView";
+export * from './SafeView';

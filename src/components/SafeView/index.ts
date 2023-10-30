@@ -1,2 +1,2 @@
-import SafeView from "./SafeView";
+import SafeView from './SafeView';
 export { SafeView };
