@@ -3,8 +3,21 @@
 This is the Exam 2023 in Cross-platform at Høyskolen Kristiania.<br />
 The project will fail to run if `.env` for **Firebase** is not configured. Rename the `.env template` and setup with your Firebase application configuration.
 
-## Issues & bugs
+-   [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
+    -   [Issues \& bugs](#issues--bugs)
+    -   [Dependencies](#dependencies)
+        -   [Expo](#expo)
+        -   [TailWind \& NativeWind](#tailwind--nativewind)
+        -   [React Native dotenv](#react-native-dotenv)
+        -   [Firebase](#firebase)
+        -   [Splash screen](#splash-screen)
+        -   [Safe Area](#safe-area)
+        -   [Fonts](#fonts)
+        -   [Prettier](#prettier)
+    -   [GitHooks](#githooks)
+        -   [Instructions](#instructions)
 
+## Issues & bugs
 
 ## Dependencies
 
@@ -95,8 +108,8 @@ When the app has been registered, move the `google-services.json` file into root
 
 ```js
 // firebaseConfig.ts
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 
 // Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
@@ -125,7 +138,45 @@ The Component **SafeAreaView** is unstable and the recommendation is to use the 
 
 Using custom fonts with library **Expo Font** via `npx expo install expo-font`. &nbsp;&nbsp;'The Typeface is **Handjet** & **Ubuntu** from [Google Fonts](https://fonts.google.com/). To use the Typeface in TypeScript we need to declare a module with **.ttf** files as strings. For optimal performance we use a HOC to dynamically pass in the Typeface we want.
 
-## GitHooks 🪝
+### [Prettier](https://medium.com/@killerchip0/react-native-typescript-with-eslint-and-prettier-e98d50585627)
+
+Code structure formatter via `npx i --save-dev prettier` and add the following to **package.json**
+
+```json
+"scripts": {
+        ...
+        "prettier:write": "npx prettier --write **/*.{js,jsx,ts,tsx,json} && npx prettier --write *.{js,jsx,ts,tsx,json}"
+    }
+```
+
+Create a new file `.prettierrc` and add the following rules
+
+```json
+{
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "jsxSingleQuote": false,
+    "quoteProps": "as-needed",
+    "singleQuote": true,
+    "semi": true,
+    "printWidth": 100,
+    "useTabs": false,
+    "tabWidth": 4,
+    "trailingComma": "es5",
+    "endOfLine": "auto"
+}
+```
+
+Finally, we add VSCODE settings in `settings.json` under TypeScript to prettify on save
+
+```json
+"[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+```
+
+## GitHooks
 
 -   GitHooks is running a bash script named `post-checkout.sh` that does pulling from remote branch
     asserting that you are always developing from the latest update.
