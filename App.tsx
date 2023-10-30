@@ -1,10 +1,10 @@
 import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SafeView } from './src/components';
 import { useCustomFonts } from './src/hooks';
+import WelcomeRoutes from './src/routes';
+import { StatusBar, Text, View } from 'react-native';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -43,13 +43,8 @@ export default function App() {
 
     return (
         <SafeAreaProvider>
-            <SafeView onLayout={onLayoutRootView} className="justify-center items-center border-2">
-                <View className="bg-[#000] w-full h-full justify-center items-center">
-                    <StatusBar style="auto" hidden />
-                    <Text className="text-[#ff00AA] border-2 border-[#123] self-center font-handjet-regular">
-                        Open up App.tsx to start working on your app!
-                    </Text>
-                </View>
+            <SafeView onLayout={onLayoutRootView} className="flex-1">
+                <WelcomeRoutes />
             </SafeView>
         </SafeAreaProvider>
     );
