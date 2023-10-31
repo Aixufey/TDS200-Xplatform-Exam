@@ -1,33 +1,57 @@
+import { Entypo } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreen } from '../screens';
-
+import { CameraScreen, HomeScreen } from '../screens';
 const RootRoutes: React.FC = () => {
     const Tab = createBottomTabNavigator();
-    const noHeader = {
-        headerShown: false,
-    };
 
     return (
         <Tab.Navigator
             initialRouteName="Home"
-            sceneContainerStyle={{ backgroundColor: '#AAFFAA' }}
+            sceneContainerStyle={{ backgroundColor: '#151515' }}
             screenOptions={{
-                tabBarActiveTintColor: '#FFAA',
-                tabBarInactiveTintColor: '#AA00AA',
+                tabBarActiveTintColor: '#FFEA00',
+                tabBarInactiveTintColor: '#0FFA',
                 tabBarStyle: [
                     {
                         backgroundColor: '#000',
-                        borderTopColor: '#0FF',
+                        borderTopColor: '#00FFFF',
                         borderTopWidth: 2,
                         borderTopLeftRadius: 15,
                         borderTopRightRadius: 15,
                         position: 'absolute',
-                        padding: 10,
+                        padding: 5,
                     },
                 ],
             }}
         >
-            <Tab.Screen name="Home" component={HomeScreen} options={noHeader} />
+            <Tab.Screen
+                name="Home"
+                component={HomeScreen}
+                options={{
+                    headerShown: false,
+                    tabBarIcon: ({ focused }) => (
+                        <Entypo
+                            name="home"
+                            size={24}
+                            color={focused ? 'rgba(255,233,0,1)' : 'rgba(0,255,255,0.3)'}
+                        />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Camera"
+                component={CameraScreen}
+                options={{
+                    headerShown: false,
+                    tabBarIcon: ({ focused }) => (
+                        <Entypo
+                            name="camera"
+                            size={24}
+                            color={focused ? 'rgba(255,233,0,1)' : 'rgba(0,255,255,0.3)'}
+                        />
+                    ),
+                }}
+            />
         </Tab.Navigator>
     );
 };
