@@ -4,7 +4,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SafeView } from './src/components';
 import { useCustomFonts } from './src/hooks';
 import WelcomeRoutes from './src/routes';
-import { StatusBar, Text, View } from 'react-native';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();

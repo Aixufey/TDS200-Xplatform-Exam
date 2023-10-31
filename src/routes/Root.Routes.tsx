@@ -7,7 +7,7 @@ const RootRoutes: React.FC = () => {
     return (
         <Tab.Navigator
             initialRouteName="Home"
-            sceneContainerStyle={{ backgroundColor: '#151515' }}
+            sceneContainerStyle={{ backgroundColor: 'rgba(0,0,0,1)' }}
             screenOptions={{
                 tabBarActiveTintColor: '#FFEA00',
                 tabBarInactiveTintColor: '#0FFA',

@@ -1,9 +1,10 @@
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
+import { Background } from '../../components';
 const HomeScreen: React.FC = () => {
     return (
-        <View className="bg-[#000] flex-1">
+        <Background>
             <Text className="text-white font-handjet-regular text-[150px]">Home</Text>
-        </View>
+        </Background>
     );
 };
 export default HomeScreen;

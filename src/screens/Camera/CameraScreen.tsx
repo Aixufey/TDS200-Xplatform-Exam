@@ -1,10 +1,11 @@
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
+import { Background } from '../../components';
 
 const CameraScreen: React.FC = () => {
     return (
-        <View className="flex-1 w-100 h-100 bg-black">
+        <Background>
             <Text>Camera</Text>
-        </View>
+        </Background>
     );
 };
 export default CameraScreen;

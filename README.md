@@ -15,6 +15,7 @@ The project will fail to run if `.env` for **Firebase** is not configured. Renam
     - [Splash screen](#splash-screen)
     - [Safe Area](#safe-area)
     - [TailWind \& NativeWind](#tailwind--nativewind)
+    - [Vector Icons](#vector-icons)
   - [GitHooks](#githooks)
     - [Instructions](#instructions)
 
@@ -187,7 +188,9 @@ module.exports = function (api) {
 };
 ```
 
----
+### [Vector Icons](https://docs.expo.dev/guides/icons/#expovector-icons)
+
+A library that provides various vector icons via `npm i @expo/vector-icons` &nbsp;&nbsp;For more official [documentation](https://icons.expo.fyi/Index/Entypo/login)
 
 ## GitHooks
 

@@ -12,7 +12,7 @@ const SafeView: React.FC<ISafeViewProps> = ({ style, children, onLayout, classNa
     const insets = useSafeAreaInsets();
     return (
         <View
-            style={[style && style, { paddingTop: insets.top + 10, backgroundColor: 'black' }]}
+            style={[style && style, { paddingTop: insets.top, backgroundColor: 'black' }]}
             onLayout={onLayout && onLayout}
             className={className && className}
         >
