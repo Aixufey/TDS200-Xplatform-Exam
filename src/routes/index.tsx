@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Text, View } from 'react-native';
 import { Welcome } from '../screens';
-import RootRoutes from './Root.routes';
+import RootRoutes from './Root.Routes';
 
 const WelcomeRoutes: React.FC = () => {
     const { Navigator, Screen } = createStackNavigator();
