@@ -2,7 +2,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 // All the Screen names in the app
 type RootProps = {
-    Welcome: undefined;
+    WelcomeScreen: undefined;
     RootRoutes: undefined;
     HomeScreen: undefined;
 };
