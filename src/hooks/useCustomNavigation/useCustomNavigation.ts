@@ -4,7 +4,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 type RootProps = {
     Welcome: undefined;
     RootRoutes: undefined;
-    Home: undefined;
+    HomeScreen: undefined;
 };
 type _NavigationProp = NavigationProp<RootProps>;
 
