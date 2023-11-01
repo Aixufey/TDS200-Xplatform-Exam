@@ -27,7 +27,7 @@ const Canvas: React.FC<IGalleryCanvas> = ({ children, title, isFocused }) => {
 
     return (
         <View id="Canvas-Container" className="w-full h-full justify-center items-center">
-            <View id="Canvas-Body" className="w-[90%] h-[90%] justify-center items-center">
+            <View id="Canvas-Body" className="w-[95%] h-[90%] justify-center items-center">
                 <View
                     id="Canvas-BG"
                     className="absolute w-full h-full border-[0.2px] border-tertiary300 rounded bg-dark300 opacity-50"
