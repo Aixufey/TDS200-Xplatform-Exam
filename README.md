@@ -3,21 +3,23 @@
 This is the Exam 2023 in Cross-platform at Høyskolen Kristiania.<br />
 The project will fail to run if `.env` for **Firebase** is not configured. Rename the `.env template` and setup with your Firebase application configuration.
 
-- [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
-  - [Issues \& bugs](#issues--bugs)
-  - [Dependencies](#dependencies)
-    - [Expo](#expo)
-    - [Firebase](#firebase)
-    - [Fonts](#fonts)
-    - [Navigation](#navigation)
-    - [Prettier](#prettier)
-    - [React Native dotenv](#react-native-dotenv)
-    - [Splash screen](#splash-screen)
-    - [Safe Area](#safe-area)
-    - [TailWind \& NativeWind](#tailwind--nativewind)
-    - [Vector Icons](#vector-icons)
-  - [GitHooks](#githooks)
-    - [Instructions](#instructions)
+-   [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
+    -   [Issues \& bugs](#issues--bugs)
+    -   [Dependencies](#dependencies)
+        -   [Expo](#expo)
+        -   [Expo-Blur](#expo-blur)
+        -   [Firebase](#firebase)
+        -   [Fonts](#fonts)
+        -   [Linear Gradient](#linear-gradient)
+        -   [Navigation](#navigation)
+        -   [Prettier](#prettier)
+        -   [React Native dotenv](#react-native-dotenv)
+        -   [Splash screen](#splash-screen)
+        -   [Safe Area](#safe-area)
+        -   [TailWind \& NativeWind](#tailwind--nativewind)
+        -   [Vector Icons](#vector-icons)
+    -   [GitHooks](#githooks)
+        -   [Instructions](#instructions)
 
 ## Issues & bugs
 
@@ -26,6 +28,12 @@ The project will fail to run if `.env` for **Firebase** is not configured. Renam
 ### [Expo](https://docs.expo.dev/)
 
 The bare bone is installed using **Expo Go** `npx create-expo-app -t` with TypeScript template. Flag `-t` for template.&nbsp;&nbsp;<br />
+
+---
+
+### [Expo-Blur](https://docs.expo.dev/versions/latest/sdk/blur-view/)
+
+The modal is achieved by using Expo-Blur package via `npx expo install expo-blur`
 
 ---
 
@@ -53,6 +61,12 @@ const db = getFirestore(app);
 ### [Fonts](https://docs.expo.dev/versions/latest/sdk/font/)
 
 Using custom fonts with library **Expo Font** via `npx expo install expo-font`. &nbsp;&nbsp;'The Typeface is **Handjet** & **Ubuntu** from [Google Fonts](https://fonts.google.com/). To use the Typeface in TypeScript we need to declare a module with **.ttf** files as strings. For optimal performance we use a HOC to dynamically pass in the Typeface we want.
+
+---
+
+### [Linear Gradient](https://docs.expo.dev/versions/latest/sdk/linear-gradient/)
+
+React Native does not support gradients. We use Expo-LinearGradient from `npx expo install expo-linear-gradient` and pass in an array of colors.
 
 ---
 
