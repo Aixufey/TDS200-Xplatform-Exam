@@ -74,7 +74,7 @@ const RootRoutes: React.FC = () => {
                                 bottom: focused ? 5 : 0,
                             }}
                         >
-                            Media
+                            Gallery
                         </Text>
                     ),
                 }}
