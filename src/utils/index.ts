@@ -1,1 +1,3 @@
-export * from './fontAssets';
+import FontAssetsUtil from './fontAssets';
+import randomGradient from './randomGradient';
+export { FontAssetsUtil, randomGradient };
