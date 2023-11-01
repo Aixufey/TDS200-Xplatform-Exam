@@ -1,2 +1,3 @@
+import MemoizedItem from './MemoizedPicture';
 import Picture from './Picture';
-export { Picture };
+export { MemoizedItem, Picture };

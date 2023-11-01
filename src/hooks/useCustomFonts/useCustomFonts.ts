@@ -6,7 +6,7 @@ import {
     UbuntuItalic,
     UbuntuLight,
     UbuntuRegular,
-} from '../../utils';
+} from '../../utils/fontAssets';
 
 const useCustomFonts = () => {
     const [fontsLoaded] = Font.useFonts({

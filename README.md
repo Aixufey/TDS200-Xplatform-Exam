@@ -202,9 +202,13 @@ module.exports = function (api) {
 };
 ```
 
+---
+
 ### [Vector Icons](https://docs.expo.dev/guides/icons/#expovector-icons)
 
 A library that provides various vector icons via `npm i @expo/vector-icons` &nbsp;&nbsp;For more official [documentation](https://icons.expo.fyi/Index/Entypo/login)
+
+---
 
 ## GitHooks
 
