@@ -26,7 +26,7 @@ module.exports = {
                 neutral300: '#a4a4a4',
                 dark: '#2d2d2d',
                 dark200: '#202020',
-                dark300: '#060606'
+                dark300: '#060606',
             },
         },
     },

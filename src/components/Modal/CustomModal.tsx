@@ -12,9 +12,7 @@ const CustomModal: React.FC<ICustomModal> = ({ intensity, children }) => {
             className="flex-1 w-full h-full text-center justify-center items-center overflow-hidden"
         >
             <View className="w-[65%] h-[65%] border-[1px] border-[#000] p-[6px] bg-[#151515] rounded-2xl overflow-hidden justify-center items-center">
-                <ScrollView>
-                    {children}
-                </ScrollView>
+                <ScrollView>{children}</ScrollView>
             </View>
         </BlurView>
     );
