@@ -1,2 +1,2 @@
-import useCustomNavigation from "./useCustomNavigation";
+import useCustomNavigation from './useCustomNavigation';
 export { useCustomNavigation };

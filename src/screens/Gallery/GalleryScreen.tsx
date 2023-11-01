@@ -7,8 +7,6 @@ import { Background, Canvas, MemoizedItem } from '../../components';
 const GalleryScreen: React.FC = () => {
     const isFocused = useIsFocused();
 
-    
-
     return (
         <Background>
             <View className="flex-1 w-full bottom-[4.5%] justify-center items-center">
