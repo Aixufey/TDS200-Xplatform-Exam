@@ -1,59 +1,54 @@
 import { AntDesign, Entypo } from '@expo/vector-icons';
-import { useState } from 'react';
-import { GestureResponderEvent, Image, Pressable, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { GestureResponderEvent, Image, Pressable, View } from 'react-native';
+import { useGalleryContext } from '../../context';
 import DesignSystem from '../../styles';
 interface IPicture {
     uri?: string;
-    longPressed?: boolean;
+    firstName?: string;
 }
-const Picture: React.FC<IPicture> = ({ uri }) => {
-    const [longPressed, setLongPressed] = useState<boolean>(false);
+const Picture: React.FC<IPicture> = ({ uri, firstName }) => {
     const [select, setSelect] = useState<boolean>(false);
     const { Colors } = DesignSystem();
     const fallBackUri = '../../../assets/images/cicada.png';
+    const { handleLongPress, isLongPress, setCurrentPicture } = useGalleryContext();
 
-    const handlePress = (e: GestureResponderEvent) => {
-        console.log(e.nativeEvent.target);
-
-        if (longPressed) {
-            handleSelect(e);
+    useEffect(() => {
+        if (!isLongPress) {
+            setSelect(false);
         }
-    };
-    const handleLongPress = (e: GestureResponderEvent) => {
-        console.log(e.nativeEvent.target);
-        setLongPressed((prev) => !prev);
-    };
-    const handleSelect = (e: GestureResponderEvent) => {
-        console.log(e.nativeEvent.target);
-        setSelect((prev) => !prev);
+    }, [isLongPress]);
+
+    const handlePressPicture = (e: GestureResponderEvent) => {
+        // console.log(e.nativeEvent.target);
+        // Selected Picture state needs to be at this level of granularity
+        // Context -- single source of truth will provide ALL the pictures as 'selected' which is not what we want.
+        console.log(`open`, e.nativeEvent.target);
+        if (isLongPress) {
+            setSelect((prev) => !prev);
+            setCurrentPicture(firstName);
+        }
     };
 
     return (
-        <Pressable onPress={handlePress} onLongPress={handleLongPress}>
+        <Pressable onPress={handlePressPicture} onLongPress={handleLongPress}>
             <View className="min-w-[75px] min-h-[75px] border-[0.5px] border-dark">
                 <Image
                     source={require('../../../assets/images/cicada.png')}
                     className="absolute flex-1 w-full h-full bg-neutral300 "
                 />
-                {longPressed && !select ? (
-                    <Entypo name="circle" size={14} style={{ color: Colors.secondary }} />
-                ) : select ? (
-                    <AntDesign name="checkcircle" size={12} style={{ color: Colors.secondary }} />
-                ) : null}
+                {isLongPress &&
+                    (!select ? (
+                        <Entypo name="circle" size={12} style={{ color: Colors.secondary }} />
+                    ) : (
+                        <AntDesign
+                            name="checkcircle"
+                            size={12}
+                            style={{ color: Colors.secondary }}
+                        />
+                    ))}
             </View>
         </Pressable>
     );
 };
 export default Picture;
-
-interface ILongPressMenu {
-    children: React.ReactNode;
-}
-const LongPressMenu: React.FC<ILongPressMenu> = ({ children }) => {
-    return (
-        <View className="border-2 border-white bg-white w-full h-full">
-            <Text>lol</Text>
-            {children}
-        </View>
-    );
-};
