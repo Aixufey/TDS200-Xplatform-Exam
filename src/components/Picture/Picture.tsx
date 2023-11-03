@@ -1,4 +1,4 @@
-import { AntDesign, Entypo } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import React, { memo, useEffect, useState } from 'react';
 import { GestureResponderEvent, Image, Pressable, Text, View } from 'react-native';
 import { useGalleryContext } from '../../context';
@@ -13,7 +13,7 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
     const [select, setSelect] = useState<boolean>(false);
     const { Colors } = DesignSystem();
     const fallback = require('../../../assets/images/cicada.png');
-    const { handleLongPress, isLongPress, setCurrentPicture } = useGalleryContext();
+    const { handleLongPress, isLongPress, setCurrentPicture, favorite } = useGalleryContext();
 
     useEffect(() => {
         if (!isLongPress) {
@@ -46,19 +46,38 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
                         />
                         {isLongPress &&
                             (!select ? (
-                                <Entypo
-                                    name="circle"
-                                    size={12}
-                                    style={{ color: Colors.secondary }}
-                                />
+                                <View className="absolute left-[3%] top-[3%]">
+                                    <FontAwesome
+                                        name="circle-o"
+                                        size={14}
+                                        style={{ color: Colors.secondary }}
+                                    />
+                                </View>
                             ) : (
-                                <AntDesign
-                                    name="checkcircle"
-                                    size={12}
-                                    style={{ color: Colors.secondary }}
-                                />
+                                <View className="absolute left-[3%] top-[3%]">
+                                    <AntDesign
+                                        name="checkcircle"
+                                        size={12}
+                                        style={{ color: Colors.secondary }}
+                                    />
+                                </View>
                             ))}
-                        <Text>{firstName}</Text>
+
+                        {favorite &&
+                            favorite.map((item) => {
+                                return item.id == id ? (
+                                    <View className="absolute right-[3%] top-[3%]">
+                                        <MaterialIcons
+                                            name="favorite"
+                                            size={14}
+                                            style={{ color: 'crimson' }}
+                                        />
+                                    </View>
+                                ) : null;
+                            })}
+                        <Text className="self-center text-white bottom-0 absolute">
+                            {firstName}
+                        </Text>
                     </View>
                 </Pressable>
             </View>
