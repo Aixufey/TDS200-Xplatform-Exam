@@ -1,5 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import DATA from '../../../MOCK_DATA.json';
+import { favoriteItems } from '../../constants';
 
 interface IGalleryContext {
     data: any;
@@ -53,22 +55,27 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         };
     }, [DATA]);
 
+    useEffect(() => {
+        handleGetStoredFavorite();
+    }, []);
+
     // Debugging
     useEffect(() => {
         // console.log(data.length);
         // console.log('Current selected length ', selectedPictures.length);
         // console.log('current Picture? ', currentPicture)
-        console.log('Favorites', favorite);
-        console.log('favorite length', favorite.length);
-        console.log('Current selected length', selectedPictures.length);
-        console.log('Current selected', selectedPictures);
-    }, [data,currentPicture, favorite, selectedPictures]);
+        // console.log('Favorites', favorite);
+        // console.log('favorite length', favorite.length);
+        // console.log('Current selected length', selectedPictures.length);
+        // console.log('Current selected', selectedPictures);
+    }, [data, currentPicture, favorite, selectedPictures]);
 
     const updateCurrentPicture = (picture: any) => {
         // console.log(picture);
         if (!picture) return;
 
         setCurrentPicture(picture);
+
         // Track multiple selections
         // Due the nature of React asynchronous state batching, we can check if last snapshot contains the selected
         setSelectedPictures((prevSelected: any) => {
@@ -88,7 +95,7 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
 
         setFavorite((prevFavs) => {
             // Accumulate favorite
-            return inputArray.reduce((newFavs: any, picture: any) => {
+            const newFavs = inputArray.reduce((newFavs: any, picture: any) => {
                 // Check current picture if exists in accumulator
                 const isFavorite = newFavs.some((fav: any) => fav.id == picture.id);
 
@@ -101,21 +108,80 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
                 }
                 // Init acc with previous favorite state
             }, prevFavs);
+            handleStoreFavorite(newFavs);
+            return newFavs;
         });
 
         // Clean selections
-        setSelectedPictures([]);
-        setCurrentPicture(null);
-        setIsLongPress(false);
+        cleanSelections();
+    };
+
+    const handleDeletePicture = (input: any) => {
+        console.log('selected ', input);
+        if (!input || input.length == 0) return;
+        console.log('here');
+        // Assert to array for single picture
+        const inputArray = input instanceof Array ? input : [input];
+
+        // Concurrently delete from data for each item given input array
+        // exclude item if it exists.
+        setData((prevData: any) =>
+            prevData.filter((item: any) => !inputArray.some((input: any) => input.id == item.id))
+        );
+        console.log(data.length);
+
+        // Concurrently clean from favorites
+        setFavorite((prevFavs: any) => {
+            const filtered = prevFavs.filter(
+                (fav: any) => !inputArray.some((input: any) => input.id == fav.id)
+            );
+            handleStoreFavorite(filtered);
+            return filtered;
+        });
+        console.log(favorite.length);
+
+        // Clean selections
+        cleanSelections();
     };
 
     const handlePress = () => {
         setIsPress((prevState) => !prevState);
     };
+
     const handleLongPress = () => {
         setIsLongPress((prevState) => !prevState);
         setShowBottomDrawer((prevState) => !prevState);
     };
+
+    const handleStoreFavorite = async (input: any) => {
+        await AsyncStorage.setItem(favoriteItems, JSON.stringify(input));
+        // console.log('store favorite', input);
+        // if (!input || input.length == 0) return;
+        // try {
+        //     const result = await AsyncStorage.getItem(favoriteItems);
+        //     if (result) {
+        //         const parsed = JSON.parse(result);
+        //         const filtered = parsed.filter(
+        //             (item: any) => !input.some((input: any) => input.id == item.id)
+        //         );
+        //         await AsyncStorage.setItem(favoriteItems, JSON.stringify([...filtered]));
+        //     }
+        // } catch (e) {
+        //     console.log(e);
+        // }
+    };
+    const handleGetStoredFavorite = async () => {
+        try {
+            const result = await AsyncStorage.getItem(favoriteItems);
+            if (result) {
+                const parsed = JSON.parse(result);
+                setFavorite(parsed);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
     const resetState = () => {
         setShowBottomDrawer(false);
         setIsPress(false);
@@ -123,29 +189,11 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         setSelectedPictures([]);
         setCurrentPicture(null);
     };
-    const handleDeletePicture = (input: any) => {
-        console.log("selected ", input);
-        if (!input || input.length == 0) return;
-        console.log("here")
-        // Assert to array for single picture
-        const inputArray = input instanceof Array ? input : [input];
 
-        // Concurrently delete from data for each item given input array
-        // exclude item if it exists.
-        setData((prevData: any) => prevData.filter(
-            (item: any) => !inputArray.some((input: any) => input.id == item.id)
-        ));
-        console.log(data.length)
-
-        // Concurrently clean from favorites
-        setFavorite((prevFavs: any) => prevFavs.filter(
-            (fav: any) => !inputArray.some((input: any) => input.id == fav.id)
-        ));
-        console.log(favorite.length)
-
-        // Clean selections
+    const cleanSelections = () => {
         setSelectedPictures([]);
         setCurrentPicture(null);
+        setIsLongPress(false);
     };
 
     return (
