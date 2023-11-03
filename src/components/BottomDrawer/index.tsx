@@ -1,19 +1,23 @@
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
-import { Pressable, View } from 'react-native';
+import { Pressable, StyleProp, View, ViewStyle } from 'react-native';
 import { useGalleryContext } from '../../context';
 interface IBottomDrawer {
     children?: React.ReactNode;
+    className?: string;
+    style?: StyleProp<ViewStyle>;
 }
 
-const BottomDrawer: React.FC<IBottomDrawer> = ({ children }) => {
-    const {
-        selectedPictures,
-        currentPicture,
-        toggleFavorite,
-        handleDeletePicture,
-    } = useGalleryContext();
+const BottomDrawer: React.FC<IBottomDrawer> = ({ children, className, style }) => {
+    const { selectedPictures, currentPicture, toggleFavorite, handleDeletePicture } =
+        useGalleryContext();
     return (
-        <View className="bg-neutral rounded-tl-xl rounded-tr-xl w-full h-full z-100 flex-row justify-evenly items-center pb-5">
+        <View
+            style={style}
+            className={
+                className ??
+                'bg-neutral rounded-tl-xl rounded-tr-xl w-full h-full z-100 flex-row justify-evenly items-center pb-5'
+            }
+        >
             <View>
                 <Pressable
                     onPress={() => toggleFavorite(selectedPictures)}

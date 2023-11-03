@@ -194,6 +194,7 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         setSelectedPictures([]);
         setCurrentPicture(null);
         setIsLongPress(false);
+        setShowBottomDrawer(false);
     };
 
     return (

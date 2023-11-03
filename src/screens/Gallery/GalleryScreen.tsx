@@ -55,11 +55,11 @@ const GalleryScreen: React.FC = () => {
                     />
                 </Canvas>
             </View>
-            <View className="absolute bottom-[50px] h-[10%] w-[100%]">
-                {/* {showBottomDrawer && <BottomDrawer />} */}
-                <BottomDrawer />
-            </View>
+            {showBottomDrawer &&
+                <BottomDrawer className="absolute bottom-[8%] bg-neutral rounded-xl h-[10%] w-full z-100 flex-row justify-evenly items-center " />
+            }
         </Background>
+        
     );
 };
 export default GalleryScreen;
