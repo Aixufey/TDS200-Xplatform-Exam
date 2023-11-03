@@ -28,7 +28,11 @@ const GalleryScreen: React.FC = () => {
                             data={favorite}
                             keyExtractor={(item: any) => item.id.toString()}
                             renderItem={({ item, index }) => (
-                                <Picture id={item.id.toString()} firstName={item.firstName} />
+                                <Picture
+                                    key={index}
+                                    id={item.id.toString()}
+                                    firstName={item.firstName}
+                                />
                             )}
                         />
                     </View>
@@ -36,7 +40,11 @@ const GalleryScreen: React.FC = () => {
                         data={data}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({ item, index }) => (
-                            <Picture id={item.id.toString()} firstName={item.first_name} />
+                            <Picture
+                                key={index}
+                                id={item.id.toString()}
+                                firstName={item.first_name}
+                            />
                         )}
                         removeClippedSubviews={true}
                         showsVerticalScrollIndicator={false}

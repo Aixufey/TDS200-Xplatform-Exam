@@ -64,10 +64,11 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
                             ))}
 
                         {favorite &&
-                            favorite.map((item) => {
+                            favorite.map((item, index) => {
                                 return item.id == id ? (
-                                    <View className="absolute right-[3%] top-[3%]">
+                                    <View key={index} className="absolute right-[3%] top-[3%]">
                                         <MaterialIcons
+                                            key={index}
                                             name="favorite"
                                             size={14}
                                             style={{ color: 'crimson' }}
