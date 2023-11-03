@@ -1,13 +1,13 @@
 import { useIsFocused } from '@react-navigation/native';
 import React, { useLayoutEffect } from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import { Background, Canvas, Picture } from '../../components';
 import BottomDrawer from '../../components/BottomDrawer';
 import { useGalleryContext } from '../../context';
 
 const GalleryScreen: React.FC = () => {
     const isFocused = useIsFocused();
-    const { showBottomDrawer, resetState, data } = useGalleryContext();
+    const { showBottomDrawer, resetState, data, favorite } = useGalleryContext();
 
     useLayoutEffect(() => {
         return () => {
@@ -22,6 +22,16 @@ const GalleryScreen: React.FC = () => {
         <Background>
             <View className="flex-1 w-full bottom-[4.5%] justify-center items-center">
                 <Canvas isFocused={isFocused} title={'Media'}>
+                    <View className="border-[0.3px] border-white w-full h-[25%] justify-center items-center">
+                        <FlatList
+                            numColumns={4}
+                            data={favorite}
+                            keyExtractor={(item: any) => item.id.toString()}
+                            renderItem={({ item, index }) => (
+                                <Picture id={item.id.toString()} firstName={item.firstName} />
+                            )}
+                        />
+                    </View>
                     <FlatList
                         data={data}
                         keyExtractor={(item) => item.id.toString()}
