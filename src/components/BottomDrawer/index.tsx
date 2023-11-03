@@ -24,7 +24,7 @@ const BottomDrawer: React.FC<IBottomDrawer> = ({ children }) => {
             </View>
             <View>
                 <Pressable
-                    onPress={() => handleDeletePicture(currentPicture)}
+                    onPress={() => handleDeletePicture(selectedPictures)}
                     className="justify-center items-center"
                 >
                     <AntDesign name="delete" size={24} color="black" />

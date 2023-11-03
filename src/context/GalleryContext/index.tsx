@@ -58,7 +58,10 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         // console.log(data.length);
         // console.log('Current selected length ', selectedPictures.length);
         // console.log('current Picture? ', currentPicture)
-        // console.log('Favorites', favorite.length);
+        console.log('Favorites', favorite);
+        console.log('favorite length', favorite.length);
+        console.log('Current selected length', selectedPictures.length);
+        console.log('Current selected', selectedPictures);
     }, [data,currentPicture, favorite, selectedPictures]);
 
     const updateCurrentPicture = (picture: any) => {
@@ -115,19 +118,28 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         setSelectedPictures([]);
         setCurrentPicture(null);
     };
-    const handleDeletePicture = (picture: any) => {
-        // console.log(picture);
-        if (!picture) return;
+    const handleDeletePicture = (input: any) => {
+        console.log("selected ", input);
+        if (!input || input.length == 0) return;
+        console.log("here")
+        // Assert to array for single picture
+        const inputArray = input instanceof Array ? input : [input];
 
-        // console.log('before', data.length);
-        const newData = data.filter((item: any) => item.id != picture.id);
-        setData(newData);
-        // console.log('after ', newData.length);
+        // Concurrently delete from data for each item given input array
+        // exclude item if it exists.
+        setData((prevData: any) => prevData.filter(
+            (item: any) => !inputArray.some((input: any) => input.id == item.id)
+        ));
+        console.log(data.length)
 
-        if (picture.id == currentPicture.id && favorite.length > 0) {
-            const result = favorite.filter((favorite: any) => favorite.id != picture.id);
-            setFavorite(result);
-        }
+        // Concurrently clean from favorites
+        setFavorite((prevFavs: any) => prevFavs.filter(
+            (fav: any) => !inputArray.some((input: any) => input.id == fav.id)
+        ));
+        console.log(favorite.length)
+
+        // Clean selections
+        setSelectedPictures([]);
         setCurrentPicture(null);
     };
 
