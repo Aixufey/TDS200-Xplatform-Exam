@@ -6,12 +6,17 @@ interface IBottomDrawer {
 }
 
 const BottomDrawer: React.FC<IBottomDrawer> = ({ children }) => {
-    const { currentPicture, addToFavorites, removeFromFavorites } = useGalleryContext();
+    const {
+        selectedPictures,
+        currentPicture,
+        toggleFavorite,
+        handleDeletePicture,
+    } = useGalleryContext();
     return (
         <View className="bg-neutral rounded-tl-xl rounded-tr-xl w-full h-full z-100 flex-row justify-evenly items-center pb-5">
             <View>
                 <Pressable
-                    onPress={() => addToFavorites({ id: 1, firstName: currentPicture })}
+                    onPress={() => toggleFavorite(selectedPictures)}
                     className="justify-center items-center"
                 >
                     <MaterialIcons name="favorite-border" size={24} color="black" />
@@ -19,7 +24,7 @@ const BottomDrawer: React.FC<IBottomDrawer> = ({ children }) => {
             </View>
             <View>
                 <Pressable
-                    onPress={() => removeFromFavorites({ id: 1 })}
+                    onPress={() => handleDeletePicture(currentPicture)}
                     className="justify-center items-center"
                 >
                     <AntDesign name="delete" size={24} color="black" />
