@@ -102,6 +102,11 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
                 // Init acc with previous favorite state
             }, prevFavs);
         });
+
+        // Clean selections
+        setSelectedPictures([]);
+        setCurrentPicture(null);
+        setIsLongPress(false);
     };
 
     const handlePress = () => {
