@@ -1,6 +1,7 @@
 import { AntDesign } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, Text,View } from 'react-native';
+import { useGalleryContext } from '../../context';
 import DesignSystem from '../../styles';
 interface ICustomModal {
     intensity?: number;
@@ -10,9 +11,11 @@ interface ICustomModal {
 }
 const CustomModal: React.FC<ICustomModal> = ({ onPress, className, intensity, children }) => {
     const { Colors } = DesignSystem();
+    const { currentPicture, resetState } = useGalleryContext();
 
     const handleOnPressClose = () => {
         onPress && onPress();
+        resetState();
     };
 
     return (
@@ -24,7 +27,13 @@ const CustomModal: React.FC<ICustomModal> = ({ onPress, className, intensity, ch
                 >
                     <AntDesign name="closecircle" size={24} color={Colors.tertiary} />
                 </TouchableOpacity>
-                {children}
+                {
+                    currentPicture &&
+                    <View>
+                            <Text className='text-white'>{currentPicture.firstName}</Text>
+                            { children }
+                    </View>
+                }
             </View>
         </BlurView>
     );

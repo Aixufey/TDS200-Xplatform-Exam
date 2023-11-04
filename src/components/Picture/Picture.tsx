@@ -27,10 +27,16 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
         // Context -- single source of truth will provide ALL the pictures as 'selected' which is not what we want.
         console.log(`open`, e.nativeEvent.target);
         handlePress();
-        
+
+        let blob = {
+            id: id,
+            firstName: firstName,
+        }
+        setCurrentPicture(blob)
+
         if (isLongPress) {
             setSelect((prev) => !prev);
-            setCurrentPicture({ id: id, firstName: firstName });
+            setCurrentPicture(blob);
         }
     };
 

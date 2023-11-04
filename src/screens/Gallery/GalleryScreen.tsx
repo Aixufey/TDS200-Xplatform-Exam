@@ -1,5 +1,5 @@
 import { useIsFocused } from '@react-navigation/native';
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect as useEffect, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { Background, Canvas, CustomModal, Picture } from '../../components';
 import { useGalleryContext } from '../../context';
@@ -7,9 +7,9 @@ import { useGalleryContext } from '../../context';
 const GalleryScreen: React.FC = () => {
     const [toggleModal, setToggleModal] = useState<boolean>(false);
     const isFocused = useIsFocused();
-    const { resetState, data, favorite, isPress } = useGalleryContext();
+    const { resetState, data, favorite, isPress, isLongPress } = useGalleryContext();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         return () => {
             // Reset states when leaving the screen
             // Reset drawer state, press state, long press state, all selected pictures
@@ -18,12 +18,17 @@ const GalleryScreen: React.FC = () => {
         };
     }, [isFocused]);
 
-    useLayoutEffect(() => {
-        setToggleModal((prev) => !prev);
-    }, [isPress]);
+    useEffect(() => {
+        // Open modal on item click.
+        if (isPress && !isLongPress) {
+            setToggleModal(true);
+        }
+        // Close modal on unmount.
+        if (!isFocused) setToggleModal(false);
+    }, [isPress, isFocused]);
 
     const handleToggleModal = () => {
-        setToggleModal((prev) => !prev);
+        setToggleModal(false);
     };
 
     return (
@@ -37,6 +42,7 @@ const GalleryScreen: React.FC = () => {
                             keyExtractor={(item: any) => item.id.toString()}
                             renderItem={({ item, index }) => (
                                 <Picture
+                                    uri="https://cdn-icons-png.flaticon.com/512/2333/2333464.png"
                                     key={index}
                                     id={item.id.toString()}
                                     firstName={item.firstName}
@@ -49,6 +55,7 @@ const GalleryScreen: React.FC = () => {
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({ item, index }) => (
                             <Picture
+                                uri={item.uri}
                                 key={index}
                                 id={item.id.toString()}
                                 firstName={item.first_name}
@@ -62,15 +69,15 @@ const GalleryScreen: React.FC = () => {
                         windowSize={5}
                     />
                 </Canvas>
-                {toggleModal && (
+                {toggleModal ? (
                     <CustomModal
                         onPress={handleToggleModal}
                         intensity={8}
                         className="absolute w-full h-[91%] justify-center items-center"
                     >
-                        <Text className="justify-center items-center text-[#FbAA]">ooolloo</Text>
+                        <Text className="justify-center items-center text-[#FbAA]">Children</Text>
                     </CustomModal>
-                )}
+                ) : null}
             </View>
         </Background>
     );
