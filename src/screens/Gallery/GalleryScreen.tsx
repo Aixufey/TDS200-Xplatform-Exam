@@ -1,13 +1,13 @@
 import { useIsFocused } from '@react-navigation/native';
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
-import { Background, Canvas, Picture } from '../../components';
-import BottomDrawer from '../../components/BottomDrawer';
+import { Background, Canvas, CustomModal, Picture } from '../../components';
 import { useGalleryContext } from '../../context';
 
 const GalleryScreen: React.FC = () => {
+    const [toggleModal, setToggleModal] = useState<boolean>(false);
     const isFocused = useIsFocused();
-    const { showBottomDrawer, resetState, data, favorite } = useGalleryContext();
+    const { resetState, data, favorite, isPress } = useGalleryContext();
 
     useLayoutEffect(() => {
         return () => {
@@ -17,6 +17,14 @@ const GalleryScreen: React.FC = () => {
             // console.log('Unmounted Gallery Screen');
         };
     }, [isFocused]);
+
+    useLayoutEffect(() => {
+        setToggleModal((prev) => !prev);
+    }, [isPress]);
+
+    const handleToggleModal = () => {
+        setToggleModal((prev) => !prev);
+    };
 
     return (
         <Background>
@@ -52,14 +60,19 @@ const GalleryScreen: React.FC = () => {
                         maxToRenderPerBatch={20}
                         numColumns={4}
                         windowSize={5}
-                    />  
+                    />
                 </Canvas>
+                {toggleModal && (
+                    <CustomModal
+                        onPress={handleToggleModal}
+                        intensity={8}
+                        className="absolute w-full h-[91%] justify-center items-center"
+                    >
+                        <Text className="justify-center items-center text-[#FbAA]">ooolloo</Text>
+                    </CustomModal>
+                )}
             </View>
-            {showBottomDrawer &&
-                <BottomDrawer className="absolute bottom-[8%] bg-neutral rounded-xl h-[10%] w-full z-100 flex-row justify-evenly items-center " />
-            }
         </Background>
-        
     );
 };
 export default GalleryScreen;

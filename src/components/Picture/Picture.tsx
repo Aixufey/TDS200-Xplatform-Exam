@@ -13,7 +13,7 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
     const [select, setSelect] = useState<boolean>(false);
     const { Colors } = DesignSystem();
     const fallback = require('../../../assets/images/cicada.png');
-    const { handleLongPress, isLongPress, setCurrentPicture, favorite } = useGalleryContext();
+    const { handlePress, handleLongPress, isLongPress, setCurrentPicture, favorite } = useGalleryContext();
 
     useEffect(() => {
         if (!isLongPress) {
@@ -26,6 +26,8 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
         // Selected Picture state needs to be at this level of granularity
         // Context -- single source of truth will provide ALL the pictures as 'selected' which is not what we want.
         console.log(`open`, e.nativeEvent.target);
+        handlePress();
+        
         if (isLongPress) {
             setSelect((prev) => !prev);
             setCurrentPicture({ id: id, firstName: firstName });
