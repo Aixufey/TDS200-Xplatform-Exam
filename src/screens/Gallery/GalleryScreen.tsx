@@ -52,7 +52,7 @@ const GalleryScreen: React.FC = () => {
                         maxToRenderPerBatch={20}
                         numColumns={4}
                         windowSize={5}
-                    />
+                    />  
                 </Canvas>
             </View>
             {showBottomDrawer &&

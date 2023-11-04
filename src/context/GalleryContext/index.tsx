@@ -141,7 +141,8 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         console.log(favorite.length);
 
         // Clean selections
-        cleanSelections();
+        setSelectedPictures([]);
+        setCurrentPicture(null);
     };
 
     const handlePress = () => {
