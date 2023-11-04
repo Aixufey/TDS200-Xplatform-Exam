@@ -64,15 +64,15 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         // console.log(data.length);
         // console.log('Current selected length ', selectedPictures.length);
-        console.log('current Picture? ', currentPicture)
+        // console.log('current Picture? ', currentPicture)
         // console.log('Favorites', favorite);
         // console.log('favorite length', favorite.length);
         // console.log('Current selected length', selectedPictures.length);
-        // console.log('Current selected', selectedPictures);
+        console.log('Current selected', selectedPictures);
     }, [data, currentPicture, favorite, selectedPictures]);
 
     const updateCurrentPicture = (picture: any) => {
-        console.log(picture);
+        // console.log(picture);
         if (!picture) return;
 
         setCurrentPicture(picture);

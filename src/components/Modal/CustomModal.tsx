@@ -15,6 +15,7 @@ const CustomModal: React.FC<ICustomModal> = ({ onPress, className, intensity, ch
 
     const handleOnPressClose = () => {
         onPress && onPress();
+        // TODO: Clean instead of hard reset?
         resetState();
     };
 

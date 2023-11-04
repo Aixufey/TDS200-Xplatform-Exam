@@ -13,7 +13,8 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
     const [select, setSelect] = useState<boolean>(false);
     const { Colors } = DesignSystem();
     const fallback = require('../../../assets/images/cicada.png');
-    const { handlePress, handleLongPress, isLongPress, setCurrentPicture, favorite } = useGalleryContext();
+    const { handlePress, handleLongPress, isLongPress, setCurrentPicture, favorite } =
+        useGalleryContext();
 
     useEffect(() => {
         if (!isLongPress) {
@@ -26,17 +27,17 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
         // Selected Picture state needs to be at this level of granularity
         // Context -- single source of truth will provide ALL the pictures as 'selected' which is not what we want.
         console.log(`open`, e.nativeEvent.target);
+
+        // Open Modal
         handlePress();
 
-        let blob = {
-            id: id,
-            firstName: firstName,
-        }
-        setCurrentPicture(blob)
+        // TODO: A bug that cannot show current Picture in modal simultaneously keep adding to selectedPictures
+        // setCurrentPicture({ id: id, firstName: firstName });
 
+        // Multi select
         if (isLongPress) {
             setSelect((prev) => !prev);
-            setCurrentPicture(blob);
+            setCurrentPicture({ id: id, firstName: firstName });
         }
     };
 
