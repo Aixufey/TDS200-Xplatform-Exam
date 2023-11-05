@@ -12,7 +12,6 @@ The project will fail to run if `.env` for **Firebase** is not configured. Renam
     - [Fonts](#fonts)
     - [Linear Gradient](#linear-gradient)
     - [Local storage](#local-storage)
-  - [The local storage works exactly like on web browser where we can store data in form of key and value pairs.    Install via `npm install @react-native-async-storage/async-storage`.](#the-local-storage-works-exactly-like-on-web-browser-where-we-can-store-data-in-form-of-key-and-value-pairs--install-via-npm-install-react-native-async-storageasync-storage)
     - [Navigation](#navigation)
     - [Prettier](#prettier)
     - [React Native dotenv](#react-native-dotenv)
@@ -74,7 +73,9 @@ React Native does not support gradients. We use Expo-LinearGradient from `npx ex
 
 ### [Local storage](https://react-native-async-storage.github.io/async-storage/docs/usage)
 
-## The local storage works exactly like on web browser where we can store data in form of key and value pairs. &nbsp;&nbsp; Install via `npm install @react-native-async-storage/async-storage`.
+The local storage works exactly like on web browser where we can store data in form of key and value pairs. &nbsp;&nbsp; Install via `npm install @react-native-async-storage/async-storage`.
+
+---
 
 ### [Navigation](https://reactnative.dev/docs/next/navigation)
 
