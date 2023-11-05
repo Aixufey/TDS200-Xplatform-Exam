@@ -55,12 +55,14 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         };
     }, [DATA]);
 
+    // Load favorites
     useEffect(() => {
         handleGetStoredFavorite();
     }, []);
 
     // Debugging
     useEffect(() => {
+        // console.log(`Pressed `, isPress)
         // console.log(data.length);
         // console.log('Current selected length ', selectedPictures.length);
         // console.log('current Picture? ', currentPicture)
@@ -68,7 +70,7 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         // console.log('favorite length', favorite.length);
         // console.log('Current selected length', selectedPictures.length);
         // console.log('Current selected', selectedPictures);
-    }, [data, currentPicture, favorite, selectedPictures]);
+    }, [data, isPress, currentPicture, favorite, selectedPictures]);
 
     const updateCurrentPicture = (picture: any) => {
         // console.log(picture);

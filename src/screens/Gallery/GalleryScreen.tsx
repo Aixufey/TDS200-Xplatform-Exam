@@ -1,15 +1,15 @@
 import { useIsFocused } from '@react-navigation/native';
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect as useEffect, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
-import { Background, Canvas, Picture } from '../../components';
-import BottomDrawer from '../../components/BottomDrawer';
+import { Background, Canvas, CustomModal, Picture } from '../../components';
 import { useGalleryContext } from '../../context';
 
 const GalleryScreen: React.FC = () => {
+    const [toggleModal, setToggleModal] = useState<boolean>(false);
     const isFocused = useIsFocused();
-    const { showBottomDrawer, resetState, data, favorite } = useGalleryContext();
+    const { resetState, data, favorite, isPress, isLongPress } = useGalleryContext();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         return () => {
             // Reset states when leaving the screen
             // Reset drawer state, press state, long press state, all selected pictures
@@ -17,6 +17,19 @@ const GalleryScreen: React.FC = () => {
             // console.log('Unmounted Gallery Screen');
         };
     }, [isFocused]);
+
+    useEffect(() => {
+        // Open modal on item click.
+        if (isPress && !isLongPress) {
+            setToggleModal(true);
+        }
+        // Close modal on unmount.
+        if (!isFocused) setToggleModal(false);
+    }, [isPress, isFocused]);
+
+    const handleToggleModal = () => {
+        setToggleModal(false);
+    };
 
     return (
         <Background>
@@ -26,11 +39,12 @@ const GalleryScreen: React.FC = () => {
                         <FlatList
                             numColumns={4}
                             data={favorite}
-                            keyExtractor={(item: any) => item.id.toString()}
+                            keyExtractor={(item: any) => item.id}
                             renderItem={({ item, index }) => (
                                 <Picture
+                                    uri="https://cdn-icons-png.flaticon.com/512/2333/2333464.png"
                                     key={index}
-                                    id={item.id.toString()}
+                                    id={item.id}
                                     firstName={item.firstName}
                                 />
                             )}
@@ -38,11 +52,12 @@ const GalleryScreen: React.FC = () => {
                     </View>
                     <FlatList
                         data={data}
-                        keyExtractor={(item) => item.id.toString()}
+                        keyExtractor={(item: any) => item.id}
                         renderItem={({ item, index }) => (
                             <Picture
+                                uri={item.uri}
                                 key={index}
-                                id={item.id.toString()}
+                                id={item.id}
                                 firstName={item.first_name}
                             />
                         )}
@@ -52,14 +67,19 @@ const GalleryScreen: React.FC = () => {
                         maxToRenderPerBatch={20}
                         numColumns={4}
                         windowSize={5}
-                    />  
+                    />
                 </Canvas>
+                {toggleModal ? (
+                    <CustomModal
+                        onPress={handleToggleModal}
+                        intensity={8}
+                        className="absolute w-full h-[91%] justify-center items-center"
+                    >
+                        <Text className="justify-center items-center text-[#FbAA]">Pass children here</Text>
+                    </CustomModal>
+                ) : null}
             </View>
-            {showBottomDrawer &&
-                <BottomDrawer className="absolute bottom-[8%] bg-neutral rounded-xl h-[10%] w-full z-100 flex-row justify-evenly items-center " />
-            }
         </Background>
-        
     );
 };
 export default GalleryScreen;
