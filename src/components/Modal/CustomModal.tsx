@@ -1,6 +1,6 @@
 import { AntDesign } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { TouchableOpacity, Text,View } from 'react-native';
+import { TouchableOpacity, Text, View } from 'react-native';
 import { useGalleryContext } from '../../context';
 import DesignSystem from '../../styles';
 interface ICustomModal {
@@ -28,13 +28,14 @@ const CustomModal: React.FC<ICustomModal> = ({ onPress, className, intensity, ch
                 >
                     <AntDesign name="closecircle" size={24} color={Colors.tertiary} />
                 </TouchableOpacity>
-                {
-                    currentPicture &&
+                {currentPicture && (
                     <View>
-                            <Text className='text-white'>{ currentPicture.id} - {currentPicture.firstName}</Text>
+                        <Text className="text-white">
+                            {currentPicture.id} - {currentPicture.firstName}
+                        </Text>
                     </View>
-                }
-                { children }
+                )}
+                {children}
             </View>
         </BlurView>
     );
