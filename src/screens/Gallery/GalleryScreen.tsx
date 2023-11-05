@@ -75,7 +75,9 @@ const GalleryScreen: React.FC = () => {
                         intensity={8}
                         className="absolute w-full h-[91%] justify-center items-center"
                     >
-                        <Text className="justify-center items-center text-[#FbAA]">Pass children here</Text>
+                        <Text className="justify-center items-center text-[#FbAA]">
+                            Pass children here
+                        </Text>
                     </CustomModal>
                 ) : null}
             </View>
