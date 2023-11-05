@@ -31,13 +31,12 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
         // Open Modal
         handlePress();
 
-        // TODO: A bug that cannot show current Picture in modal simultaneously keep adding to selectedPictures
-        setCurrentPicture({id: id, firstName: firstName});
+        // Select picture(s)
+        setCurrentPicture({ id: id, firstName: firstName });
 
         // Multi select
         if (isLongPress) {
             setSelect((prev) => !prev);
-            setCurrentPicture({ id: id, firstName: firstName });
         }
     };
 
