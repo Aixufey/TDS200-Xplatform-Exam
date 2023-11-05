@@ -31,10 +31,10 @@ const CustomModal: React.FC<ICustomModal> = ({ onPress, className, intensity, ch
                 {
                     currentPicture &&
                     <View>
-                            <Text className='text-white'>{currentPicture.firstName}</Text>
-                            { children }
+                            <Text className='text-white'>{ currentPicture.id} - {currentPicture.firstName}</Text>
                     </View>
                 }
+                { children }
             </View>
         </BlurView>
     );

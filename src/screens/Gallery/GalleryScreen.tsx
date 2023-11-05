@@ -39,12 +39,12 @@ const GalleryScreen: React.FC = () => {
                         <FlatList
                             numColumns={4}
                             data={favorite}
-                            keyExtractor={(item: any) => item.id.toString()}
+                            keyExtractor={(item: any) => item.id}
                             renderItem={({ item, index }) => (
                                 <Picture
                                     uri="https://cdn-icons-png.flaticon.com/512/2333/2333464.png"
                                     key={index}
-                                    id={item.id.toString()}
+                                    id={item.id}
                                     firstName={item.firstName}
                                 />
                             )}
@@ -52,12 +52,12 @@ const GalleryScreen: React.FC = () => {
                     </View>
                     <FlatList
                         data={data}
-                        keyExtractor={(item) => item.id.toString()}
+                        keyExtractor={(item: any) => item.id}
                         renderItem={({ item, index }) => (
                             <Picture
                                 uri={item.uri}
                                 key={index}
-                                id={item.id.toString()}
+                                id={item.id}
                                 firstName={item.first_name}
                             />
                         )}
@@ -75,7 +75,7 @@ const GalleryScreen: React.FC = () => {
                         intensity={8}
                         className="absolute w-full h-[91%] justify-center items-center"
                     >
-                        <Text className="justify-center items-center text-[#FbAA]">Children</Text>
+                        <Text className="justify-center items-center text-[#FbAA]">Pass children here</Text>
                     </CustomModal>
                 ) : null}
             </View>
