@@ -6,7 +6,7 @@ import { Alert, Image, Text, TouchableOpacity, View } from 'react-native';
 interface ICameraView {
     className?: string;
 }
-const CameraView: React.FC<ICameraView> = ({ className }) => {
+const CameraProView: React.FC<ICameraView> = ({ className }) => {
     const [imageUri, setImageUri] = useState<string | undefined>(undefined);
     const [image, setImage] = useState<ImagePickerResult | undefined>(undefined);
     const [cameraPermissionInformation, requestPermission] = useCameraPermissions();
@@ -63,32 +63,13 @@ const CameraView: React.FC<ICameraView> = ({ className }) => {
         }
     };
 
-    // const pickImage = async () => {
-    //     // No permissions request is necessary for launching the image library
-    //     let result = await launchImageLibraryAsync({
-    //         mediaTypes: MediaTypeOptions.All,
-    //         allowsEditing: true,
-    //         aspect: [1, 1],
-    //         quality: 0.2,
-    //     });
-    //     // console.log(result);
-
-    //     if (!result.canceled) {
-    //         console.log(result.assets[0].fileSize);
-    //         setImage(result.assets[0].uri);
-    //     }
-    // };
     return (
         <View className="w-full h-full justify-center items-center">
             {imageUri && <Image source={{ uri: imageUri }} style={{ width: 200, height: 200 }} />}
             <TouchableOpacity onPress={handlePressCamera}>
                 <Text className="text-white text-3xl">Click</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
-                {image?.assets?.map((asset) => <Text className="text-white">{asset.uri}</Text>)}
-            </TouchableOpacity>
-            {/* <Camera ratio="1:1" className={className} ref={cameraRef} type={CameraType.back} /> */}
         </View>
     );
 };
-export default CameraView;
+export default CameraProView;
