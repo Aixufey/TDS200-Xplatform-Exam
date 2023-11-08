@@ -1,5 +1,5 @@
 import { Text } from 'react-native';
-import { Background } from '../../components';
+import { Background, CameraView } from '../../components';
 const HomeScreen: React.FC = () => {
     return (
         <Background>
