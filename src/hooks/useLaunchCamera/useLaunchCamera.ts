@@ -1,4 +1,5 @@
 import { Camera, CameraCapturedPicture } from 'expo-camera';
+import { FlipType, SaveFormat, manipulateAsync } from 'expo-image-manipulator';
 import {
     CameraType,
     ImagePickerResult,
@@ -6,10 +7,9 @@ import {
     launchCameraAsync,
     useCameraPermissions,
 } from 'expo-image-picker';
+import { createAssetAsync } from 'expo-media-library';
 import { useRef, useState } from 'react';
 import { Alert } from 'react-native';
-import { createAssetAsync } from 'expo-media-library';
-
 export type imageTypePro = {
     uri: string;
     assetId?: string | null;
@@ -62,8 +62,6 @@ const useLaunchCamera = () => {
         const { assets } = snapshot;
         setImagePro(snapshot);
     };
-    
-    
 
     const handleLaunchCameraBro = async () => {
         const hasPermission = await handlePermission();
@@ -80,10 +78,21 @@ const useLaunchCamera = () => {
                     cameraType: CameraType.back,
                 };
                 const snapshot = await broCameraRef.current.takePictureAsync(opt);
-                setImageBro(snapshot as imageTypeBro);
-                console.log(snapshot.exif);
-                const asset = await createAssetAsync(snapshot.uri)
-                console.log(asset);
+                const compressedBro = await manipulateAsync(
+                    snapshot.uri,
+                    [
+                        {
+                            resize: { height: 800, width: 800 },
+                        },
+                        {
+                            flip: FlipType.Horizontal,
+                        },
+                    ],
+                    { compress: 0.2, format: SaveFormat.JPEG }
+                );
+                setImageBro(compressedBro as imageTypeBro);
+                // TODO: Upload broski to firebase
+                const asset = await createAssetAsync(compressedBro.uri);
             }
         } catch (e) {
             console.log(e);

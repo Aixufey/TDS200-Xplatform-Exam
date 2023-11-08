@@ -3,25 +3,26 @@
 This is the Exam 2023 in Cross-platform at Høyskolen Kristiania.<br />
 The project will fail to run if `.env` for **Firebase** is not configured. Rename the `.env template` and setup with your Firebase application configuration.
 
-- [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
-  - [Issues \& bugs](#issues--bugs)
-  - [Dependencies](#dependencies)
-    - [Expo](#expo)
-    - [Expo-Blur](#expo-blur)
-    - [Firebase](#firebase)
-    - [Fonts](#fonts)
-    - [Linear Gradient](#linear-gradient)
-    - [Local storage](#local-storage)
-    - [Media Library](#media-library)
-    - [Navigation](#navigation)
-    - [Prettier](#prettier)
-    - [React Native dotenv](#react-native-dotenv)
-    - [Splash screen](#splash-screen)
-    - [Safe Area](#safe-area)
-    - [TailWind \& NativeWind](#tailwind--nativewind)
-    - [Vector Icons](#vector-icons)
-  - [GitHooks](#githooks)
-    - [Instructions](#instructions)
+-   [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
+    -   [Issues \& bugs](#issues--bugs)
+    -   [Dependencies](#dependencies)
+        -   [Expo](#expo)
+        -   [Expo-Blur](#expo-blur)
+        -   [Firebase](#firebase)
+        -   [Image Manipulator](#image-manipulator)
+        -   [Fonts](#fonts)
+        -   [Linear Gradient](#linear-gradient)
+        -   [Local storage](#local-storage)
+        -   [Media Library](#media-library)
+        -   [Navigation](#navigation)
+        -   [Prettier](#prettier)
+        -   [React Native dotenv](#react-native-dotenv)
+        -   [Splash screen](#splash-screen)
+        -   [Safe Area](#safe-area)
+        -   [TailWind \& NativeWind](#tailwind--nativewind)
+        -   [Vector Icons](#vector-icons)
+    -   [GitHooks](#githooks)
+        -   [Instructions](#instructions)
 
 ## Issues & bugs
 
@@ -56,6 +57,27 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+```
+
+---
+
+### [Image Manipulator](https://docs.expo.dev/versions/latest/sdk/imagemanipulator/)
+
+In order to save storage before uploading to Firebase, we compress the asset using `npx expo install expo-image-manipulator`
+
+```js
+const compressedBro = await manipulateAsync(
+    snapshot.uri,
+    [
+        {
+            resize: { height: 800, width: 800 },
+        },
+        {
+            flip: FlipType.Horizontal,
+        },
+    ],
+    { compress: 0.2, format: SaveFormat.JPEG }
+);
 ```
 
 ---
