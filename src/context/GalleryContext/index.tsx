@@ -1,10 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Asset, PagedInfo, getAlbumsAsync, getAssetsAsync } from 'expo-media-library';
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import DATA from '../../../MOCK_DATA.json';
 import { favoriteItems } from '../../constants';
 
 interface IGalleryContext {
     data: any;
+    updateData: (data: any) => void;
     selectedPictures: any[];
     currentPicture: any;
     setCurrentPicture: (picture: any) => void;
@@ -21,6 +23,7 @@ interface IGalleryContext {
 }
 const GalleryContext = createContext<IGalleryContext>({
     data: [],
+    updateData: (data) => {},
     selectedPictures: [],
     currentPicture: null,
     setCurrentPicture: (picture) => {},
@@ -39,7 +42,7 @@ const GalleryContext = createContext<IGalleryContext>({
 export const useGalleryContext = () => useContext(GalleryContext);
 
 const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
-    const [data, setData] = useState<any>([]);
+    const [data, setData] = useState<PagedInfo<Asset> | any>();
     const [currentPicture, setCurrentPicture] = useState<any>(null);
     const [favorite, setFavorite] = useState<any[]>([]);
     const [isPress, setIsPress] = useState<boolean>(false);
@@ -59,6 +62,22 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         handleGetStoredFavorite();
     }, []);
+
+    useEffect(() => {
+        (async () => {
+            const album = await getAlbumsAsync();
+            if (!album) return console.log(`Error loading album `, album);
+            const media = await getAssetsAsync({
+                mediaType: 'photo',
+                sortBy: 'modificationTime',
+            });
+            setData(media.assets);
+        })();
+    }, [data]);
+
+    const updateData = (data: any) => {
+        setData(data);
+    };
 
     // Debugging
     useEffect(() => {
@@ -204,6 +223,7 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         <GalleryContext.Provider
             value={{
                 data: data,
+                updateData: updateData,
                 selectedPictures: selectedPictures,
                 currentPicture: currentPicture,
                 setCurrentPicture: updateCurrentPicture,

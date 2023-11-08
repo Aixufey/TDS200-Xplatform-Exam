@@ -7,9 +7,18 @@ import {
     launchCameraAsync,
     useCameraPermissions,
 } from 'expo-image-picker';
-import { createAssetAsync } from 'expo-media-library';
+import {
+    Asset,
+    addAssetsToAlbumAsync,
+    createAlbumAsync,
+    createAssetAsync,
+    getAlbumAsync,
+    usePermissions,
+} from 'expo-media-library';
 import { useRef, useState } from 'react';
 import { Alert } from 'react-native';
+import { imageAlbum } from '../../constants';
+import { useGalleryContext } from '../../context';
 export type imageTypePro = {
     uri: string;
     assetId?: string | null;
@@ -33,14 +42,27 @@ const useLaunchCamera = () => {
     const [imagePro, setImagePro] = useState<ImagePickerResult>();
     const [imageBro, setImageBro] = useState<CameraCapturedPicture>();
     const [permission, requestPermission] = useCameraPermissions();
+    const [mediaPerm, reqMediaPerm] = usePermissions();
     const broCameraRef = useRef<Camera>(null);
 
     const handlePermission = async () => {
-        if (permission?.status === PermissionStatus.UNDETERMINED) {
-            const resp = await requestPermission();
-            return resp.granted;
+        if (
+            permission?.status === PermissionStatus.GRANTED &&
+            mediaPerm?.status === PermissionStatus.GRANTED
+        ) {
+            return true;
         }
-        if (permission?.status === PermissionStatus.DENIED) {
+        if (
+            permission?.status === PermissionStatus.UNDETERMINED ||
+            mediaPerm?.status === PermissionStatus.UNDETERMINED
+        ) {
+            const responses = await Promise.all([requestPermission(), reqMediaPerm()]);
+            return responses.every((response) => response.granted);
+        }
+        if (
+            permission?.status === PermissionStatus.DENIED ||
+            mediaPerm?.status === PermissionStatus.DENIED
+        ) {
             Alert.alert('You need to grant camera access.');
             return false;
         }
@@ -63,6 +85,26 @@ const useLaunchCamera = () => {
         setImagePro(snapshot);
     };
 
+    /**
+     * 
+     * @param asset Expecting an image asset
+     */
+    const handleSaveToAlbum = async (asset: Asset) => {
+        let album;
+        try {
+            album = await getAlbumAsync(imageAlbum);
+            // console.log(album);
+            // console.log(album.assetCount)
+            if (album === null) {
+                album = await createAlbumAsync(imageAlbum, asset, false);
+            } else {
+                await addAssetsToAlbumAsync([asset], album, false);
+            }
+        } catch (error) {
+            console.log(`Error saving to album `, album);
+        }
+    };
+
     const handleLaunchCameraBro = async () => {
         const hasPermission = await handlePermission();
         if (!hasPermission) return;
@@ -72,7 +114,7 @@ const useLaunchCamera = () => {
                     skipProcessing: true,
                     quality: 0.2,
                     aspect: [1, 1],
-                    allowsEditing: true,
+                    allowsEditing: false,
                     exif: true,
                     base64: false,
                     cameraType: CameraType.back,
@@ -93,6 +135,8 @@ const useLaunchCamera = () => {
                 setImageBro(compressedBro as imageTypeBro);
                 // TODO: Upload broski to firebase
                 const asset = await createAssetAsync(compressedBro.uri);
+
+                handleSaveToAlbum(asset);
             }
         } catch (e) {
             console.log(e);
