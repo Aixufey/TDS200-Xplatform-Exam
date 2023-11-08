@@ -32,7 +32,7 @@ const useLaunchCamera = () => {
     const [imagePro, setImagePro] = useState<ImagePickerResult>();
     const [imageBro, setImageBro] = useState<CameraCapturedPicture>();
     const [permission, requestPermission] = useCameraPermissions();
-    const broCameraRef = useRef<Camera>();
+    const broCameraRef = useRef<Camera>(null);
 
     const handlePermission = async () => {
         if (permission?.status === PermissionStatus.UNDETERMINED) {
@@ -65,7 +65,6 @@ const useLaunchCamera = () => {
     const handleLaunchCameraBro = async () => {
         const hasPermission = await handlePermission();
         if (!hasPermission) return;
-
         try {
             if (broCameraRef.current) {
                 let opt = {
@@ -79,6 +78,7 @@ const useLaunchCamera = () => {
                 };
                 const snapshot = await broCameraRef.current.takePictureAsync(opt);
                 setImageBro(snapshot as imageTypeBro);
+                console.log(snapshot.uri)
             }
         } catch (e) {
             console.log(e);
@@ -86,6 +86,7 @@ const useLaunchCamera = () => {
     };
 
     return {
+        broCameraRef,
         imagePro,
         imageBro,
         handleLaunchCameraPro,

@@ -71,6 +71,7 @@ const GalleryScreen: React.FC = () => {
                 </Canvas>
                 {toggleModal ? (
                     <CustomModal
+                        toggleModal={handleToggleModal}
                         onPress={handleToggleModal}
                         intensity={8}
                         className="absolute w-full h-[91%] justify-center items-center"

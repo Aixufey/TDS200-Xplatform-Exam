@@ -14,7 +14,7 @@ const Button: React.FC<IButton> = ({ onPress, style, className, text, children }
     return (
         <LinearGradient
             style={style}
-            colors={[Colors.secondary, Colors.primary200, Colors.tertiary300, 'transparent']}
+            colors={[Colors.secondary, Colors.primary, Colors.tertiary700, 'transparent']}
             start={{ x: 0, y: 1 }}
             end={{ x: 1, y: 0 }}
             className={
