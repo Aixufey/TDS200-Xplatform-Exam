@@ -8,6 +8,7 @@ import {
 } from 'expo-image-picker';
 import { useRef, useState } from 'react';
 import { Alert } from 'react-native';
+import { createAssetAsync } from 'expo-media-library';
 
 export type imageTypePro = {
     uri: string;
@@ -61,6 +62,8 @@ const useLaunchCamera = () => {
         const { assets } = snapshot;
         setImagePro(snapshot);
     };
+    
+    
 
     const handleLaunchCameraBro = async () => {
         const hasPermission = await handlePermission();
@@ -78,7 +81,9 @@ const useLaunchCamera = () => {
                 };
                 const snapshot = await broCameraRef.current.takePictureAsync(opt);
                 setImageBro(snapshot as imageTypeBro);
-                console.log(snapshot.uri)
+                console.log(snapshot.exif);
+                const asset = await createAssetAsync(snapshot.uri)
+                console.log(asset);
             }
         } catch (e) {
             console.log(e);

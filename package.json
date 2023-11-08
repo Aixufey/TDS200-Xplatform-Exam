@@ -27,7 +27,8 @@
     "expo-blur": "~12.4.1",
     "@react-native-async-storage/async-storage": "1.18.2",
     "expo-image-picker": "~14.3.2",
-    "expo-camera": "~13.4.4"
+    "expo-camera": "~13.4.4",
+    "expo-media-library": "~15.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -47,6 +48,12 @@
         "expo-camera",
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+        },
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "isAccessMediaLocationEnabled": true
         }
       ]
     ]

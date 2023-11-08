@@ -12,6 +12,7 @@ The project will fail to run if `.env` for **Firebase** is not configured. Renam
     - [Fonts](#fonts)
     - [Linear Gradient](#linear-gradient)
     - [Local storage](#local-storage)
+    - [Media Library](#media-library)
     - [Navigation](#navigation)
     - [Prettier](#prettier)
     - [React Native dotenv](#react-native-dotenv)
@@ -74,6 +75,12 @@ React Native does not support gradients. We use Expo-LinearGradient from `npx ex
 ### [Local storage](https://react-native-async-storage.github.io/async-storage/docs/usage)
 
 The local storage works exactly like on web browser where we can store data in form of key and value pairs. &nbsp;&nbsp; Install via `npm install @react-native-async-storage/async-storage`.
+
+---
+
+### [Media Library](https://docs.expo.dev/versions/latest/sdk/media-library/)
+
+The photo asset can be saved to album using `npx expo install expo-media-library` and store the image object as **uri**
 
 ---
 
