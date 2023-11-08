@@ -58,7 +58,7 @@ const useLaunchCamera = () => {
             base64: false,
             cameraType: CameraType.back,
         });
-        const { assets} = snapshot;
+        const { assets } = snapshot;
         setImagePro(snapshot);
     };
 
