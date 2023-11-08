@@ -9,10 +9,15 @@ import { CustomModal } from '../Modal';
 const CameraView: React.FC = () => {
     const { handleLaunchCameraBro, broCameraRef, imageBro } = useLaunchCamera();
     const [toggleModal, setToggleModal] = useState<boolean>(false);
+    const [cameraType, setCameraType] = useState<CameraType>(CameraType.back);
 
     const handleToggleModal = () => {
         if (!imageBro) return;
         setToggleModal((prev) => !prev);
+    };
+
+    const handleToggleCameraType = () => {
+        setCameraType((curr) => (curr === CameraType.back ? CameraType.front : CameraType.back));
     };
 
     const renderModal = () => {
@@ -38,7 +43,7 @@ const CameraView: React.FC = () => {
                     ratio="1:1"
                     className="w-[350px] h-[350px]"
                     ref={broCameraRef}
-                    type={CameraType.back}
+                    type={cameraType}
                 />
                 <View className="absolute w-full bottom-3 flex-row justify-evenly">
                     <View className="w-[20%] border-[0.5px] border-white bg-dark400">
@@ -58,7 +63,7 @@ const CameraView: React.FC = () => {
                             color={DesignSystem().Colors.neutral100}
                         />
                     </TouchableOpacity>
-                    <TouchableOpacity className="opacity-90">
+                    <TouchableOpacity onPress={handleToggleCameraType} className="opacity-90">
                         <MaterialIcons
                             name="flip-camera-ios"
                             size={65}
