@@ -10,6 +10,7 @@ import {
     useState,
 } from 'react';
 import { favoriteItems } from '../../constants';
+import { Camera } from 'expo-camera';
 
 interface IGalleryContext {
     data: any;
@@ -30,24 +31,26 @@ interface IGalleryContext {
 }
 const GalleryContext = createContext<IGalleryContext>({
     data: [],
-    updateData: (data) => {},
+    updateData: (data) => { },
     selectedPictures: [],
     currentPicture: null,
-    setCurrentPicture: (picture) => {},
-    toggleFavorite: (picture) => {},
+    setCurrentPicture: (picture) => { },
+    toggleFavorite: (picture) => { },
     favorite: [],
-    handlePress: () => {},
+    handlePress: () => { },
     isPress: false,
-    handleLongPress: () => {},
+    handleLongPress: () => { },
     isLongPress: false,
-    setShowBottomDrawer: (show) => {},
+    setShowBottomDrawer: (show) => { },
     showBottomDrawer: false,
-    resetState: () => {},
-    handleDeletePicture: (picture) => {},
+    resetState: () => { },
+    handleDeletePicture: (picture) => { },
 });
 
 export const useGalleryContext = () => useContext(GalleryContext);
-
+import * as MediaLibrary from 'expo-media-library';
+import { Alert } from 'react-native';
+import { useOwnPermission } from '../../hooks';
 const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
     const [data, setData] = useState<Asset[]>();
     const [currentPicture, setCurrentPicture] = useState<any>(null);
@@ -57,6 +60,11 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
     const [showBottomDrawer, setShowBottomDrawer] = useState<boolean>(false);
     const [selectedPictures, setSelectedPictures] = useState<any[]>([]);
 
+    // Request permissions on component mount
+    const { camera, mediaLibrary } = useOwnPermission();
+    useEffect(() => {
+        console.log(camera, mediaLibrary)
+    }, []);
     const fetchAlbum = useCallback(async () => {
         const album = await getAlbumsAsync();
         if (!album) return console.log(`Error loading album `, album);
@@ -65,7 +73,7 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
             sortBy: 'modificationTime',
         });
         setData(media.assets);
-    }, [ ]);
+    }, []);
 
     // Load source data
     useEffect(() => {
