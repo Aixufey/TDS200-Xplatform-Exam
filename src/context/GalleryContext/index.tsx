@@ -1,7 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Asset, PagedInfo, getAlbumsAsync, getAssetsAsync } from 'expo-media-library';
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import DATA from '../../../MOCK_DATA.json';
+import { Asset, getAlbumsAsync, getAssetsAsync } from 'expo-media-library';
+import {
+    ReactNode,
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 import { favoriteItems } from '../../constants';
 
 interface IGalleryContext {
@@ -42,7 +49,7 @@ const GalleryContext = createContext<IGalleryContext>({
 export const useGalleryContext = () => useContext(GalleryContext);
 
 const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
-    const [data, setData] = useState<PagedInfo<Asset> | any>();
+    const [data, setData] = useState<Asset[]>();
     const [currentPicture, setCurrentPicture] = useState<any>(null);
     const [favorite, setFavorite] = useState<any[]>([]);
     const [isPress, setIsPress] = useState<boolean>(false);
@@ -50,30 +57,37 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
     const [showBottomDrawer, setShowBottomDrawer] = useState<boolean>(false);
     const [selectedPictures, setSelectedPictures] = useState<any[]>([]);
 
+    const fetchAlbum = useCallback(async () => {
+        const album = await getAlbumsAsync();
+        if (!album) return console.log(`Error loading album `, album);
+        const media = await getAssetsAsync({
+            mediaType: 'photo',
+            sortBy: 'modificationTime',
+        });
+        setData(media.assets);
+    }, [ ]);
+
     // Load source data
     useEffect(() => {
-        setData(DATA);
+        const fetchData = async () => {
+            const data = await getAssetsAsync();
+            if (data !== undefined) setData(data.assets);
+        };
+        fetchData();
         return () => {
             console.log('Unmounted context');
         };
-    }, [DATA]);
+    }, []);
+
+    useEffect(() => {
+        console.log(`niet`);
+        fetchAlbum();
+    }, [fetchAlbum]);
 
     // Load favorites
     useEffect(() => {
         handleGetStoredFavorite();
     }, []);
-
-    useEffect(() => {
-        (async () => {
-            const album = await getAlbumsAsync();
-            if (!album) return console.log(`Error loading album `, album);
-            const media = await getAssetsAsync({
-                mediaType: 'photo',
-                sortBy: 'modificationTime',
-            });
-            setData(media.assets);
-        })();
-    }, [data]);
 
     const updateData = (data: any) => {
         setData(data);
@@ -140,7 +154,7 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
     const handleDeletePicture = (input: any) => {
         console.log('selected ', input);
         if (!input || input.length == 0) return;
-        console.log('here');
+        //console.log('here');
         // Assert to array for single picture
         const inputArray = input instanceof Array ? input : [input];
 
@@ -149,7 +163,7 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         setData((prevData: any) =>
             prevData.filter((item: any) => !inputArray.some((input: any) => input.id == item.id))
         );
-        console.log(data.length);
+        console.log(data?.length);
 
         // Concurrently clean from favorites
         setFavorite((prevFavs: any) => {
@@ -177,20 +191,6 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
 
     const handleStoreFavorite = async (input: any) => {
         await AsyncStorage.setItem(favoriteItems, JSON.stringify(input));
-        // console.log('store favorite', input);
-        // if (!input || input.length == 0) return;
-        // try {
-        //     const result = await AsyncStorage.getItem(favoriteItems);
-        //     if (result) {
-        //         const parsed = JSON.parse(result);
-        //         const filtered = parsed.filter(
-        //             (item: any) => !input.some((input: any) => input.id == item.id)
-        //         );
-        //         await AsyncStorage.setItem(favoriteItems, JSON.stringify([...filtered]));
-        //     }
-        // } catch (e) {
-        //     console.log(e);
-        // }
     };
     const handleGetStoredFavorite = async () => {
         try {
@@ -219,28 +219,26 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         setShowBottomDrawer(false);
     };
 
-    return (
-        <GalleryContext.Provider
-            value={{
-                data: data,
-                updateData: updateData,
-                selectedPictures: selectedPictures,
-                currentPicture: currentPicture,
-                setCurrentPicture: updateCurrentPicture,
-                handlePress: handlePress,
-                isPress: isPress,
-                handleLongPress: handleLongPress,
-                isLongPress: isLongPress,
-                favorite: favorite,
-                toggleFavorite: toggleFavorite,
-                showBottomDrawer: showBottomDrawer,
-                setShowBottomDrawer: setShowBottomDrawer,
-                resetState: resetState,
-                handleDeletePicture: handleDeletePicture,
-            }}
-        >
-            {children}
-        </GalleryContext.Provider>
-    );
+    const contextValue = useMemo(() => {
+        return {
+            data,
+            updateData,
+            selectedPictures,
+            currentPicture,
+            setCurrentPicture: updateCurrentPicture,
+            handlePress,
+            isPress,
+            handleLongPress,
+            isLongPress,
+            favorite,
+            toggleFavorite,
+            showBottomDrawer,
+            setShowBottomDrawer,
+            resetState,
+            handleDeletePicture,
+        };
+    }, [data, currentPicture, favorite, isPress, isLongPress, selectedPictures]);
+
+    return <GalleryContext.Provider value={contextValue}>{children}</GalleryContext.Provider>;
 };
 export default GalleryContextProvider;

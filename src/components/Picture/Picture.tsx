@@ -1,7 +1,7 @@
 import { AntDesign, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import React, { memo, useEffect, useState } from 'react';
 import { GestureResponderEvent, Image, Pressable, Text, View } from 'react-native';
-import { useGalleryContext } from '../../context';
+import { useGalleryContext, useUIContext } from '../../context';
 import DesignSystem from '../../styles';
 
 interface IPicture {
@@ -13,8 +13,8 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
     const [select, setSelect] = useState<boolean>(false);
     const { Colors } = DesignSystem();
     const fallback = require('../../../assets/images/cicada.png');
-    const { handlePress, handleLongPress, isLongPress, setCurrentPicture, favorite } =
-        useGalleryContext();
+    const { setCurrentPicture, favorite } = useGalleryContext();
+    const { isLongPress, handleLongPress, handlePress } = useUIContext();
 
     useEffect(() => {
         if (!isLongPress) {

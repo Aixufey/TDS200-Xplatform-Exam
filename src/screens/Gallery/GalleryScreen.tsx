@@ -2,12 +2,13 @@ import { useIsFocused } from '@react-navigation/native';
 import React, { useLayoutEffect as useEffect, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { Background, Canvas, CustomModal, Picture } from '../../components';
-import { useGalleryContext } from '../../context';
+import { useGalleryContext, useUIContext } from '../../context';
 
 const GalleryScreen: React.FC = () => {
     const [toggleModal, setToggleModal] = useState<boolean>(false);
     const isFocused = useIsFocused();
-    const { resetState, data, favorite, isPress, isLongPress } = useGalleryContext();
+    const { data, favorite} = useGalleryContext();
+    const { resetState, isPress, isLongPress } = useUIContext();
 
     useEffect(() => {
         return () => {

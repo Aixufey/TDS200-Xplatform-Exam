@@ -1,14 +1,14 @@
 import { AntDesign, Entypo, MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text } from 'react-native';
-import { useGalleryContext } from '../context';
+import { useGalleryContext, useUIContext } from '../context';
 import { useCustomNavigation } from '../hooks';
 import { CameraScreen, GalleryScreen, HomeScreen } from '../screens';
 import DesignSystem from '../styles';
 const RootRoutes: React.FC = () => {
     const Tab = createBottomTabNavigator();
-    const { showBottomDrawer, toggleFavorite, selectedPictures, handleDeletePicture } =
-        useGalleryContext();
+    const { toggleFavorite, selectedPictures, handleDeletePicture } = useGalleryContext();
+    const { isLongPressMenu } = useUIContext();
     const { Colors } = DesignSystem();
     const { goBack } = useCustomNavigation();
 
@@ -39,7 +39,7 @@ const RootRoutes: React.FC = () => {
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) =>
-                        !showBottomDrawer ? (
+                        !isLongPressMenu ? (
                             <Entypo
                                 name="home"
                                 size={24}
@@ -62,7 +62,7 @@ const RootRoutes: React.FC = () => {
                                 bottom: focused ? 5 : 0,
                             }}
                         >
-                            {!showBottomDrawer && 'Home'}
+                            {!isLongPressMenu && 'Home'}
                         </Text>
                     ),
                 }}
@@ -73,7 +73,7 @@ const RootRoutes: React.FC = () => {
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) =>
-                        !showBottomDrawer ? (
+                        !isLongPressMenu ? (
                             <Entypo
                                 name="image"
                                 size={24}
@@ -96,7 +96,7 @@ const RootRoutes: React.FC = () => {
                                 bottom: focused ? 5 : 0,
                             }}
                         >
-                            {!showBottomDrawer && 'Gallery'}
+                            {!isLongPressMenu && 'Gallery'}
                         </Text>
                     ),
                 }}
@@ -106,13 +106,13 @@ const RootRoutes: React.FC = () => {
                 component={CameraScreen}
                 listeners={({ navigation, route }) => ({
                     tabPress: (e) => {
-                        showBottomDrawer ? e.preventDefault() : navigation.navigate('Camera');
+                        isLongPressMenu ? e.preventDefault() : navigation.navigate('Camera');
                     },
                 })}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) =>
-                        !showBottomDrawer ? (
+                        !isLongPressMenu ? (
                             <Entypo
                                 name="camera"
                                 size={24}
@@ -139,7 +139,7 @@ const RootRoutes: React.FC = () => {
                                 bottom: focused ? 5 : 0,
                             }}
                         >
-                            {!showBottomDrawer && 'Camera'}
+                            {!isLongPressMenu && 'Camera'}
                         </Text>
                     ),
                 }}

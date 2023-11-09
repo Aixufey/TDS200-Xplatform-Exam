@@ -2,7 +2,7 @@ import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { useGalleryContext } from '../../context';
+import { useGalleryContext, useUIContext } from '../../context';
 import DesignSystem from '../../styles';
 interface ICustomModal {
     intensity?: number;
@@ -19,7 +19,8 @@ const CustomModal: React.FC<ICustomModal> = ({
     children,
 }) => {
     const { Colors } = DesignSystem();
-    const { currentPicture, resetState } = useGalleryContext();
+    const { currentPicture } = useGalleryContext();
+    const { resetState } = useUIContext();
     const [flip, setFlip] = useState<boolean>(false);
 
     const handleOnPressClose = () => {
