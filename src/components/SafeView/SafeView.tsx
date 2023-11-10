@@ -2,13 +2,13 @@ import React from 'react';
 import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-interface ISafeViewProps {
+interface ISafeView {
     style?: StyleProp<ViewStyle>;
     children?: React.ReactNode;
     onLayout?: ((event: LayoutChangeEvent) => void) | undefined;
     className?: string | undefined;
 }
-const SafeView: React.FC<ISafeViewProps> = ({ style, children, onLayout, className }) => {
+const SafeView: React.FC<ISafeView> = ({ style, children, onLayout, className }) => {
     const insets = useSafeAreaInsets();
     return (
         <View

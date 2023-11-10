@@ -1,9 +1,9 @@
 import { ImageBackground, View } from 'react-native';
 
-interface IBackgroundProps {
+interface IBackground {
     children?: React.ReactNode;
 }
-const Background: React.FC<IBackgroundProps> = ({ children }) => {
+const Background: React.FC<IBackground> = ({ children }) => {
     const imageName = `BG`;
     const image = require(`../../../assets/background/${imageName}.jpg`);
     return (
