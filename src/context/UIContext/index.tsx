@@ -7,8 +7,9 @@ interface IUIContext {
     isLongPressMenu: boolean;
     isPress: boolean;
     isLongPress: boolean;
-    resetState: () => void;
+    resetUIState: () => void;
     setIsLongPress: (toggle: boolean) => void;
+    setIsLongPressMenu: (toggle: boolean) => void;
 }
 
 type UIContextProviderProp = {
@@ -18,12 +19,13 @@ type UIContextProviderProp = {
 const UIContext = createContext<IUIContext>({
     handlePress: () => {},
     handleLongPress: () => {},
-    handleLongPressMenu: (toggle) => {},
+    handleLongPressMenu: () => {},
     isLongPressMenu: false,
     isPress: false,
     isLongPress: false,
-    resetState: () => { },
-    setIsLongPress: () => {}
+    resetUIState: () => {},
+    setIsLongPress: () => {},
+    setIsLongPressMenu: () => {},
 });
 
 export const useUIContext = () => useContext(UIContext);
@@ -40,7 +42,7 @@ const UIContextProvider: React.FC<UIContextProviderProp> = ({ children }) => {
         setIsLongPress((prev) => !prev);
         setIsLongPressMenu((prev) => !prev);
     };
-    const resetState = () => {
+    const resetUIState = () => {
         setIsLongPressMenu(false);
         setIsPress(false);
         setIsLongPress(false);
@@ -56,7 +58,8 @@ const UIContextProvider: React.FC<UIContextProviderProp> = ({ children }) => {
                 isLongPressMenu,
                 isPress,
                 isLongPress,
-                resetState,
+                resetUIState,
+                setIsLongPressMenu,
             }}
         >
             {children}

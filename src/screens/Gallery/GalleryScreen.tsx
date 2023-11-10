@@ -1,18 +1,14 @@
 import { useIsFocused } from '@react-navigation/native';
-import { Camera } from 'expo-camera';
-import { requestPermissionsAsync, PermissionStatus } from 'expo-media-library';
-import React, { useCallback, useLayoutEffect as useEffect, useState } from 'react';
+import React, { useLayoutEffect as useEffect, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { Background, Canvas, CustomModal, PermissionView, Picture } from '../../components';
 import { useGalleryContext, useUIContext } from '../../context';
-import { cameraPermission, TDS200 } from '../../constants';
-import * as MediaLibrary from 'expo-media-library';
 import { useFetchAlbum } from '../../hooks';
 const GalleryScreen: React.FC = () => {
     const [toggleModal, setToggleModal] = useState<boolean>(false);
     const isFocused = useIsFocused();
-    const { data, favorite, updateData } = useGalleryContext();
-    const { resetState, isPress, isLongPress } = useUIContext();
+    const { data, favorite, resetGalleryState } = useGalleryContext();
+    const { resetUIState, isPress, isLongPress } = useUIContext();
     const { fetchAlbum, hasPermission } = useFetchAlbum();
 
     // Reconcile when memoized fetchAlbum is changed.
@@ -24,7 +20,8 @@ const GalleryScreen: React.FC = () => {
         return () => {
             // Reset states when leaving the screen
             // Reset drawer state, press state, long press state, all selected pictures
-            resetState();
+            resetUIState();
+            resetGalleryState();
             // console.log('Unmounted Gallery Screen');
         };
     }, [isFocused]);
@@ -42,12 +39,12 @@ const GalleryScreen: React.FC = () => {
         setToggleModal(false);
     };
 
-
-
     return (
         <Background>
             <View className="flex-1 w-full bottom-[4.5%] justify-center items-center">
-                {!hasPermission ? <PermissionView /> : (
+                {!hasPermission ? (
+                    <PermissionView />
+                ) : (
                     <Canvas isFocused={isFocused} title={'Media'}>
                         <View className="border-[0.3px] border-white w-full h-[25%] justify-center items-center">
                             <FlatList
@@ -83,8 +80,7 @@ const GalleryScreen: React.FC = () => {
                             windowSize={5}
                         />
                     </Canvas>
-                )
-                }
+                )}
                 {toggleModal ? (
                     <CustomModal
                         toggleModal={handleToggleModal}
