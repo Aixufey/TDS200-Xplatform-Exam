@@ -1,4 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Camera } from 'expo-camera';
+import * as MediaLibrary from 'expo-media-library';
 import { Asset, getAlbumsAsync, getAssetsAsync } from 'expo-media-library';
 import {
     ReactNode,
@@ -9,9 +11,7 @@ import {
     useMemo,
     useState,
 } from 'react';
-import { favoriteItems } from '../../constants';
-import { Camera } from 'expo-camera';
-
+import { favoriteItems, imageAlbum } from '../../constants';
 interface IGalleryContext {
     data: any;
     updateData: (data: any) => void;
@@ -31,26 +31,24 @@ interface IGalleryContext {
 }
 const GalleryContext = createContext<IGalleryContext>({
     data: [],
-    updateData: (data) => { },
+    updateData: (data) => {},
     selectedPictures: [],
     currentPicture: null,
-    setCurrentPicture: (picture) => { },
-    toggleFavorite: (picture) => { },
+    setCurrentPicture: (picture) => {},
+    toggleFavorite: (picture) => {},
     favorite: [],
-    handlePress: () => { },
+    handlePress: () => {},
     isPress: false,
-    handleLongPress: () => { },
+    handleLongPress: () => {},
     isLongPress: false,
-    setShowBottomDrawer: (show) => { },
+    setShowBottomDrawer: (show) => {},
     showBottomDrawer: false,
-    resetState: () => { },
-    handleDeletePicture: (picture) => { },
+    resetState: () => {},
+    handleDeletePicture: (picture) => {},
 });
 
 export const useGalleryContext = () => useContext(GalleryContext);
-import * as MediaLibrary from 'expo-media-library';
-import { Alert } from 'react-native';
-import { useOwnPermission } from '../../hooks';
+
 const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
     const [data, setData] = useState<Asset[]>();
     const [currentPicture, setCurrentPicture] = useState<any>(null);
@@ -60,37 +58,45 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
     const [showBottomDrawer, setShowBottomDrawer] = useState<boolean>(false);
     const [selectedPictures, setSelectedPictures] = useState<any[]>([]);
 
+    // TODO: Separate into own context?
     // Request permissions on component mount
-    const { camera, mediaLibrary } = useOwnPermission();
-    useEffect(() => {
-        console.log(camera, mediaLibrary)
-    }, []);
-    const fetchAlbum = useCallback(async () => {
-        const album = await getAlbumsAsync();
-        if (!album) return console.log(`Error loading album `, album);
-        const media = await getAssetsAsync({
-            mediaType: 'photo',
-            sortBy: 'modificationTime',
-        });
-        setData(media.assets);
-    }, []);
+    // const [hasPermission, setHasPermission] = useState<boolean>(false);
+    // useEffect(() => {
+    //     (async () => {
+    //         const mediaPermission = await MediaLibrary.requestPermissionsAsync();
+    //         const cameraPermission = await Camera.requestCameraPermissionsAsync();
+    //         if (mediaPermission.status === 'granted' && cameraPermission.status === 'granted') {
+    //             setHasPermission(true);
+    //         } else {
+    //             console.warn(`Permission not granted`);
+    //         }
+    //     })();
+    //     return () => {
+    //         console.log(`Unmount Gallery`);
+    //     };
+    // }, []);
 
-    // Load source data
-    useEffect(() => {
-        const fetchData = async () => {
-            const data = await getAssetsAsync();
-            if (data !== undefined) setData(data.assets);
-        };
-        fetchData();
-        return () => {
-            console.log('Unmounted context');
-        };
-    }, []);
+    // Memoize the fetchAlbum function and reconcile when dependency changes.
+    // const fetchAlbum = useCallback(async () => {
+    //     // if (hasPermission)
+    //         try {
+    //             const album = await getAlbumsAsync();
+    //             if (!album) return console.log(`Error loading album `, album);
+    //             const media = await getAssetsAsync({
+    //                 mediaType: 'photo',
+    //                 sortBy: 'creationTime',
+    //                 album: album.find((item) => item.title === imageAlbum),
+    //             });
+    //             setData(media.assets);
+    //         } catch (e) {
+    //             console.error(e);
+    //         }
+    // }, []);
 
-    useEffect(() => {
-        console.log(`niet`);
-        fetchAlbum();
-    }, [fetchAlbum]);
+    // // Mount when memoized fetchAlbum is changed
+    // useEffect(() => {
+    //     fetchAlbum();
+    // }, [fetchAlbum]);
 
     // Load favorites
     useEffect(() => {

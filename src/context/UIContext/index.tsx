@@ -8,6 +8,7 @@ interface IUIContext {
     isPress: boolean;
     isLongPress: boolean;
     resetState: () => void;
+    setIsLongPress: (toggle: boolean) => void;
 }
 
 type UIContextProviderProp = {
@@ -21,7 +22,8 @@ const UIContext = createContext<IUIContext>({
     isLongPressMenu: false,
     isPress: false,
     isLongPress: false,
-    resetState: () => {},
+    resetState: () => { },
+    setIsLongPress: () => {}
 });
 
 export const useUIContext = () => useContext(UIContext);
@@ -50,6 +52,7 @@ const UIContextProvider: React.FC<UIContextProviderProp> = ({ children }) => {
                 handlePress,
                 handleLongPress,
                 handleLongPressMenu: setIsLongPressMenu,
+                setIsLongPress,
                 isLongPressMenu,
                 isPress,
                 isLongPress,

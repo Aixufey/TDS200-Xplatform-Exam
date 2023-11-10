@@ -18,7 +18,7 @@ export default function App() {
             if (fontsLoaded) {
                 setTimeout(() => {
                     setAppIsReady(true);
-                }, 2000);
+                }, 1500);
             }
         } catch (e) {
             console.warn(e);
