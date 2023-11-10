@@ -17,7 +17,7 @@ import {
 } from 'expo-media-library';
 import { useRef, useState } from 'react';
 import { Alert } from 'react-native';
-import { imageAlbum } from '../../constants';
+import { TDS200 } from '../../constants';
 import { useGalleryContext } from '../../context';
 export type imageTypePro = {
     uri: string;
@@ -92,11 +92,11 @@ const useLaunchCamera = () => {
     const handleSaveToAlbum = async (asset: Asset) => {
         let album;
         try {
-            album = await getAlbumAsync(imageAlbum);
+            album = await getAlbumAsync(TDS200);
             // console.log(album);
             // console.log(album.assetCount)
             if (album === null) {
-                album = await createAlbumAsync(imageAlbum, asset, false);
+                album = await createAlbumAsync(TDS200, asset, false);
             } else {
                 await addAssetsToAlbumAsync([asset], album, false);
             }

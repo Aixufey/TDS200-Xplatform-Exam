@@ -1,13 +1,24 @@
 import { useIsFocused } from '@react-navigation/native';
-import React, { useLayoutEffect as useEffect, useState } from 'react';
+import { Camera } from 'expo-camera';
+import { requestPermissionsAsync, PermissionStatus } from 'expo-media-library';
+import React, { useCallback, useLayoutEffect as useEffect, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
-import { Background, Canvas, CustomModal, Picture } from '../../components';
-import { useGalleryContext } from '../../context';
-
+import { Background, Canvas, CustomModal, PermissionView, Picture } from '../../components';
+import { useGalleryContext, useUIContext } from '../../context';
+import { cameraPermission, TDS200 } from '../../constants';
+import * as MediaLibrary from 'expo-media-library';
+import { useFetchAlbum } from '../../hooks';
 const GalleryScreen: React.FC = () => {
     const [toggleModal, setToggleModal] = useState<boolean>(false);
     const isFocused = useIsFocused();
-    const { resetState, data, favorite, isPress, isLongPress } = useGalleryContext();
+    const { data, favorite, updateData } = useGalleryContext();
+    const { resetState, isPress, isLongPress } = useUIContext();
+    const { fetchAlbum, hasPermission } = useFetchAlbum();
+
+    // Reconcile when memoized fetchAlbum is changed.
+    useEffect(() => {
+        fetchAlbum();
+    }, [fetchAlbum, hasPermission]);
 
     useEffect(() => {
         return () => {
@@ -31,44 +42,49 @@ const GalleryScreen: React.FC = () => {
         setToggleModal(false);
     };
 
+
+
     return (
         <Background>
             <View className="flex-1 w-full bottom-[4.5%] justify-center items-center">
-                <Canvas isFocused={isFocused} title={'Media'}>
-                    <View className="border-[0.3px] border-white w-full h-[25%] justify-center items-center">
+                {!hasPermission ? <PermissionView /> : (
+                    <Canvas isFocused={isFocused} title={'Media'}>
+                        <View className="border-[0.3px] border-white w-full h-[25%] justify-center items-center">
+                            <FlatList
+                                numColumns={4}
+                                data={favorite}
+                                keyExtractor={(item: any) => item.id}
+                                renderItem={({ item, index }) => (
+                                    <Picture
+                                        uri="https://cdn-icons-png.flaticon.com/512/2333/2333464.png"
+                                        key={index}
+                                        id={item.id}
+                                        firstName={item.firstName}
+                                    />
+                                )}
+                            />
+                        </View>
                         <FlatList
-                            numColumns={4}
-                            data={favorite}
+                            data={data}
                             keyExtractor={(item: any) => item.id}
                             renderItem={({ item, index }) => (
                                 <Picture
-                                    uri="https://cdn-icons-png.flaticon.com/512/2333/2333464.png"
+                                    uri={item.uri}
                                     key={index}
                                     id={item.id}
-                                    firstName={item.firstName}
+                                    firstName={item.first_name}
                                 />
                             )}
+                            removeClippedSubviews={true}
+                            showsVerticalScrollIndicator={false}
+                            initialNumToRender={10}
+                            maxToRenderPerBatch={20}
+                            numColumns={4}
+                            windowSize={5}
                         />
-                    </View>
-                    <FlatList
-                        data={data}
-                        keyExtractor={(item: any) => item.id}
-                        renderItem={({ item, index }) => (
-                            <Picture
-                                uri={item.uri}
-                                key={index}
-                                id={item.id}
-                                firstName={item.first_name}
-                            />
-                        )}
-                        removeClippedSubviews={true}
-                        showsVerticalScrollIndicator={false}
-                        initialNumToRender={10}
-                        maxToRenderPerBatch={20}
-                        numColumns={4}
-                        windowSize={5}
-                    />
-                </Canvas>
+                    </Canvas>
+                )
+                }
                 {toggleModal ? (
                     <CustomModal
                         toggleModal={handleToggleModal}
