@@ -11,7 +11,7 @@ import {
     useMemo,
     useState,
 } from 'react';
-import { favoriteItems, imageAlbum } from '../../constants';
+import { favoriteItems, TDS200 } from '../../constants';
 interface IGalleryContext {
     data: any;
     updateData: (data: any) => void;
@@ -85,7 +85,7 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
     //             const media = await getAssetsAsync({
     //                 mediaType: 'photo',
     //                 sortBy: 'creationTime',
-    //                 album: album.find((item) => item.title === imageAlbum),
+    //                 album: album.find((item) => item.title === TDS200),
     //             });
     //             setData(media.assets);
     //         } catch (e) {
