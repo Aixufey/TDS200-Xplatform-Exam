@@ -19,14 +19,15 @@ const CustomModal: React.FC<ICustomModal> = ({
     children,
 }) => {
     const { Colors } = DesignSystem();
-    const { currentPicture } = useGalleryContext();
-    const { resetState } = useUIContext();
+    const { currentPicture, resetGalleryState } = useGalleryContext();
+    const { resetUIState } = useUIContext();
     const [flip, setFlip] = useState<boolean>(false);
 
     const handleOnPressClose = () => {
         onPress && onPress();
         // TODO: Clean instead of hard reset?
-        resetState();
+        resetUIState();
+        resetGalleryState();
 
         toggleModal && toggleModal();
     };
