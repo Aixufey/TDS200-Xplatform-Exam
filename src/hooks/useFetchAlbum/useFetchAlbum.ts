@@ -1,12 +1,12 @@
 import { requestPermissionsAsync } from 'expo-media-library';
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 import * as MediaLibrary from 'expo-media-library';
-import { TDS200 } from "../../constants";
-import { useGalleryContext } from "../../context";
+import { TDS200 } from '../../constants';
+import { useGalleryContext } from '../../context';
 
 /**
  * This hook is requesting for media library permissions and fetching the album for this Exam TDS200
- * @returns an object with the permission status and the memoized fetchAlbum function. 
+ * @returns an object with the permission status and the memoized fetchAlbum function.
  * The memoize function will reconcile when dependency changes.
  * @example const {hasPermission, fetchAlbum} = useFetchAlbum();
  */
@@ -32,7 +32,7 @@ const useFetchAlbum = () => {
             const media = await MediaLibrary.getAssetsAsync({
                 mediaType: 'photo',
                 sortBy: 'creationTime',
-                album: targetAlbum
+                album: targetAlbum,
             });
             updateData(media.assets);
         } catch (e) {

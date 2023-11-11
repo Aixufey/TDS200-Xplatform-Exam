@@ -16,9 +16,7 @@ const CameraScreen: React.FC = () => {
     return (
         <Background>
             <View className="w-full h-full justify-center items-center">
-                {isBroCam && (
-                    <CameraView />
-                )}
+                {isBroCam && <CameraView />}
                 <View className="absolute bottom-[10%] w-full justify-evenly items-center flex-row">
                     <Button
                         onPress={handleLaunchCameraPro}

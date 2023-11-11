@@ -18,8 +18,9 @@ const Button: React.FC<IButton> = ({ onPress, style, className, text, children }
             start={{ x: 0, y: 1 }}
             end={{ x: 1, y: 0 }}
             className={
-                className ? className : 
-                'justify-center items-center rounded-[10px] border-[0.5px] border-[#FFA] w-[85px] h-[55px]'
+                className
+                    ? className
+                    : 'justify-center items-center rounded-[10px] border-[0.5px] border-[#FFA] w-[85px] h-[55px]'
             }
         >
             <TouchableOpacity onPress={onPress}>
