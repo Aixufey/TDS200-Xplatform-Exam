@@ -32,7 +32,7 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
         handlePress();
 
         // Select picture(s)
-        setCurrentPicture({ id: id, firstName: firstName });
+        setCurrentPicture({ id: id, uri: uri });
 
         // Multi select
         if (isLongPress) {

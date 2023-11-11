@@ -1,7 +1,7 @@
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useGalleryContext, useUIContext } from '../../context';
 import DesignSystem from '../../styles';
 interface ICustomModal {
@@ -37,20 +37,23 @@ const CustomModal: React.FC<ICustomModal> = ({
     };
 
     const renderBackView = () => {
-        return <View className="flex-1 bg-dark500 w-full h-full absolute"></View>;
+        return (
+            <View className="flex-1 bg-dark500 w-full h-full absolute justify-center items-center">
+                <Text className="text-white font-handjet-light">ID: {currentPicture.id}</Text>
+                <Text className="text-white font-handjet-light">URI: {currentPicture.uri}</Text>
+            </View>
+        );
     };
 
     return (
         toggleModal && (
             <BlurView intensity={intensity || 5} tint="dark" className={className}>
                 <View className="w-[75%] h-[75%] border-[1px] border-[#00ffff] bg-dark300 rounded-2xl overflow-hidden justify-center items-center">
-                    {children}
+                    <View className="absolute top-[5%]">{children}</View>
 
                     {currentPicture && (
-                        <View>
-                            <Text className="text-white">
-                                {currentPicture.id} - {currentPicture.firstName}
-                            </Text>
+                        <View className="overflow-hidden w-[250px] h-[250px] rounded-md">
+                            <Image className="w-full h-full" source={{ uri: currentPicture.uri }} />
                         </View>
                     )}
 

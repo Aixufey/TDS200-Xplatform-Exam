@@ -7,8 +7,9 @@ import { CameraScreen, GalleryScreen, HomeScreen } from '../screens';
 import DesignSystem from '../styles';
 const RootRoutes: React.FC = () => {
     const Tab = createBottomTabNavigator();
-    const { toggleFavorite, selectedPictures, handleDeletePicture } = useGalleryContext();
-    const { isLongPressMenu } = useUIContext();
+    const { toggleFavorite, selectedPictures, handleDeletePicture, resetGalleryState } =
+        useGalleryContext();
+    const { isLongPressMenu, resetUIState } = useUIContext();
     const { Colors } = DesignSystem();
     const { goBack } = useCustomNavigation();
 
@@ -48,7 +49,7 @@ const RootRoutes: React.FC = () => {
                             />
                         ) : (
                             <MaterialIcons
-                                onPress={() => goBack()}
+                                onPress={() => (resetGalleryState(), resetUIState())}
                                 name="arrow-back-ios"
                                 size={24}
                                 color={Colors.neutral}

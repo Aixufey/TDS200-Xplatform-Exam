@@ -3,7 +3,6 @@ import { FlipType, SaveFormat, manipulateAsync } from 'expo-image-manipulator';
 import {
     CameraType,
     ImagePickerResult,
-    PermissionStatus,
     launchCameraAsync,
     useCameraPermissions,
 } from 'expo-image-picker';
@@ -13,12 +12,10 @@ import {
     createAlbumAsync,
     createAssetAsync,
     getAlbumAsync,
-    usePermissions,
 } from 'expo-media-library';
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 import { TDS200 } from '../../constants';
-import { useGalleryContext } from '../../context';
 export type imageTypePro = {
     uri: string;
     assetId?: string | null;
@@ -42,36 +39,28 @@ const useLaunchCamera = () => {
     const [imagePro, setImagePro] = useState<ImagePickerResult>();
     const [imageBro, setImageBro] = useState<CameraCapturedPicture>();
     const [permission, requestPermission] = useCameraPermissions();
-    const [mediaPerm, reqMediaPerm] = usePermissions();
+    const [hasPermission, setHasPermission] = useState<boolean>(false);
     const broCameraRef = useRef<Camera>(null);
 
-    const handlePermission = async () => {
-        if (
-            permission?.status === PermissionStatus.GRANTED &&
-            mediaPerm?.status === PermissionStatus.GRANTED
-        ) {
-            return true;
+    const fetchCamera = useCallback(async () => {
+        try {
+            const response = await requestPermission();
+            if (response.status !== 'granted') {
+                Alert.alert('You need to grant camera access.');
+                return setHasPermission(false);
+            }
+            setHasPermission(response.granted);
+        } catch (e) {
+            console.log(`Camera Permission not granted `, e);
         }
-        if (
-            permission?.status === PermissionStatus.UNDETERMINED ||
-            mediaPerm?.status === PermissionStatus.UNDETERMINED
-        ) {
-            const responses = await Promise.all([requestPermission(), reqMediaPerm()]);
-            return responses.every((response) => response.granted);
-        }
-        if (
-            permission?.status === PermissionStatus.DENIED ||
-            mediaPerm?.status === PermissionStatus.DENIED
-        ) {
-            Alert.alert('You need to grant camera access.');
-            return false;
-        }
-        return true;
-    };
+    }, []);
+
+    useEffect(() => {
+        fetchCamera();
+    }, [fetchCamera, hasPermission]);
 
     const handleLaunchCameraPro = async () => {
-        const hasPermission = await handlePermission();
-        if (!hasPermission) return;
+        if (!hasPermission) return Alert.alert(`Camera access not granted.`);
 
         const snapshot = await launchCameraAsync({
             quality: 0.2,
@@ -106,8 +95,7 @@ const useLaunchCamera = () => {
     };
 
     const handleLaunchCameraBro = async () => {
-        const hasPermission = await handlePermission();
-        if (!hasPermission) return;
+        if (!hasPermission) return Alert.alert(`Camera access not granted.`);
         try {
             if (broCameraRef.current) {
                 let opt = {
