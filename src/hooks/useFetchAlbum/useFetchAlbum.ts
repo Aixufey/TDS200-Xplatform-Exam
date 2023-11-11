@@ -30,6 +30,7 @@ const useFetchAlbum = () => {
                 return console.log(`Album ${TDS200} not found`);
             }
             const media = await MediaLibrary.getAssetsAsync({
+                first: 100,
                 mediaType: 'photo',
                 sortBy: 'creationTime',
                 album: targetAlbum,

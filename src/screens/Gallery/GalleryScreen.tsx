@@ -12,9 +12,10 @@ const GalleryScreen: React.FC = () => {
     const { fetchAlbum, hasPermission } = useFetchAlbum();
 
     // Reconcile when memoized fetchAlbum is changed.
+    // TODO: Pictures taken is not updated in UI - having it as dependency cause heavy rendering fix this?
     useEffect(() => {
         fetchAlbum();
-    }, [fetchAlbum, hasPermission]);
+    }, [hasPermission]);
 
     useEffect(() => {
         return () => {
@@ -46,39 +47,58 @@ const GalleryScreen: React.FC = () => {
                     <PermissionView />
                 ) : (
                     <Canvas isFocused={isFocused} title={'Media'}>
-                        <View className="border-[0.3px] border-white w-full h-[25%] justify-center items-center">
-                            <FlatList
-                                numColumns={4}
-                                data={favorite}
-                                keyExtractor={(item: any) => item.id}
-                                renderItem={({ item, index }) => (
-                                    <Picture
-                                        uri="https://cdn-icons-png.flaticon.com/512/2333/2333464.png"
-                                        key={index}
-                                        id={item.id}
-                                        firstName={item.firstName}
-                                    />
-                                )}
-                            />
-                        </View>
-                        <FlatList
-                            data={data}
-                            keyExtractor={(item: any) => item.id}
-                            renderItem={({ item, index }) => (
-                                <Picture
-                                    uri={item.uri}
-                                    key={index}
-                                    id={item.id}
-                                    firstName={item.first_name}
+                        <View className="w-full h-full overflow-hidden">
+                            <View className="border-[0.3px] border-white w-full h-[25%] justify-center items-center">
+                                <Text className="w-full p-2 text-neutral font-handjet-light">
+                                    Favorites
+                                </Text>
+
+                                <FlatList
+                                    data={favorite}
+                                    keyExtractor={(item: any) => item.id}
+                                    renderItem={({ item, index }) => (
+                                        <Picture
+                                            uri={
+                                                item.uri ??
+                                                'https://cdn-icons-png.flaticon.com/512/2333/2333464.png'
+                                            }
+                                            key={index}
+                                            id={item.id}
+                                            firstName={item.firstName}
+                                        />
+                                    )}
+                                    removeClippedSubviews={true}
+                                    showsVerticalScrollIndicator={false}
+                                    initialNumToRender={10}
+                                    maxToRenderPerBatch={10}
+                                    windowSize={5}
+                                    numColumns={4}
                                 />
-                            )}
-                            removeClippedSubviews={true}
-                            showsVerticalScrollIndicator={false}
-                            initialNumToRender={10}
-                            maxToRenderPerBatch={20}
-                            numColumns={4}
-                            windowSize={5}
-                        />
+                            </View>
+                            <View className="justify-center items-center">
+                                <Text className="w-full p-2 text-neutral font-handjet-light">
+                                    Gallery
+                                </Text>
+                                <FlatList
+                                    data={data}
+                                    keyExtractor={(item: any) => item.id}
+                                    renderItem={({ item, index }) => (
+                                        <Picture
+                                            uri={item.uri}
+                                            key={index}
+                                            id={item.id}
+                                            firstName={item.first_name}
+                                        />
+                                    )}
+                                    removeClippedSubviews={true}
+                                    showsVerticalScrollIndicator={false}
+                                    initialNumToRender={10}
+                                    maxToRenderPerBatch={20}
+                                    numColumns={4}
+                                    windowSize={5}
+                                />
+                            </View>
+                        </View>
                     </Canvas>
                 )}
                 {toggleModal ? (
@@ -88,9 +108,7 @@ const GalleryScreen: React.FC = () => {
                         intensity={8}
                         className="absolute w-full h-[91%] justify-center items-center"
                     >
-                        <Text className="justify-center items-center text-[#FbAA]">
-                            Pass children here
-                        </Text>
+                        <Text className="text-neutral font-handjet-light text-xl">Picture</Text>
                     </CustomModal>
                 ) : null}
             </View>

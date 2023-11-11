@@ -3,6 +3,7 @@ import { Asset } from 'expo-media-library';
 import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { favoriteItems } from '../../constants';
 import { useUIContext } from '../UIContext';
+import * as MediaLibrary from 'expo-media-library';
 interface IGalleryContext {
     data: any;
     updateData: (data: any) => void;
@@ -105,29 +106,20 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         cleanSelections();
     };
 
-    const handleDeletePicture = (input: any) => {
-        console.log('selected ', input);
-        if (!input || input.length == 0) return;
-        //console.log('here');
-        // Assert to array for single picture
-        const inputArray = input instanceof Array ? input : [input];
+    const handleDeletePicture = async (input: any[]) => {
+        // Early return if input is empty or not an array
+        if (!Array.isArray(input) || input.length === 0) return;
 
-        // Concurrently delete from data for each item given input array
-        // exclude item if it exists.
-        setData((prevData: any) =>
-            prevData.filter((item: any) => !inputArray.some((input: any) => input.id == item.id))
-        );
-        console.log(data?.length);
+        // Create a Set for quick lookup
+        const inputIds = new Set(input.map((item) => item.id));
 
-        // Concurrently clean from favorites
-        setFavorite((prevFavs: any) => {
-            const filtered = prevFavs.filter(
-                (fav: any) => !inputArray.some((input: any) => input.id == fav.id)
-            );
-            handleStoreFavorite(filtered);
-            return filtered;
+        // Filter data and favorites, checking for undefined
+        setData((prevData) => (prevData ? prevData.filter((item) => !inputIds.has(item.id)) : []));
+        setFavorite((prevFavs) => {
+            const filteredFavs = prevFavs ? prevFavs.filter((fav) => !inputIds.has(fav.id)) : [];
+            handleStoreFavorite(filteredFavs);
+            return filteredFavs;
         });
-        console.log(favorite.length);
 
         // Clean selections
         setSelectedPictures([]);
