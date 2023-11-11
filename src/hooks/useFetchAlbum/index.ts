@@ -1,2 +1,2 @@
-import useFetchAlbum from "./useFetchAlbum";
+import useFetchAlbum from './useFetchAlbum';
 export { useFetchAlbum };

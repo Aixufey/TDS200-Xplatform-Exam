@@ -86,7 +86,7 @@ const useLaunchCamera = () => {
     };
 
     /**
-     * 
+     *
      * @param asset Expecting an image asset
      */
     const handleSaveToAlbum = async (asset: Asset) => {

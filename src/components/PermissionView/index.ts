@@ -1,4 +1,2 @@
-import PermissionView from "./PermissionView";
-export {
-    PermissionView
-};
+import PermissionView from './PermissionView';
+export { PermissionView };

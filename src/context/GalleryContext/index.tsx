@@ -12,52 +12,29 @@ interface IGalleryContext {
     setCurrentPicture: (picture: any) => void;
     toggleFavorite: (picture: any) => void;
     favorite: any[];
-    // handlePress: () => void;
-    // isPress: boolean;
-    // handleLongPress: () => void;
-    // isLongPress: boolean;
-    // setShowBottomDrawer: (show: boolean) => void;
-    // showBottomDrawer: boolean;
     resetGalleryState: () => void;
     handleDeletePicture: (picture: any) => void;
 }
 const GalleryContext = createContext<IGalleryContext>({
     data: [],
-    updateData: (data) => {},
+    updateData: () => {},
     selectedPictures: [],
-    setSelectedPictures: (pictures) => {},
+    setSelectedPictures: () => {},
     currentPicture: null,
-    setCurrentPicture: (picture) => {},
-    toggleFavorite: (picture) => {},
+    setCurrentPicture: () => {},
+    toggleFavorite: () => {},
     favorite: [],
-    // handlePress: () => {},
-    // isPress: false,
-    // handleLongPress: () => {},
-    // isLongPress: false,
-    // setShowBottomDrawer: (show) => {},
-    // showBottomDrawer: false,
     resetGalleryState: () => {},
-    handleDeletePicture: (picture) => {},
+    handleDeletePicture: () => {},
 });
 
 export const useGalleryContext = () => useContext(GalleryContext);
 
 const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
-    const {
-        isLongPress,
-        isPress,
-        setIsLongPress,
-        setIsLongPressMenu,
-        handlePress,
-        handleLongPress,
-        handleLongPressMenu,
-    } = useUIContext();
+    const { isLongPress, isPress, setIsLongPress, setIsLongPressMenu } = useUIContext();
     const [data, setData] = useState<Asset[]>();
     const [currentPicture, setCurrentPicture] = useState<any>(null);
     const [favorite, setFavorite] = useState<any[]>([]);
-    // const [isPress, setIsPress] = useState<boolean>(false);
-    // const [isLongPress, setIsLongPress] = useState<boolean>(false);
-    // const [showBottomDrawer, setShowBottomDrawer] = useState<boolean>(false);
     const [selectedPictures, setSelectedPictures] = useState<any[]>([]);
 
     // Load favorites
@@ -157,15 +134,6 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         setCurrentPicture(null);
     };
 
-    // const handlePress = () => {
-    //     setIsPress((prevState) => !prevState);
-    // };
-
-    // const handleLongPress = () => {
-    //     setIsLongPress((prevState) => !prevState);
-    //     setShowBottomDrawer((prevState) => !prevState);
-    // };
-
     const handleStoreFavorite = async (input: any) => {
         await AsyncStorage.setItem(favoriteItems, JSON.stringify(input));
     };
@@ -182,9 +150,6 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const resetGalleryState = () => {
-        // setShowBottomDrawer(false);
-        // setIsPress(false);
-        // setIsLongPress(false);
         setSelectedPictures([]);
         setCurrentPicture(null);
     };
@@ -194,8 +159,6 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         setCurrentPicture(null);
         setIsLongPress(false);
         setIsLongPressMenu(false);
-        // setIsLongPress(false);
-        // setShowBottomDrawer(false);
     };
 
     const contextValue = useMemo(() => {
@@ -206,14 +169,8 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
             setSelectedPictures,
             currentPicture,
             setCurrentPicture: updateCurrentPicture,
-            // handlePress,
-            // isPress,
-            // handleLongPress,
-            // isLongPress,
             favorite,
             toggleFavorite,
-            // showBottomDrawer,
-            // setShowBottomDrawer,
             resetGalleryState,
             handleDeletePicture,
         };
