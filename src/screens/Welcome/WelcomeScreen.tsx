@@ -1,7 +1,7 @@
 import { Entypo } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StatusBar, StyleProp, Text, View, ViewStyle, Animated } from 'react-native';
-import { CustomModal } from '../../components';
+import { CustomModal, IconButton } from '../../components';
 import Background from '../../components/Background/Background';
 import { useCustomNavigation } from '../../hooks';
 import DesignSystem from '../../styles';

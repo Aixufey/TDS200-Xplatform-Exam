@@ -1,9 +1,10 @@
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useState } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, View } from 'react-native';
 import { useGalleryContext, useUIContext } from '../../context';
 import DesignSystem from '../../styles';
+import { IconButton } from '../Button';
+import BackView from './BackView';
 interface ICustomModal {
     intensity?: number;
     children?: React.ReactNode;
@@ -19,16 +20,13 @@ const CustomModal: React.FC<ICustomModal> = ({
     children,
 }) => {
     const { Colors } = DesignSystem();
-    const { currentPicture, resetGalleryState } = useGalleryContext();
+    const { currentPicture } = useGalleryContext();
     const { resetUIState } = useUIContext();
     const [flip, setFlip] = useState<boolean>(false);
 
     const handleOnPressClose = () => {
         onPress && onPress();
-        // TODO: Clean instead of hard reset?
         resetUIState();
-        resetGalleryState();
-
         toggleModal && toggleModal();
     };
 
@@ -36,42 +34,43 @@ const CustomModal: React.FC<ICustomModal> = ({
         setFlip((prev) => !prev);
     };
 
-    const renderBackView = () => {
-        return (
-            <View className="flex-1 bg-dark500 w-full h-full absolute justify-center items-center">
-                <Text className="text-white font-handjet-light">ID: {currentPicture.id}</Text>
-                <Text className="text-white font-handjet-light">URI: {currentPicture.uri}</Text>
-            </View>
-        );
-    };
-
     return (
         toggleModal && (
             <BlurView intensity={intensity || 5} tint="dark" className={className}>
                 <View className="w-[75%] h-[75%] border-[1px] border-[#00ffff] bg-dark300 rounded-2xl overflow-hidden justify-center items-center">
-                    <View className="absolute top-[5%]">{children}</View>
-
+                    <View className="w-full h-full justify-start items-center absolute">
+                        {children}
+                    </View>
                     {currentPicture && (
                         <View className="overflow-hidden w-[250px] h-[250px] rounded-md">
-                            <Image className="w-full h-full" source={{ uri: currentPicture.uri }} />
+                            <Image
+                                className="w-full h-full"
+                                source={{ uri: currentPicture?.uri }}
+                            />
                         </View>
                     )}
 
-                    {flip && renderBackView()}
+                    {flip && currentPicture && (
+                        <BackView id={currentPicture.id} uri={currentPicture.uri} />
+                    )}
 
                     <View className="absolute top-0 right-0 h-[15%] flex-row justify-end items-center">
-                        <TouchableOpacity
+                        <IconButton
                             onPress={handleFlip}
                             className="w-[45px] h-[45px] justify-center items-center"
-                        >
-                            <MaterialIcons name="flip" size={28} color={Colors.tertiary} />
-                        </TouchableOpacity>
-                        <TouchableOpacity
+                            IconSet="MaterialIcons"
+                            iconName="flip"
+                            iconSize={28}
+                            iconColor={Colors.tertiary}
+                        />
+                        <IconButton
                             onPress={handleOnPressClose}
                             className="w-[45px] h-[45px] justify-center items-center"
-                        >
-                            <AntDesign name="closecircle" size={24} color={Colors.tertiary} />
-                        </TouchableOpacity>
+                            IconSet="AntDesign"
+                            iconName="closecircle"
+                            iconSize={24}
+                            iconColor={Colors.tertiary}
+                        />
                     </View>
                 </View>
             </BlurView>

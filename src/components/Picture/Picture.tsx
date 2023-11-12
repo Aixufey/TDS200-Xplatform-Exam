@@ -3,13 +3,9 @@ import React, { memo, useEffect, useState } from 'react';
 import { GestureResponderEvent, Image, Pressable, Text, View } from 'react-native';
 import { useGalleryContext, useUIContext } from '../../context';
 import DesignSystem from '../../styles';
+import { BroImageType, MergedImageType } from '../../hooks/useLaunchCamera/useLaunchCamera';
 
-interface IPicture {
-    uri?: string;
-    id?: string;
-    firstName?: string;
-}
-const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
+const Picture: React.FC<MergedImageType> = memo(({ uri, id }) => {
     const [select, setSelect] = useState<boolean>(false);
     const { Colors } = DesignSystem();
     const fallback = require('../../../assets/images/cicada.png');
@@ -84,9 +80,7 @@ const Picture: React.FC<IPicture> = memo(({ uri, id, firstName }) => {
                                     </View>
                                 ) : null;
                             })}
-                        <Text className="self-center text-white bottom-0 absolute">
-                            {firstName}
-                        </Text>
+                        <Text className="self-center text-white bottom-0 absolute">{}</Text>
                     </View>
                 </Pressable>
             </View>
