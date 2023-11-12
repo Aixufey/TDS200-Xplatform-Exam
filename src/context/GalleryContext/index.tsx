@@ -1,21 +1,32 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Asset } from 'expo-media-library';
-import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { favoriteItems } from '../../constants';
+import { MergedImageType } from '../../hooks/useLaunchCamera/useLaunchCamera';
 import { useUIContext } from '../UIContext';
-import * as MediaLibrary from 'expo-media-library';
+type GalleryContextProviderProp = {
+    children: React.ReactNode;
+};
+/**
+ * data can be either album or images directly taken with camera.
+ * Asset[] type is from Expo's Media Library that we get from album with assets
+ * @example const media = await MediaLibrary.getAssetsAsync()
+ */
 interface IGalleryContext {
-    data: any;
-    updateData: (data: any) => void;
-    selectedPictures: any[];
-    setSelectedPictures: (pictures: any) => void;
-    currentPicture: any;
-    setCurrentPicture: (picture: any) => void;
-    toggleFavorite: (picture: any) => void;
-    favorite: any[];
+    data: Asset[] | MergedImageType[] | null;
+    updateData: (data: Asset[] | MergedImageType[]) => void;
+    selectedPictures: MergedImageType[];
+    setSelectedPictures: (pictures: MergedImageType[]) => void;
+    currentPicture: MergedImageType | null;
+    setCurrentPicture: (picture: MergedImageType | null) => void;
+    toggleFavorite: (picture: MergedImageType[]) => void;
+    favorite: MergedImageType[];
     resetGalleryState: () => void;
-    handleDeletePicture: (picture: any) => void;
+    handleDeletePicture: (picture: MergedImageType[]) => void;
+    handlePictures: (picture: MergedImageType) => void;
+    pictures: MergedImageType[];
 }
+
 const GalleryContext = createContext<IGalleryContext>({
     data: [],
     updateData: () => {},
@@ -27,23 +38,26 @@ const GalleryContext = createContext<IGalleryContext>({
     favorite: [],
     resetGalleryState: () => {},
     handleDeletePicture: () => {},
+    handlePictures: () => {},
+    pictures: [],
 });
 
 export const useGalleryContext = () => useContext(GalleryContext);
 
-const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
+const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children }) => {
+    const [data, setData] = useState<Asset[] | MergedImageType[] | null>(null);
+    const [currentPicture, setCurrentPicture] = useState<MergedImageType | null>(null);
+    const [favorite, setFavorite] = useState<MergedImageType[]>([]);
+    const [selectedPictures, setSelectedPictures] = useState<MergedImageType[]>([]);
+    const [pictures, setPictures] = useState<MergedImageType[]>([]);
     const { isLongPress, isPress, setIsLongPress, setIsLongPressMenu } = useUIContext();
-    const [data, setData] = useState<Asset[]>();
-    const [currentPicture, setCurrentPicture] = useState<any>(null);
-    const [favorite, setFavorite] = useState<any[]>([]);
-    const [selectedPictures, setSelectedPictures] = useState<any[]>([]);
 
     // Load favorites
     useEffect(() => {
         handleGetStoredFavorite();
     }, []);
 
-    const updateData = (data: any) => {
+    const updateData = (data: Asset[] | MergedImageType[]) => {
         setData(data);
     };
 
@@ -53,14 +67,15 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         // console.log(`LongPress `, isLongPress)
         // console.log(data.length);
         // console.log('Current selected length ', selectedPictures.length);
-        // console.log('current Picture? ', currentPicture)
+        // console.log('current Picture? ', currentPicture?.id);
         // console.log('Favorites', favorite);
         // console.log('favorite length', favorite.length);
-        console.log('Current selected length', selectedPictures.length);
+        // console.log(`pictures `, pictures.length);
+        // console.log('Current selected length', selectedPictures.length);
         // console.log('Current selected', selectedPictures);
-    }, [currentPicture, isLongPress, isPress, selectedPictures]);
+    }, [pictures, currentPicture, isLongPress, isPress, selectedPictures]);
 
-    const updateCurrentPicture = (picture: any) => {
+    const updateCurrentPicture = (picture: MergedImageType | null) => {
         // console.log(picture);
         if (!picture) return;
 
@@ -68,30 +83,30 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
 
         // Track multiple selections
         // Due the nature of React asynchronous state batching, we can check if last snapshot contains the selected
-        setSelectedPictures((prevSelected: any) => {
-            const isSelected = prevSelected.find((item: any) => item.id == picture.id);
+        setSelectedPictures((prevSelected) => {
+            const isSelected = prevSelected.find((item) => item.id == picture.id);
             if (isSelected) {
-                return prevSelected.filter((item: any) => item.id != picture.id);
+                return prevSelected.filter((item) => item.id != picture.id);
             } else {
                 return [picture, ...prevSelected];
             }
         });
     };
 
-    const toggleFavorite = (input: any) => {
+    const toggleFavorite = (input: MergedImageType[]) => {
         if (!input || input.length == 0) return;
         // Assert to array for single picture
         const inputArray = input instanceof Array ? input : [input];
 
         setFavorite((prevFavs) => {
             // Accumulate favorite
-            const newFavs = inputArray.reduce((newFavs: any, picture: any) => {
+            const newFavs = inputArray.reduce((newFavs, picture) => {
                 // Check current picture if exists in accumulator
-                const isFavorite = newFavs.some((fav: any) => fav.id == picture.id);
+                const isFavorite = newFavs.some((fav) => fav.id == picture.id);
 
                 if (isFavorite) {
                     // Remove current picture from accumulator
-                    return newFavs.filter((fav: any) => fav.id != picture.id);
+                    return newFavs.filter((fav) => fav.id != picture.id);
                 } else {
                     // Add current to acc.
                     return [picture, ...newFavs];
@@ -106,7 +121,7 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         cleanSelections();
     };
 
-    const handleDeletePicture = async (input: any[]) => {
+    const handleDeletePicture = async (input: MergedImageType[]) => {
         // Early return if input is empty or not an array
         if (!Array.isArray(input) || input.length === 0) return;
 
@@ -126,7 +141,13 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
         setCurrentPicture(null);
     };
 
-    const handleStoreFavorite = async (input: any) => {
+    const handlePictures = (picture: MergedImageType) => {
+        setPictures((prev) => {
+            return [picture, ...prev];
+        });
+    };
+
+    const handleStoreFavorite = async (input: MergedImageType[]) => {
         await AsyncStorage.setItem(favoriteItems, JSON.stringify(input));
     };
     const handleGetStoredFavorite = async () => {
@@ -165,6 +186,8 @@ const GalleryContextProvider = ({ children }: { children: ReactNode }) => {
             toggleFavorite,
             resetGalleryState,
             handleDeletePicture,
+            handlePictures,
+            pictures,
         };
     }, [data, currentPicture, favorite, selectedPictures]);
 

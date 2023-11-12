@@ -1,26 +1,22 @@
-import { Camera, CameraCapturedPicture } from 'expo-camera';
-import { FlipType, SaveFormat, manipulateAsync } from 'expo-image-manipulator';
+import { Camera } from 'expo-camera';
+import { SaveFormat, manipulateAsync } from 'expo-image-manipulator';
 import {
     CameraType,
-    ImagePickerResult,
+    ImagePickerAsset,
     launchCameraAsync,
     useCameraPermissions,
 } from 'expo-image-picker';
-import {
-    Asset,
-    addAssetsToAlbumAsync,
-    createAlbumAsync,
-    createAssetAsync,
-    getAlbumAsync,
-} from 'expo-media-library';
+import { Asset, addAssetsToAlbumAsync, createAlbumAsync, getAlbumAsync } from 'expo-media-library';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 import { TDS200 } from '../../constants';
-export type imageTypePro = {
+import { useGalleryContext } from '../../context';
+export type ProImageType = {
+    id: string;
     uri: string;
     assetId?: string | null;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
     type?: 'image' | 'video';
     fileName?: string | null;
     fileSize?: number;
@@ -28,19 +24,20 @@ export type imageTypePro = {
     base64?: string | null;
     duration?: number | null;
 };
-export type imageTypeBro = {
-    width: number;
-    height: number;
+export type BroImageType = {
+    id: string;
     uri: string;
-    base64?: string;
+    width?: number;
+    height?: number;
+    base64?: string | null;
     exif?: Partial<MediaTrackSettings> | any;
 };
+export type MergedImageType = BroImageType & ProImageType & Partial<ImagePickerAsset>;
 const useLaunchCamera = () => {
-    const [imagePro, setImagePro] = useState<ImagePickerResult>();
-    const [imageBro, setImageBro] = useState<CameraCapturedPicture>();
     const [permission, requestPermission] = useCameraPermissions();
     const [hasPermission, setHasPermission] = useState<boolean>(false);
     const broCameraRef = useRef<Camera>(null);
+    const { handlePictures, pictures, setCurrentPicture } = useGalleryContext();
 
     const fetchCamera = useCallback(async () => {
         try {
@@ -71,7 +68,15 @@ const useLaunchCamera = () => {
             cameraType: CameraType.back,
         });
         const { assets } = snapshot;
-        setImagePro(snapshot);
+        if (assets) {
+            const uniqueId: string = snapshot.assets[0].exif?.DateTime.split(':').join('');
+            const proWithId = {
+                id: uniqueId,
+                ...snapshot.assets[0],
+            };
+            setCurrentPicture(proWithId);
+            handlePictures(proWithId);
+        }
     };
 
     /**
@@ -108,23 +113,30 @@ const useLaunchCamera = () => {
                     cameraType: CameraType.back,
                 };
                 const snapshot = await broCameraRef.current.takePictureAsync(opt);
+                // Bro don't have ID, so we slap on an ID
+                const uniqueId: string = snapshot.exif.DateTime.split(':').join('');
+                // Bro too huge, we compress bro
                 const compressedBro = await manipulateAsync(
                     snapshot.uri,
                     [
                         {
-                            resize: { height: 800, width: 800 },
-                        },
-                        {
-                            flip: FlipType.Horizontal,
+                            resize: { height: 500, width: 500 },
                         },
                     ],
                     { compress: 0.2, format: SaveFormat.JPEG }
                 );
-                setImageBro(compressedBro as imageTypeBro);
+                // Bro looking smooth with ID
+                const compressedBroWithId = {
+                    id: uniqueId,
+                    ...compressedBro,
+                };
+                setCurrentPicture(compressedBroWithId);
+                // setImageBro(compressedBro as BroImageType);
                 // TODO: Upload broski to firebase
-                const asset = await createAssetAsync(compressedBro.uri);
+                // const asset = await createAssetAsync(compressedBro.uri);
 
-                handleSaveToAlbum(asset);
+                // handleSaveToAlbum(asset);
+                handlePictures(compressedBroWithId);
             }
         } catch (e) {
             console.log(e);
@@ -133,8 +145,6 @@ const useLaunchCamera = () => {
 
     return {
         broCameraRef,
-        imagePro,
-        imageBro,
         handleLaunchCameraPro,
         handleLaunchCameraBro,
     };

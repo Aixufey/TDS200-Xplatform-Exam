@@ -7,12 +7,15 @@ import { useFetchAlbum } from '../../hooks';
 const GalleryScreen: React.FC = () => {
     const [toggleModal, setToggleModal] = useState<boolean>(false);
     const isFocused = useIsFocused();
-    const { data, favorite, resetGalleryState } = useGalleryContext();
+    const { pictures, data, favorite, resetGalleryState } = useGalleryContext();
     const { resetUIState, isPress, isLongPress } = useUIContext();
     const { fetchAlbum, hasPermission } = useFetchAlbum();
 
     // Reconcile when memoized fetchAlbum is changed.
     // TODO: Pictures taken is not updated in UI - having it as dependency cause heavy rendering fix this?
+    // 1. Fetch from firebase on load
+    // 2. while screen is active, manipulation of data should be on a shallow copy - not on the original
+    // 3. when unmounting - update the firebase by pushing changes to firebase.
     useEffect(() => {
         fetchAlbum();
     }, [hasPermission]);
@@ -63,8 +66,7 @@ const GalleryScreen: React.FC = () => {
                                                 'https://cdn-icons-png.flaticon.com/512/2333/2333464.png'
                                             }
                                             key={index}
-                                            id={item.id}
-                                            firstName={item.firstName}
+                                            id={index.toString()}
                                         />
                                     )}
                                     removeClippedSubviews={true}
@@ -80,15 +82,10 @@ const GalleryScreen: React.FC = () => {
                                     Gallery
                                 </Text>
                                 <FlatList
-                                    data={data}
+                                    data={pictures}
                                     keyExtractor={(item: any) => item.id}
                                     renderItem={({ item, index }) => (
-                                        <Picture
-                                            uri={item.uri}
-                                            key={index}
-                                            id={item.id}
-                                            firstName={item.first_name}
-                                        />
+                                        <Picture uri={item.uri} key={index} id={item.id} />
                                     )}
                                     removeClippedSubviews={true}
                                     showsVerticalScrollIndicator={false}
