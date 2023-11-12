@@ -1,5 +1,6 @@
 const DesignSystem = () => {
     const Colors = {
+        primaryRei: '#ff00aa33',
         primary: '#ff00aa',
         primary100: '#ffb3d9',
         primary200: '#ff80c0',
@@ -10,6 +11,7 @@ const DesignSystem = () => {
         primary700: '#800040',
         primary800: '#4d001f',
         primary900: '#1a0000',
+        secondaryRei: '#ffed2033',
         secondary: '#ffed20',
         secondary50: '#fff9cc',
         secondary100: '#fff099',
@@ -21,6 +23,7 @@ const DesignSystem = () => {
         secondary700: '#806600',
         secondary800: '#4d3a00',
         secondary900: '#1a0d00',
+        tertiaryRei: '#00FFFF33',
         tertiary: '#00FFFF',
         tertiary50: '#e6ffff',
         tertiary100: '#b3ffff',
@@ -32,6 +35,7 @@ const DesignSystem = () => {
         tertiary700: '#008080',
         tertiary800: '#004d4d',
         tertiary900: '#001a1a',
+        neutralRei: '#ededed33',
         neutral: '#ededed',
         neutral50: '#f2f2f2',
         neutral100: '#d9d9d9',
@@ -50,6 +54,12 @@ const DesignSystem = () => {
         dark300: '#262626',
         dark400: '#1a1a1a',
         dark500: '#0d0d0d',
+        rei: '#dc143c',
+        hitotsu: '#441D4B',
+        futatsu: '#932F8C',
+        mittsu: '#422F90',
+        yottsu: '#7460AA',
+        itsutsu: '#C598BC',
     };
     return {
         Colors,

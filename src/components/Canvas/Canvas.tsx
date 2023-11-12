@@ -8,11 +8,11 @@ interface IGalleryCanvas {
     isFocused?: boolean;
     title?: string;
 }
-type GradientCoordinatesType = {
+export type GradientCoordinatesType = {
     start: { x: number; y: number };
     end: { x: number; y: number };
 };
-const DefaultCoordinates = {
+export const DefaultCoordinates = {
     start: { x: 0, y: 1 },
     end: { x: -1, y: 0 },
 };
@@ -34,16 +34,15 @@ const Canvas: React.FC<IGalleryCanvas> = ({ children, title, isFocused }) => {
                 >
                     <LinearGradient
                         colors={[
-                            Colors.primary,
-                            Colors.primary200,
-                            Colors.primary300,
-                            Colors.tertiary,
-                            Colors.tertiary200,
-                            Colors.tertiary300,
+                            Colors.hitotsu,
+                            Colors.futatsu,
+                            Colors.mittsu,
+                            Colors.yottsu,
+                            Colors.itsutsu,
                         ]}
                         start={gradientCoordinates.start}
                         end={gradientCoordinates.end}
-                        className="flex-1 opacity-10"
+                        className="flex-1 opacity-30 w-full h-full"
                     />
                 </View>
                 <View

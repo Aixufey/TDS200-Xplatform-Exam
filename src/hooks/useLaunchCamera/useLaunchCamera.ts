@@ -20,9 +20,11 @@ export type ProImageType = {
     type?: 'image' | 'video';
     fileName?: string | null;
     fileSize?: number;
-    exif?: Record<string, any> | null;
+    exif?: Partial<MediaTrackSettings> | any;
     base64?: string | null;
     duration?: number | null;
+    longitude?: number | null;
+    latitude?: number | null;
 };
 export type BroImageType = {
     id: string;
@@ -31,6 +33,8 @@ export type BroImageType = {
     height?: number;
     base64?: string | null;
     exif?: Partial<MediaTrackSettings> | any;
+    longitude?: number | null;
+    latitude?: number | null;
 };
 export type MergedImageType = BroImageType & ProImageType & Partial<ImagePickerAsset>;
 const useLaunchCamera = () => {
@@ -73,6 +77,8 @@ const useLaunchCamera = () => {
             const proWithId = {
                 id: uniqueId,
                 ...snapshot.assets[0],
+                longitude: 0.0,
+                latitude: 0.0,
             };
             setCurrentPicture(proWithId);
             handlePictures(proWithId);
@@ -129,7 +135,10 @@ const useLaunchCamera = () => {
                 const compressedBroWithId = {
                     id: uniqueId,
                     ...compressedBro,
+                    longitude: 0.0,
+                    latitude: 0.0,
                 };
+                console.log(compressedBroWithId);
                 setCurrentPicture(compressedBroWithId);
                 // setImageBro(compressedBro as BroImageType);
                 // TODO: Upload broski to firebase
