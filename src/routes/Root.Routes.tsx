@@ -19,12 +19,12 @@ const RootRoutes: React.FC = () => {
             sceneContainerStyle={{ backgroundColor: 'rgba(0,0,0,1)' }}
             screenOptions={{
                 tabBarActiveTintColor: Colors.secondary,
-                tabBarInactiveTintColor: 'rgba(0,255,255,0.5)',
+                tabBarInactiveTintColor: Colors.tertiaryRei,
                 tabBarStyle: [
                     {
                         height: 70,
-                        backgroundColor: '#000',
-                        borderTopColor: Colors.dark,
+                        backgroundColor: 'rgba(0,0,0,1)',
+                        borderTopColor: Colors.dark300,
                         borderTopWidth: 2.5,
                         borderTopLeftRadius: 15,
                         borderTopRightRadius: 15,
@@ -44,7 +44,7 @@ const RootRoutes: React.FC = () => {
                             <Entypo
                                 name="home"
                                 size={24}
-                                color={focused ? Colors.secondary : 'rgba(0,255,255,0.5)'}
+                                color={focused ? Colors.secondary : Colors.tertiaryRei}
                                 style={{ bottom: focused ? 5 : 0 }}
                             />
                         ) : (
@@ -57,11 +57,9 @@ const RootRoutes: React.FC = () => {
                         ),
                     tabBarLabel: ({ focused }) => (
                         <Text
-                            className="font-handjet-regular tracking-widest"
-                            style={{
-                                color: focused ? Colors.secondary : 'rgba(0,255,255,0.3)',
-                                bottom: focused ? 5 : 0,
-                            }}
+                            className={`font-handjet-regular tracking-widest ${
+                                focused ? 'text-secondary' : 'text-tertiaryRei'
+                            } ${focused ? 'bottom-1' : 'bottom-0'}`}
                         >
                             {!isLongPressMenu && 'Home'}
                         </Text>
@@ -78,7 +76,7 @@ const RootRoutes: React.FC = () => {
                             <Entypo
                                 name="image"
                                 size={24}
-                                color={focused ? Colors.secondary : 'rgba(0,255,255,0.3)'}
+                                color={focused ? Colors.secondary : Colors.tertiaryRei}
                                 style={{ bottom: focused ? 5 : 0 }}
                             />
                         ) : (
@@ -91,11 +89,9 @@ const RootRoutes: React.FC = () => {
                         ),
                     tabBarLabel: ({ focused }) => (
                         <Text
-                            className="font-handjet-regular tracking-widest"
-                            style={{
-                                color: focused ? Colors.secondary : 'rgba(0,255,255,0.3)',
-                                bottom: focused ? 5 : 0,
-                            }}
+                            className={`font-handjet-regular tracking-widest ${
+                                focused ? 'text-secondary' : 'text-tertiaryRei'
+                            } ${focused ? 'bottom-1' : 'bottom-0'}`}
                         >
                             {!isLongPressMenu && 'Gallery'}
                         </Text>
@@ -117,7 +113,7 @@ const RootRoutes: React.FC = () => {
                             <Entypo
                                 name="camera"
                                 size={24}
-                                color={focused ? Colors.secondary : 'rgba(0,255,255,0.3)'}
+                                color={focused ? Colors.secondary : Colors.tertiaryRei}
                                 style={{ bottom: focused ? 5 : 0 }}
                             />
                         ) : (
@@ -132,13 +128,11 @@ const RootRoutes: React.FC = () => {
                                 color={Colors.neutral}
                             />
                         ),
-                    tabBarLabel: ({ focused, color }) => (
+                    tabBarLabel: ({ focused }) => (
                         <Text
-                            className="font-handjet-regular tracking-widest"
-                            style={{
-                                color: focused ? Colors.secondary : 'rgba(0,255,255,0.3)',
-                                bottom: focused ? 5 : 0,
-                            }}
+                            className={`font-handjet-regular tracking-widest ${
+                                focused ? 'text-secondary' : 'text-tertiaryRei'
+                            } ${focused ? 'bottom-1' : 'bottom-0'}`}
                         >
                             {!isLongPressMenu && 'Camera'}
                         </Text>

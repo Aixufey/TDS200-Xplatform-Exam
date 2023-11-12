@@ -2,22 +2,20 @@ import { AntDesign, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import React, { memo, useEffect, useState } from 'react';
 import { GestureResponderEvent, Image, Pressable, Text, View } from 'react-native';
 import { useGalleryContext, useUIContext } from '../../context';
+import { MergedImageType } from '../../hooks/useLaunchCamera/useLaunchCamera';
 import DesignSystem from '../../styles';
-import { BroImageType, MergedImageType } from '../../hooks/useLaunchCamera/useLaunchCamera';
 
-const Picture: React.FC<MergedImageType> = memo(({ uri, id }) => {
+const Picture: React.FC<MergedImageType> = memo(({ uri, id, longitude, latitude }) => {
     const [select, setSelect] = useState<boolean>(false);
     const { Colors } = DesignSystem();
     const fallback = require('../../../assets/images/cicada.png');
     const { setCurrentPicture, favorite } = useGalleryContext();
-    const { isLongPress, handleLongPress, handlePress } = useUIContext();
-
+    const { isLongPress, handleLongPress, handlePress, setIsLongPress } = useUIContext();
     useEffect(() => {
         if (!isLongPress) {
             setSelect(false);
         }
     }, [isLongPress]);
-
     const handlePressPicture = (e: GestureResponderEvent) => {
         // console.log(e.nativeEvent.target);
         // Selected Picture state needs to be at this level of granularity
@@ -28,14 +26,13 @@ const Picture: React.FC<MergedImageType> = memo(({ uri, id }) => {
         handlePress();
 
         // Select picture(s)
-        setCurrentPicture({ id: id, uri: uri });
+        setCurrentPicture({ id: id, uri: uri, longitude: longitude, latitude: latitude });
 
         // Multi select
         if (isLongPress) {
             setSelect((prev) => !prev);
         }
     };
-
     return (
         <View id="Picture-Container" className="justify-center items-center p-[6px]">
             <View id="Picture-Body" className="max-w-[75px] max-h-[75px] overflow-hidden">
@@ -75,12 +72,12 @@ const Picture: React.FC<MergedImageType> = memo(({ uri, id }) => {
                                             key={index}
                                             name="favorite"
                                             size={14}
-                                            style={{ color: 'crimson' }}
+                                            style={{ color: DesignSystem().Colors.rei }}
                                         />
                                     </View>
                                 ) : null;
                             })}
-                        <Text className="self-center text-white bottom-0 absolute">{}</Text>
+                        <Text className="self-center text-neutral bottom-0 absolute"></Text>
                     </View>
                 </Pressable>
             </View>

@@ -67,7 +67,7 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
         // console.log(`LongPress `, isLongPress)
         // console.log(data.length);
         // console.log('Current selected length ', selectedPictures.length);
-        // console.log('current Picture? ', currentPicture?.id);
+        // console.log('current Picture? ', currentPicture);
         // console.log('Favorites', favorite);
         // console.log('favorite length', favorite.length);
         // console.log(`pictures `, pictures.length);
@@ -75,44 +75,50 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
         // console.log('Current selected', selectedPictures);
     }, [pictures, currentPicture, isLongPress, isPress, selectedPictures]);
 
+    /**
+     *
+     * @param picture object of three combined types. The most important keys are **id**, **uri**, and **exif?**
+     * > ```ts
+     * > type MergedImageType = BroImageType & ProImageType & Partial<ImagePickerAsset>
+     * > ```
+     * @returns current selected picture
+     */
     const updateCurrentPicture = (picture: MergedImageType | null) => {
         // console.log(picture);
         if (!picture) return;
 
         setCurrentPicture(picture);
 
-        // Track multiple selections
-        // Due the nature of React asynchronous state batching, we can check if last snapshot contains the selected
         setSelectedPictures((prevSelected) => {
-            const isSelected = prevSelected.find((item) => item.id == picture.id);
-            if (isSelected) {
-                return prevSelected.filter((item) => item.id != picture.id);
+            if (prevSelected.some((dupes) => dupes.id === picture.id)) {
+                return prevSelected;
             } else {
                 return [picture, ...prevSelected];
             }
         });
     };
 
+    /**
+     * @param input contains the selected pictures and using hash table to delete if key exist else put it back to table.
+     * @returns filtered favorites
+     */
     const toggleFavorite = (input: MergedImageType[]) => {
         if (!input || input.length == 0) return;
-        // Assert to array for single picture
-        const inputArray = input instanceof Array ? input : [input];
 
         setFavorite((prevFavs) => {
-            // Accumulate favorite
-            const newFavs = inputArray.reduce((newFavs, picture) => {
-                // Check current picture if exists in accumulator
-                const isFavorite = newFavs.some((fav) => fav.id == picture.id);
+            // Hash table has O(1) for lookup
+            const oldFavorites = new Map(prevFavs.map((fav) => [fav.id, fav]));
 
-                if (isFavorite) {
-                    // Remove current picture from accumulator
-                    return newFavs.filter((fav) => fav.id != picture.id);
+            input.forEach((item) => {
+                if (oldFavorites.has(item.id)) {
+                    oldFavorites.delete(item.id);
                 } else {
-                    // Add current to acc.
-                    return [picture, ...newFavs];
+                    oldFavorites.set(item.id, item);
                 }
-                // Init acc with previous favorite state
-            }, prevFavs);
+            });
+
+            // Convert the map back to an array with values
+            const newFavs = [...oldFavorites.values()];
             handleStoreFavorite(newFavs);
             return newFavs;
         });
@@ -121,19 +127,31 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
         cleanSelections();
     };
 
+    /**
+     *
+     * @param input contains the selected pictures and using hash table to delete if key exist else put it back to table.
+     * > Updating setData if data exist else return an empty array.
+     * @returns filtered pictures
+     */
     const handleDeletePicture = async (input: MergedImageType[]) => {
         // Early return if input is empty or not an array
         if (!Array.isArray(input) || input.length === 0) return;
 
-        // Create a Set for quick lookup
+        // Set has also O(1) for lookup
         const inputIds = new Set(input.map((item) => item.id));
 
-        // Filter data and favorites, checking for undefined
+        // Filter data and favorites
         setData((prevData) => (prevData ? prevData.filter((item) => !inputIds.has(item.id)) : []));
+
         setFavorite((prevFavs) => {
-            const filteredFavs = prevFavs ? prevFavs.filter((fav) => !inputIds.has(fav.id)) : [];
-            handleStoreFavorite(filteredFavs);
-            return filteredFavs;
+            // Preparing a new Map for quick deletion all input ids
+            const favsMap = new Map(prevFavs.map((fav) => [fav.id, fav]));
+
+            inputIds.forEach((id) => favsMap.delete(id));
+
+            const newFavs = [...favsMap.values()];
+            handleStoreFavorite(newFavs);
+            return newFavs;
         });
 
         // Clean selections

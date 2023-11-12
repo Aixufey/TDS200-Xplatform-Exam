@@ -21,12 +21,12 @@ const CameraScreen: React.FC = () => {
                     <Button
                         onPress={handleLaunchCameraPro}
                         text="Pro"
-                        className="bg-cyan-400 justify-center items-center rounded-[10px] border-[0.5px] border-[#FFA] w-[85px] h-[55px]"
+                        className="bg-cyan-400 justify-center items-center rounded-[10px] border-[1px] border-tertiary w-[85px] h-[55px]"
                     />
                     <Button
                         onPress={handlePressBro}
                         text="Bro"
-                        className="bg-lime-300 justify-center items-center rounded-[10px] border-[0.5px] border-[#FFA] w-[85px] h-[55px]"
+                        className="bg-lime-300 justify-center items-center rounded-[10px] border-[1px] border-tertiary w-[85px] h-[55px]"
                     />
                 </View>
             </View>

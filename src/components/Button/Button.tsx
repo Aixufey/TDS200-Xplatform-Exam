@@ -20,12 +20,12 @@ const Button: React.FC<IButton> = ({ onPress, style, className, text, children }
             className={
                 className
                     ? className
-                    : 'justify-center items-center rounded-[10px] border-[0.5px] border-[#FFA] w-[85px] h-[55px]'
+                    : 'justify-center items-center rounded-[10px] border-[0.5px] border-primary w-[85px] h-[55px]'
             }
         >
             <TouchableOpacity onPress={onPress}>
                 {children ?? (
-                    <Text className="text-[#FFA] text-3xl font-handjet-black">
+                    <Text className="text-secondary200 tracking-[3px] text-3xl font-handjet-black">
                         {text ? text : 'Button'}
                     </Text>
                 )}

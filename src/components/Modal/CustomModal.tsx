@@ -51,7 +51,12 @@ const CustomModal: React.FC<ICustomModal> = ({
                     )}
 
                     {flip && currentPicture && (
-                        <BackView id={currentPicture.id} uri={currentPicture.uri} />
+                        <BackView
+                            id={currentPicture.id}
+                            uri={currentPicture.uri}
+                            longitude={currentPicture.longitude}
+                            latitude={currentPicture.latitude}
+                        />
                     )}
 
                     <View className="absolute top-0 right-0 h-[15%] flex-row justify-end items-center">

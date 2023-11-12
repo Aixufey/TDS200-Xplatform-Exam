@@ -61,12 +61,14 @@ const GalleryScreen: React.FC = () => {
                                     keyExtractor={(item: any) => item.id}
                                     renderItem={({ item, index }) => (
                                         <Picture
+                                            key={index}
+                                            id={item.id}
                                             uri={
                                                 item.uri ??
                                                 'https://cdn-icons-png.flaticon.com/512/2333/2333464.png'
                                             }
-                                            key={index}
-                                            id={index.toString()}
+                                            longitude={item.longitude}
+                                            latitude={item.latitude}
                                         />
                                     )}
                                     removeClippedSubviews={true}
@@ -85,7 +87,13 @@ const GalleryScreen: React.FC = () => {
                                     data={pictures}
                                     keyExtractor={(item: any) => item.id}
                                     renderItem={({ item, index }) => (
-                                        <Picture uri={item.uri} key={index} id={item.id} />
+                                        <Picture
+                                            key={index}
+                                            id={item.id}
+                                            uri={item.uri}
+                                            longitude={item.longitude}
+                                            latitude={item.latitude}
+                                        />
                                     )}
                                     removeClippedSubviews={true}
                                     showsVerticalScrollIndicator={false}
