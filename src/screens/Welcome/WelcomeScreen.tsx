@@ -36,8 +36,12 @@ const WelcomeScreen: React.FC = () => {
             <Background>
                 <View className="flex-1 w-full h-full justify-center items-center">
                     <View className="flex-auto h-[60%] justify-center items-center">
-                        <Text className="text-[66px] text-neutral300 tracking-widest uppercase font-handjet-light">Enter the</Text>
-                        <Text className={`text-[66px] text-tertiary900 tracking-widest uppercase font-handjet-light`}>
+                        <Text className="text-[66px] text-neutral300 tracking-widest uppercase font-handjet-light">
+                            Enter the
+                        </Text>
+                        <Text
+                            className={`text-[66px] text-tertiary900 tracking-widest uppercase font-handjet-light`}
+                        >
                             void
                         </Text>
                     </View>

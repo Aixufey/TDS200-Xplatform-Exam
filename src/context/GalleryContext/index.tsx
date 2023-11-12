@@ -99,7 +99,7 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
     };
 
     /**
-     * @param input contains the selected pictures and using hash table to delete if key exist else put it back to table. 
+     * @param input contains the selected pictures and using hash table to delete if key exist else put it back to table.
      * @returns filtered favorites
      */
     const toggleFavorite = (input: MergedImageType[]) => {
@@ -128,7 +128,7 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
     };
 
     /**
-     * 
+     *
      * @param input contains the selected pictures and using hash table to delete if key exist else put it back to table.
      * > Updating setData if data exist else return an empty array.
      * @returns filtered pictures

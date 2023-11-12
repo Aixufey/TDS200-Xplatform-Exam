@@ -8,12 +8,12 @@ const randomGradient = () => {
     endAngle = endAngle % 360;
 
     const start = {
-        x: Math.cos(startAngle * Math.PI / 180),
-        y: Math.sin(startAngle * Math.PI / 180),
+        x: Math.cos((startAngle * Math.PI) / 180),
+        y: Math.sin((startAngle * Math.PI) / 180),
     };
     const end = {
-        x: Math.cos(endAngle * Math.PI / 180),
-        y: Math.sin(endAngle * Math.PI / 180),
+        x: Math.cos((endAngle * Math.PI) / 180),
+        y: Math.sin((endAngle * Math.PI) / 180),
     };
     return {
         start,

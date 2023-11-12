@@ -71,7 +71,7 @@ module.exports = {
                 futatsu: '#932F8C',
                 mittsu: '#422F90',
                 yottsu: '#7460AA',
-                itsutsu: '#C598BC'
+                itsutsu: '#C598BC',
             },
             backgroundColor: {
                 primaryRei: '#ff00aa33',
@@ -133,7 +133,7 @@ module.exports = {
                 futatsu: '#932F8C',
                 mittsu: '#422F90',
                 yottsu: '#7460AA',
-                itsutsu: '#C598BC'
+                itsutsu: '#C598BC',
             },
         },
     },

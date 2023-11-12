@@ -77,8 +77,7 @@ const Picture: React.FC<MergedImageType> = memo(({ uri, id, longitude, latitude 
                                     </View>
                                 ) : null;
                             })}
-                        <Text className="self-center text-neutral bottom-0 absolute">
-                        </Text>
+                        <Text className="self-center text-neutral bottom-0 absolute"></Text>
                     </View>
                 </Pressable>
             </View>

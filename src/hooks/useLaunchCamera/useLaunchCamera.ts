@@ -38,10 +38,10 @@ export type BroImageType = {
 };
 export type MergedImageType = BroImageType & ProImageType & Partial<ImagePickerAsset>;
 const useLaunchCamera = () => {
-    const [permission, requestPermission] = useCameraPermissions();
+    const [DoesNotWorkUsingMyOwnState, requestPermission] = useCameraPermissions();
     const [hasPermission, setHasPermission] = useState<boolean>(false);
     const broCameraRef = useRef<Camera>(null);
-    const { handlePictures, pictures, setCurrentPicture } = useGalleryContext();
+    const { handlePictures, setCurrentPicture } = useGalleryContext();
 
     const fetchCamera = useCallback(async () => {
         try {
@@ -138,13 +138,20 @@ const useLaunchCamera = () => {
                     longitude: 0.0,
                     latitude: 0.0,
                 };
-                console.log(compressedBroWithId);
+                // For Modal preview
                 setCurrentPicture(compressedBroWithId);
-                // setImageBro(compressedBro as BroImageType);
                 // TODO: Upload broski to firebase
-                // const asset = await createAssetAsync(compressedBro.uri);
 
+                // Media Library can only assert to library but cannot delete for security reasons. Tried FileSystem as well🤷‍♂️
+                // const asset = await createAssetAsync(compressedBroWithId.uri);
                 // handleSaveToAlbum(asset);
+
+                /**
+                 * Placeholder for all snapped pictures.
+                 * The decision when to upload to firebase.
+                 * 1. For synchronization - upload to firebase every time you snap a picture
+                 * 2. Greener API - upload in batch when unmounting gallery screen, user can still see the snapped picture(s)
+                 */
                 handlePictures(compressedBroWithId);
             }
         } catch (e) {
