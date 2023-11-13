@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Asset } from 'expo-media-library';
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { favoriteItems } from '../../constants';
-import { MergedImageType } from '../../hooks/useLaunchCamera/useLaunchCamera';
+import { MergedImageType, useFetchBucketList, BucketListType } from '../../hooks';
 import { useUIContext } from '../UIContext';
 type GalleryContextProviderProp = {
     children: React.ReactNode;
@@ -23,7 +23,7 @@ interface IGalleryContext {
     favorite: MergedImageType[];
     resetGalleryState: () => void;
     handleDeletePicture: (picture: MergedImageType[]) => void;
-    handlePictures: (picture: MergedImageType) => void;
+    handleTakenPictures: (picture: MergedImageType) => void;
     pictures: MergedImageType[];
 }
 
@@ -38,7 +38,7 @@ const GalleryContext = createContext<IGalleryContext>({
     favorite: [],
     resetGalleryState: () => {},
     handleDeletePicture: () => {},
-    handlePictures: () => {},
+    handleTakenPictures: () => {},
     pictures: [],
 });
 
@@ -47,20 +47,30 @@ export const useGalleryContext = () => useContext(GalleryContext);
 const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children }) => {
     const [data, setData] = useState<Asset[] | MergedImageType[] | null>(null);
     const [currentPicture, setCurrentPicture] = useState<MergedImageType | null>(null);
-    const [favorite, setFavorite] = useState<MergedImageType[]>([]);
     const [selectedPictures, setSelectedPictures] = useState<MergedImageType[]>([]);
-    const [pictures, setPictures] = useState<MergedImageType[]>([]);
+    const [favorite, setFavorite] = useState<MergedImageType[]>([]);
+    const [takenPictures, setTakenPictures] = useState<MergedImageType[]>([]);
     const { isLongPress, isPress, setIsLongPress, setIsLongPressMenu } = useUIContext();
+    const { bucket, fetchBucketList } = useFetchBucketList();
+    // Load data
+    useEffect(() => {
+        fetchBucketList();
+        updateData(bucket);
+    }, []);
 
     // Load favorites
     useEffect(() => {
         handleGetStoredFavorite();
     }, []);
 
-    const updateData = (data: Asset[] | MergedImageType[]) => {
-        setData(data);
-    };
-
+    useEffect(() => {
+        
+    }, [])
+    const reconcileData = useCallback((newPictures: MergedImageType[] | BucketListType[]) => {
+        if (!newPictures || newPictures.length === 0) return
+        
+        
+    }, []) 
     // Debugging
     useEffect(() => {
         // console.log(`Pressed `, isPress)
@@ -73,7 +83,18 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
         // console.log(`pictures `, pictures.length);
         // console.log('Current selected length', selectedPictures.length);
         // console.log('Current selected', selectedPictures);
-    }, [pictures, currentPicture, isLongPress, isPress, selectedPictures]);
+    }, [takenPictures, currentPicture, isLongPress, isPress, selectedPictures]);
+
+    /**
+     *
+     * @param data is expected of type Asset[] or MergedImageType[]
+     * @example
+     * > If setting assets from phone MediaLibrary then data will be Asset.
+     * > Else the type collection may be from camera and firebase.
+     */
+    const updateData = (data: Asset[] | MergedImageType[]) => {
+        setData(data);
+    };
 
     /**
      *
@@ -159,15 +180,28 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
         setCurrentPicture(null);
     };
 
-    const handlePictures = (picture: MergedImageType) => {
-        setPictures((prev) => {
+    /**
+     * Used to set the taken pictures
+     * @param picture is the current taken picture being added to a collection of taken pictures of this session.
+     * > The session is indicating the lifecycle of this GalleryContext, so long it's active the taken pictures is cached.
+     */
+    const handleTakenPictures = (picture: MergedImageType) => {
+        setTakenPictures((prev) => {
             return [picture, ...prev];
         });
     };
 
+    /**
+     * Refactored helper func to set favorite 
+     * @param input 
+     */
     const handleStoreFavorite = async (input: MergedImageType[]) => {
         await AsyncStorage.setItem(favoriteItems, JSON.stringify(input));
     };
+
+    /**
+     * Refactored helper func to get stored favorite
+     */
     const handleGetStoredFavorite = async () => {
         try {
             const result = await AsyncStorage.getItem(favoriteItems);
@@ -180,11 +214,17 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
         }
     };
 
+    /**
+     * Reset the gallery state
+     */
     const resetGalleryState = () => {
         setSelectedPictures([]);
         setCurrentPicture(null);
     };
 
+    /**
+     * Clean selections Gallery & UI!
+     */
     const cleanSelections = () => {
         setSelectedPictures([]);
         setCurrentPicture(null);
@@ -204,8 +244,8 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
             toggleFavorite,
             resetGalleryState,
             handleDeletePicture,
-            handlePictures,
-            pictures,
+            handleTakenPictures,
+            pictures: takenPictures,
         };
     }, [data, currentPicture, favorite, selectedPictures]);
 

@@ -3,17 +3,19 @@ interface IBackView {
     id: string;
     uri: string;
     children?: React.ReactNode;
-    longitude?: number | null;
-    latitude?: number | null;
+    coordinates?: {
+        longitude?: number | undefined;
+        latitude?: number | undefined;
+    };
 }
-const BackView: React.FC<IBackView> = ({ children, id, uri, longitude, latitude }) => {
+const BackView: React.FC<IBackView> = ({ children, id, uri, coordinates }) => {
     return (
         <View className="flex-1 bg-dark500 w-full h-full absolute justify-center items-center">
             <View className="flex-auto h-full w-[95%] justify-center items-center p-5">
                 <Text className="text-neutral font-handjet-light">ID: {id}</Text>
                 <Text className="text-neutral font-handjet-light">URI: {uri}</Text>
                 <Text className="text-neutral font-handjet-light">
-                    Long: {longitude} - Lat: {latitude}
+                    Long: {coordinates?.longitude} - Lat: {coordinates?.latitude}
                 </Text>
             </View>
             <View className="flex-auto h-[50%] w-[95%] border-tertiary border-[0.3px] rounded-md justify-center items-center">

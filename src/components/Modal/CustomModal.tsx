@@ -54,8 +54,10 @@ const CustomModal: React.FC<ICustomModal> = ({
                         <BackView
                             id={currentPicture.id}
                             uri={currentPicture.uri}
-                            longitude={currentPicture.longitude}
-                            latitude={currentPicture.latitude}
+                            coordinates={{
+                                longitude: currentPicture.coordinates?.longitude,
+                                latitude: currentPicture.coordinates?.latitude
+                            }}
                         />
                     )}
 

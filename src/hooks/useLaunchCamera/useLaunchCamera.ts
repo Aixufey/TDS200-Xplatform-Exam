@@ -1,5 +1,4 @@
 import { Camera } from 'expo-camera';
-import { SaveFormat, manipulateAsync } from 'expo-image-manipulator';
 import {
     CameraType,
     ImagePickerAsset,
@@ -11,6 +10,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 import { TDS200 } from '../../constants';
 import { useGalleryContext } from '../../context';
+import { useManipulateImage } from '../useManipulateImage';
 export type ProImageType = {
     id: string;
     uri: string;
@@ -23,8 +23,10 @@ export type ProImageType = {
     exif?: Partial<MediaTrackSettings> | any;
     base64?: string | null;
     duration?: number | null;
-    longitude?: number | null;
-    latitude?: number | null;
+    coordinates?: {
+        longitude?: number | undefined;
+        latitude?: number | undefined;
+    };
 };
 export type BroImageType = {
     id: string;
@@ -33,15 +35,18 @@ export type BroImageType = {
     height?: number;
     base64?: string | null;
     exif?: Partial<MediaTrackSettings> | any;
-    longitude?: number | null;
-    latitude?: number | null;
+    coordinates?: {
+        longitude?: number | undefined;
+        latitude?: number | undefined;
+    };
 };
 export type MergedImageType = BroImageType & ProImageType & Partial<ImagePickerAsset>;
+export type BucketListType = Pick<MergedImageType, 'id' | 'uri' | 'coordinates' | 'exif'>;
 const useLaunchCamera = () => {
     const [DoesNotWorkUsingMyOwnState, requestPermission] = useCameraPermissions();
     const [hasPermission, setHasPermission] = useState<boolean>(false);
     const broCameraRef = useRef<Camera>(null);
-    const { handlePictures, setCurrentPicture } = useGalleryContext();
+    const { handleTakenPictures, setCurrentPicture } = useGalleryContext();
 
     const fetchCamera = useCallback(async () => {
         try {
@@ -81,7 +86,7 @@ const useLaunchCamera = () => {
                 latitude: 0.0,
             };
             setCurrentPicture(proWithId);
-            handlePictures(proWithId);
+            handleTakenPictures(proWithId);
         }
     };
 
@@ -119,40 +124,40 @@ const useLaunchCamera = () => {
                     cameraType: CameraType.back,
                 };
                 const snapshot = await broCameraRef.current.takePictureAsync(opt);
-                // Bro don't have ID, so we slap on an ID
-                const uniqueId: string = snapshot.exif.DateTime.split(':').join('');
+                const { exif } = snapshot;
+                // Bro don't have ID, so we slap on an ID using regex to rm all colons and trim whitespace
+                const uniqueId: string = snapshot.exif.DateTime.replace(/[:\s]/g, '');
+                console.log(uniqueId);
                 // Bro too huge, we compress bro
-                const compressedBro = await manipulateAsync(
-                    snapshot.uri,
-                    [
-                        {
-                            resize: { height: 500, width: 500 },
-                        },
-                    ],
-                    { compress: 0.2, format: SaveFormat.JPEG }
-                );
-                // Bro looking smooth with ID
-                const compressedBroWithId = {
-                    id: uniqueId,
-                    ...compressedBro,
-                    longitude: 0.0,
-                    latitude: 0.0,
-                };
-                // For Modal preview
-                setCurrentPicture(compressedBroWithId);
-                // TODO: Upload broski to firebase
+                const compressedBro = await useManipulateImage(snapshot.uri);
+                if (compressedBro) {
+                    const { uri } = compressedBro;
+                    // Bro looking smooth with ID
+                    const compressedBroWithId = {
+                        id: uniqueId,
+                        ...compressedBro,
+                        longitude: 0.0,
+                        latitude: 0.0,
+                    };
+                    // For Modal preview
+                    setCurrentPicture(compressedBroWithId);
+                    // TODO: Upload broski to firebase
 
-                // Media Library can only assert to library but cannot delete for security reasons. Tried FileSystem as well🤷‍♂️
-                // const asset = await createAssetAsync(compressedBroWithId.uri);
-                // handleSaveToAlbum(asset);
+                    // Media Library can only assert to library but cannot delete for security reasons. Tried FileSystem as well🤷‍♂️
+                    // const asset = await createAssetAsync(compressedBroWithId.uri);
+                    // handleSaveToAlbum(asset);
 
-                /**
-                 * Placeholder for all snapped pictures.
-                 * The decision when to upload to firebase.
-                 * 1. For synchronization - upload to firebase every time you snap a picture
-                 * 2. Greener API - upload in batch when unmounting gallery screen, user can still see the snapped picture(s)
-                 */
-                handlePictures(compressedBroWithId);
+                    /**
+                     * Placeholder for all snapped pictures.
+                     * The decision when to upload to firebase.
+                     * 1. For synchronization - upload to firebase every time you snap a picture
+                     * 2. Greener API - upload in batch when unmounting gallery screen, user can still see the snapped picture(s)
+                     */
+                    const resp = await fetch(uri);
+                    const blob = await resp.blob();
+                    // await useUploadImageToFirebase(compressedBroWithId.id, blob, exif, {latitude: compressedBroWithId.latitude, longitude: compressedBroWithId.longitude});
+                    handleTakenPictures(compressedBroWithId);
+                }
             }
         } catch (e) {
             console.log(e);
