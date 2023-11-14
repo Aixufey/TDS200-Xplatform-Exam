@@ -1,24 +1,29 @@
 import { useIsFocused } from '@react-navigation/native';
-import React, { useLayoutEffect as useEffect, useState } from 'react';
+import React, { useLayoutEffect as useEffect, useLayoutEffect, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { Background, Canvas, CustomModal, PermissionView, Picture } from '../../components';
 import { useGalleryContext, useUIContext } from '../../context';
-import { useFetchAlbum } from '../../hooks';
+import { useFetchAlbum, useFetchBucketList, useRequestPermission } from '../../hooks';
 const GalleryScreen: React.FC = () => {
     const [toggleModal, setToggleModal] = useState<boolean>(false);
     const isFocused = useIsFocused();
     const { pictures, data, favorite, resetGalleryState } = useGalleryContext();
     const { resetUIState, isPress, isLongPress } = useUIContext();
-    const { fetchAlbum, hasPermission } = useFetchAlbum();
-
+    const { fetchAlbum } = useFetchAlbum();
+    const { hasPermission, requestPermission } = useRequestPermission();
+    const { bucket, fetchBucketList } = useFetchBucketList();
     // Reconcile when memoized fetchAlbum is changed.
     // TODO: Pictures taken is not updated in UI - having it as dependency cause heavy rendering fix this?
     // 1. Fetch from firebase on load
     // 2. while screen is active, manipulation of data should be on a shallow copy - not on the original
     // 3. when unmounting - update the firebase by pushing changes to firebase.
-    useEffect(() => {
-        fetchAlbum();
-    }, [hasPermission]);
+    useLayoutEffect(() => {
+        requestPermission();
+        //fetchBucketList();
+    }, [isFocused]);
+    // useEffect(() => {
+    //     fetchAlbum();
+    // }, [hasPermission]);
 
     useEffect(() => {
         return () => {
@@ -67,8 +72,10 @@ const GalleryScreen: React.FC = () => {
                                                 item.uri ??
                                                 'https://cdn-icons-png.flaticon.com/512/2333/2333464.png'
                                             }
-                                            longitude={item.longitude}
-                                            latitude={item.latitude}
+                                            coordinates={{
+                                                latitude: item.coordinates?.latitude,
+                                                longitude: item.coordinates?.longitude,
+                                            }}
                                         />
                                     )}
                                     removeClippedSubviews={true}
@@ -84,15 +91,17 @@ const GalleryScreen: React.FC = () => {
                                     Gallery
                                 </Text>
                                 <FlatList
-                                    data={pictures}
+                                    data={bucket}
                                     keyExtractor={(item: any) => item.id}
                                     renderItem={({ item, index }) => (
                                         <Picture
                                             key={index}
                                             id={item.id}
                                             uri={item.uri}
-                                            longitude={item.longitude}
-                                            latitude={item.latitude}
+                                            coordinates={{
+                                                latitude: item.coordinates?.latitude,
+                                                longitude: item.coordinates?.longitude,
+                                            }}
                                         />
                                     )}
                                     removeClippedSubviews={true}

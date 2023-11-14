@@ -29,7 +29,6 @@ const WelcomeScreen: React.FC = () => {
             ...Styles,
         ];
     };
-    console.log(getRandomColorKey());
     return (
         <View className="bg-[#000] w-full h-full justify-center items-center">
             <StatusBar barStyle={'light-content'} />
