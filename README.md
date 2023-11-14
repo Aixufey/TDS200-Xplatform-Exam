@@ -4,6 +4,7 @@ This is the Exam 2023 in Cross-platform at Høyskolen Kristiania.<br />
 The project will fail to run if `.env` for **Firebase** is not configured. Rename the `.env template` and setup with your Firebase application configuration.
 
 -   [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
+    -   [Introduction](#introduction)
     -   [Issues \& bugs](#issues--bugs)
     -   [Dependencies](#dependencies)
         -   [Expo](#expo)
@@ -23,6 +24,12 @@ The project will fail to run if `.env` for **Firebase** is not configured. Renam
         -   [Vector Icons](#vector-icons)
     -   [GitHooks](#githooks)
         -   [Instructions](#instructions)
+
+## Introduction
+
+When application load the context, it will fetch to firebase and return the galleries from storage.
+The decision for when to query firebase when you take a picture or cache the assets then query the firebase based on some condition was thought thoroughly.
+The initial idea was to post the pictures in a batch, but firebase does not allow post in batch. The workaround is to cache the pictures for this session in a collection then iterate over each item and post to firebase.
 
 ## Issues & bugs
 
