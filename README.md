@@ -1,7 +1,7 @@
 # TDS200-Xplatform-Exam
 
 This is the Exam 2023 in Cross-platform at Høyskolen Kristiania.<br />
-The project will fail to run if `.env` for **Firebase** is not configured. Rename the `.env template` and setup with your Firebase application configuration.
+The project will fail to run if `.env` for **Firebase** is not configured. Rename the `.env template` and set it up with your Firebase application configuration.
 
 -   [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
     -   [Introduction](#introduction)
