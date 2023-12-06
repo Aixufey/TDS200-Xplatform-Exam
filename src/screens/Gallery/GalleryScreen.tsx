@@ -1,29 +1,34 @@
 import { useIsFocused } from '@react-navigation/native';
 import React, { useLayoutEffect as useEffect, useLayoutEffect, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import { Background, Canvas, CustomModal, PermissionView, Picture } from '../../components';
 import { useGalleryContext, useUIContext } from '../../context';
-import { useFetchAlbum, useFetchBucketList, useRequestPermission } from '../../hooks';
+import { useFetchBucketList, useRequestPermission } from '../../hooks';
+import DesignSystem from '../../styles';
 const GalleryScreen: React.FC = () => {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [toggleModal, setToggleModal] = useState<boolean>(false);
-    const isFocused = useIsFocused();
-    const { pictures, data, favorite, resetGalleryState } = useGalleryContext();
+    const { favorite, resetGalleryState, updateData } = useGalleryContext();
     const { resetUIState, isPress, isLongPress } = useUIContext();
-    const { fetchAlbum } = useFetchAlbum();
     const { hasPermission, requestPermission } = useRequestPermission();
     const { bucket, fetchBucketList } = useFetchBucketList();
+    const { Colors } = DesignSystem();
+    const isFocused = useIsFocused();
     // Reconcile when memoized fetchAlbum is changed.
     // TODO: Pictures taken is not updated in UI - having it as dependency cause heavy rendering fix this?
     // 1. Fetch from firebase on load
     // 2. while screen is active, manipulation of data should be on a shallow copy - not on the original
     // 3. when unmounting - update the firebase by pushing changes to firebase.
     useLayoutEffect(() => {
-        requestPermission();
-        //fetchBucketList();
+        const fetchData = async () => {
+            setIsLoading(true);
+            await requestPermission();
+            await fetchBucketList();
+            updateData(bucket);
+            setIsLoading(false);
+        };
+        fetchData();
     }, [isFocused]);
-    // useEffect(() => {
-    //     fetchAlbum();
-    // }, [hasPermission]);
 
     useEffect(() => {
         return () => {
@@ -51,7 +56,9 @@ const GalleryScreen: React.FC = () => {
     return (
         <Background>
             <View className="flex-1 w-full bottom-[4.5%] justify-center items-center">
-                {!hasPermission ? (
+                {isLoading ? (
+                    <ActivityIndicator size={'large'} color={Colors.rei} />
+                ) : !hasPermission ? (
                     <PermissionView />
                 ) : (
                     <Canvas isFocused={isFocused} title={'Media'}>

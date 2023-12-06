@@ -11,6 +11,9 @@ import { Alert } from 'react-native';
 import { TDS200 } from '../../constants';
 import { useGalleryContext } from '../../context';
 import { useManipulateImage } from '../useManipulateImage';
+import { useUploadImageToFirebase } from '../useUploadImageToFirebase';
+
+// Type definitions is taken from Expo Camera
 export type ProImageType = {
     id: string;
     uri: string;
@@ -141,11 +144,6 @@ const useLaunchCamera = () => {
                     };
                     // For Modal preview
                     setCurrentPicture(compressedBroWithId);
-                    // TODO: Upload broski to firebase
-
-                    // Media Library can only assert to library but cannot delete for security reasons. Tried FileSystem as well🤷‍♂️
-                    // const asset = await createAssetAsync(compressedBroWithId.uri);
-                    // handleSaveToAlbum(asset);
 
                     /**
                      * Placeholder for all snapped pictures.
@@ -155,7 +153,10 @@ const useLaunchCamera = () => {
                      */
                     const resp = await fetch(uri);
                     const blob = await resp.blob();
-                    // await useUploadImageToFirebase(compressedBroWithId.id, blob, exif, {latitude: compressedBroWithId.latitude, longitude: compressedBroWithId.longitude});
+                    await useUploadImageToFirebase(compressedBroWithId.id, blob, exif, {
+                        latitude: compressedBroWithId.latitude,
+                        longitude: compressedBroWithId.longitude,
+                    });
                     handleTakenPictures(compressedBroWithId);
                 }
             }

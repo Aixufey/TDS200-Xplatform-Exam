@@ -1,8 +1,12 @@
 import { getDownloadURL, getMetadata, getStorage, listAll, ref } from 'firebase/storage';
 import { useState } from 'react';
 import { bucketURl } from '../../constants';
-import { BucketListType } from '../useLaunchCamera/useLaunchCamera';
+import { BucketListType } from '../useLaunchCamera';
 
+/**
+ * Pictures does not contain an unique ID, we use the timestamp as a natural id.
+ * @returns Pictures from firebase
+ */
 const useFetchBucketList = <T extends BucketListType>() => {
     const [bucket, setBucket] = useState<T[]>([]);
     const storage = getStorage();
