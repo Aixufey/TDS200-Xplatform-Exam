@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Asset } from 'expo-media-library';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { favoriteItems } from '../../constants';
-import { MergedImageType, useFetchBucketList, BucketListType } from '../../hooks';
+import { MergedImageType } from '../../hooks';
 import { useUIContext } from '../UIContext';
 type GalleryContextProviderProp = {
     children: React.ReactNode;
@@ -51,26 +51,12 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
     const [favorite, setFavorite] = useState<MergedImageType[]>([]);
     const [takenPictures, setTakenPictures] = useState<MergedImageType[]>([]);
     const { isLongPress, isPress, setIsLongPress, setIsLongPressMenu } = useUIContext();
-    const { bucket, fetchBucketList } = useFetchBucketList();
-    // Load data
-    useEffect(() => {
-        fetchBucketList();
-        updateData(bucket);
-    }, []);
 
     // Load favorites
     useEffect(() => {
         handleGetStoredFavorite();
     }, []);
 
-    useEffect(() => {
-        
-    }, [])
-    const reconcileData = useCallback((newPictures: MergedImageType[] | BucketListType[]) => {
-        if (!newPictures || newPictures.length === 0) return
-        
-        
-    }, []) 
     // Debugging
     useEffect(() => {
         // console.log(`Pressed `, isPress)
