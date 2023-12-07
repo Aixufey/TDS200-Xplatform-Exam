@@ -49,18 +49,6 @@ const CameraView: React.FC = () => {
         setCaptions([]);
     };
 
-    const renderPreviewModal = () => {
-        return (
-            togglePreviewModal && (
-                <CustomModal
-                    intensity={25}
-                    toggleModal={handleTogglePreviewModal}
-                    className="justify-center items-center absolute w-full h-full"
-                />
-            )
-        );
-    };
-
     const updateFirestoreCaptions = async () => {
         if (currentPicture?.id === undefined) {
             return alert('Picture does not exist');
@@ -95,7 +83,19 @@ const CameraView: React.FC = () => {
         setInput(txt);
     };
 
-    const renderPictureModal = () => {
+    const RenderPreviewModal: React.FC = () => {
+        return (
+            togglePreviewModal && (
+                <CustomModal
+                    intensity={25}
+                    toggleModal={handleTogglePreviewModal}
+                    className="justify-center items-center absolute w-full h-full"
+                />
+            )
+        );
+    };
+
+    const RenderPictureModal: React.FC = () => {
         return (
             togglePictureModal && (
                 <Modal
@@ -214,9 +214,9 @@ const CameraView: React.FC = () => {
                         iconColor={Colors.neutral100}
                     />
                 </View>
-                {renderPreviewModal()}
+                {<RenderPreviewModal />}
             </View>
-            {renderPictureModal()}
+            {<RenderPictureModal />}
         </View>
     );
 };
