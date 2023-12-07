@@ -153,11 +153,12 @@ const useLaunchCamera = () => {
                      */
                     const resp = await fetch(uri);
                     const blob = await resp.blob();
-                    await useUploadImageToFirebase(compressedBroWithId.id, blob, exif, {
-                        latitude: compressedBroWithId.latitude,
-                        longitude: compressedBroWithId.longitude,
-                    });
-                    handleTakenPictures(compressedBroWithId);
+                    
+                    // await useUploadImageToFirebase(compressedBroWithId.id, blob, exif, {
+                    //     latitude: compressedBroWithId.latitude,
+                    //     longitude: compressedBroWithId.longitude,
+                    // });
+                    //handleTakenPictures(compressedBroWithId);
                 }
             }
         } catch (e) {

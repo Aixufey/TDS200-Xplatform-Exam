@@ -4,4 +4,5 @@ const TDS200: string = 'TDS200';
 const bucketURl: string = 'pictures/';
 const reactionsDoc: string = 'reactions';
 const commentsDoc: string = 'comments';
-export { TDS200, bucketURl, cameraPermission, commentsDoc, favoriteItems, reactionsDoc};
+const captionsDoc: string = 'captions';
+export { TDS200, bucketURl, cameraPermission, commentsDoc, captionsDoc, favoriteItems, reactionsDoc };
