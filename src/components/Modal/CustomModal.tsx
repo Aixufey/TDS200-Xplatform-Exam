@@ -1,4 +1,3 @@
-import { AntDesign, Feather, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import {
     DocumentData,
@@ -15,10 +14,10 @@ import {
     FlatList,
     Image,
     NativeSyntheticEvent,
+    ScrollView,
     Text,
     TextInput,
     TextInputChangeEventData,
-    TouchableOpacity,
     View,
 } from 'react-native';
 import { commentsDoc, reactionsDoc } from '../../constants';
@@ -50,6 +49,8 @@ const CustomModal: React.FC<ICustomModal> = ({
     const [showComment, setShowComment] = useState<boolean>(false);
     const [input, setInput] = useState<string>('');
     const [comments, setComments] = useState<DocumentData[]>([]);
+    const [showCaptions, setShowCaptions] = useState<boolean>(false);
+    const [captions, setCaptions] = useState<DocumentData>([]);
     const [feedback, setFeedback] = useState({
         likes: 0,
         dislikes: 0,
@@ -80,11 +81,24 @@ const CustomModal: React.FC<ICustomModal> = ({
                 id: doc.id,
                 ...doc.data(),
             }));
-            console.log(comments);
+            //console.log(comments);
             setComments(comments);
+            setFetch(false);
         };
-        //fetchReactions();
-        //fetchComments();
+        const fetchCaptions = async () => {
+            if (currentPicture?.id === undefined) return;
+            const captionsRef = doc(firebase_db, 'captions', currentPicture.id);
+            const captionDoc = await getDoc(captionsRef);
+
+            if (captionDoc.exists()) {
+                const data = captionDoc.data();
+                //console.log(data);
+                setCaptions(data);
+            }
+        };
+        fetchReactions();
+        fetchComments();
+        fetchCaptions();
     }, [currentPicture, fetch]);
 
     const handleDeleteComment = async (commentId: string) => {
@@ -176,64 +190,103 @@ const CustomModal: React.FC<ICustomModal> = ({
             timeStamp: new Date(),
         });
         setInput('');
+        setFetch(true);
+    };
+
+    const RenderCaptionView: React.FC = () => {
+        return (
+            <View className="w-full h-full justify-start items-center absolute">
+                <View className="w-full h-full justify-start items-center absolute">
+                    <Text className="text-neutral font-handjet-light text-xl">Captions</Text>
+                </View>
+                <View className="basis-[10%] px-2 w-full h-full flex-row justify-end items-center">
+                    <IconButton
+                        onPress={() => {
+                            setShowCaptions(false);
+                            setShowComment(false);
+                        }}
+                        className="w-[45px] h-[45px] justify-center items-center"
+                        IconSet="AntDesign"
+                        iconName="closecircle"
+                        iconSize={24}
+                        iconColor={Colors.tertiary}
+                    />
+                </View>
+                <View className="p-2 w-[75%] h-[75%] overflow-hidden">
+                    <ScrollView className="w-full h-full border-b-[0.5px] border-tertiary">
+                        {captions.captions &&
+                            captions.captions.map((item: string, i: string) => (
+                                <Text
+                                    key={i}
+                                    className="p-1 text-neutral font-handjet-regular tracking-widest"
+                                >
+                                    #{item}
+                                </Text>
+                            ))}
+                    </ScrollView>
+                </View>
+            </View>
+        );
     };
 
     return (
         toggleModal && (
             <BlurView intensity={intensity || 5} tint="dark" className={className}>
                 {showComment ? (
-                    <View className="flex absolute top-15 w-[75%] h-[460px] border-[1px] border-[#00ffff] bg-dark300 rounded-2xl overflow-hidden justify-center items-center">
-                        <View className="w-full h-full justify-start items-center absolute">
-                            <Text className="text-neutral font-handjet-light text-xl">
-                                Comments
-                            </Text>
-                        </View>
-                        <View className="basis-[10%] px-2 w-full h-full flex-row justify-end items-center">
-                            <TouchableOpacity className="absolute w-[20%] h-full flex-row justify-center items-center">
-                                <IconButton
-                                    onPress={() => setShowComment(false)}
-                                    className="w-[45px] h-[45px] justify-center items-center"
-                                    IconSet="AntDesign"
-                                    iconName="closecircle"
-                                    iconSize={24}
-                                    iconColor={Colors.tertiary}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        <FlatList
-                            className="basis-3/4 w-full h-64"
-                            data={comments}
-                            keyExtractor={(item: DocumentData) => item.id}
-                            renderItem={({ item }) => (
-                                <View className="p-2">
-                                    <View className="flex-row">
-                                        <Text className="text-neutral font-handjet-light">
-                                            <Text className="text-secondary font-handjet-black tracking-widest">
-                                                {item.userId}
-                                            </Text>
-                                            : {item.comment}
-                                        </Text>
-                                    </View>
-                                    <View className="justify-between items-center flex-row">
-                                        <Text className="text-neutral font-handjet-light">
-                                            {item.timeStamp.toDate().toUTCString()}
-                                        </Text>
-                                        <TouchableOpacity
-                                            onPress={() => handleDeleteComment(item.id)}
-                                        >
-                                            <FontAwesome
-                                                name="trash-o"
-                                                size={20}
-                                                color={Colors.neutral200}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
+                    <View className="flex absolute top-15 w-[75%] h-[460px] border-[1px] border-tertiary bg-dark300 rounded-2xl overflow-hidden justify-center items-center">
+                        {!showCaptions ? (
+                            <View>
+                                <View className="w-full h-full justify-start items-center absolute">
+                                    <Text className="text-neutral font-handjet-light text-xl">
+                                        Comments
+                                    </Text>
                                 </View>
-                            )}
-                        />
+                                <View className="basis-[10%] px-2 w-full h-full flex-row justify-end items-center">
+                                    <IconButton
+                                        onPress={() => setShowComment(false)}
+                                        className="w-[45px] h-[45px] justify-center items-center"
+                                        IconSet="AntDesign"
+                                        iconName="closecircle"
+                                        iconSize={24}
+                                        iconColor={Colors.tertiary}
+                                    />
+                                </View>
+                                <FlatList
+                                    className="basis-3/4 w-100 h-64"
+                                    data={comments}
+                                    keyExtractor={(item: DocumentData) => item.id}
+                                    renderItem={({ item }) => (
+                                        <View className="p-2">
+                                            <View className="flex-row">
+                                                <Text className="text-neutral font-handjet-light">
+                                                    <Text className="text-secondary font-handjet-black tracking-widest">
+                                                        {item.userId}
+                                                    </Text>
+                                                    : {item.comment}
+                                                </Text>
+                                            </View>
+                                            <View className="justify-between items-center flex-row">
+                                                <Text className="text-neutral font-handjet-light">
+                                                    {item.timeStamp.toDate().toUTCString()}
+                                                </Text>
+                                                <IconButton
+                                                    onPress={() => handleDeleteComment(item.id)}
+                                                    IconSet="FontAwesome"
+                                                    iconSize={20}
+                                                    iconName="trash-o"
+                                                    iconColor={Colors.neutral200}
+                                                />
+                                            </View>
+                                        </View>
+                                    )}
+                                />
+                            </View>
+                        ) : (
+                            <RenderCaptionView />
+                        )}
                     </View>
                 ) : (
-                    <View className="absolute top-15 w-[75%] h-[460px] border-[1px] border-[#00ffff] bg-dark300 rounded-2xl overflow-hidden justify-center items-center">
+                    <View className="absolute top-15 w-[75%] h-[460px] border-[1px] border-tertiary bg-dark300 rounded-2xl overflow-hidden justify-center items-center">
                         <View className="w-full h-full justify-start items-center absolute">
                             {children}
                         </View>
@@ -247,37 +300,49 @@ const CustomModal: React.FC<ICustomModal> = ({
                                 </View>
                                 <View className="w-[250px] h-[50px] p-1 items-center flex-row">
                                     <View className="px-2 flex-row">
-                                        <TouchableOpacity onPress={handleLike}>
-                                            <AntDesign
-                                                name="like2"
-                                                size={24}
-                                                color={Colors.tertiary}
-                                            />
-                                        </TouchableOpacity>
+                                        <IconButton
+                                            onPress={handleLike}
+                                            IconSet="AntDesign"
+                                            iconName={feedback.likes ? 'like1' : 'like2'}
+                                            iconSize={24}
+                                            iconColor={Colors.tertiary}
+                                        />
                                         <Text className="px-1 text-neutral font-handjet-light">
-                                            {feedback.likes}
+                                            {feedback.likes ?? 0}
                                         </Text>
                                     </View>
                                     <View className="px-2 flex-row">
-                                        <TouchableOpacity onPress={handleDislike}>
-                                            <AntDesign
-                                                name="dislike2"
-                                                size={24}
-                                                color={Colors.tertiary}
-                                            />
-                                        </TouchableOpacity>
+                                        <IconButton
+                                            onPress={handleDislike}
+                                            IconSet="AntDesign"
+                                            iconName={feedback.dislikes ? 'dislike1' : 'dislike2'}
+                                            iconSize={24}
+                                            iconColor={Colors.tertiary}
+                                        />
                                         <Text className="px-1 text-neutral font-handjet-light">
-                                            {feedback.dislikes}
+                                            {feedback.dislikes ?? 0}
                                         </Text>
                                     </View>
                                     <View className="px-2 flex-row">
-                                        <TouchableOpacity onPress={handleShowCommentPress}>
-                                            <FontAwesome5
-                                                name="comment-alt"
-                                                size={24}
-                                                color={Colors.tertiary}
-                                            />
-                                        </TouchableOpacity>
+                                        <IconButton
+                                            onPress={handleShowCommentPress}
+                                            IconSet="FontAwesome5"
+                                            iconName="comment-alt"
+                                            iconSize={24}
+                                            iconColor={Colors.tertiary}
+                                        />
+                                    </View>
+                                    <View className="px-2 flex-row">
+                                        <IconButton
+                                            onPress={() => {
+                                                setShowCaptions(true);
+                                                setShowComment(true);
+                                            }}
+                                            IconSet="FontAwesome5"
+                                            iconName="hashtag"
+                                            iconSize={24}
+                                            iconColor={Colors.tertiary}
+                                        />
                                     </View>
                                 </View>
 
@@ -290,17 +355,17 @@ const CustomModal: React.FC<ICustomModal> = ({
                                         placeholderTextColor={Colors.neutral700}
                                         className="px-1 text-neutral font-handjet-light w-[220px]"
                                     />
-                                    {input.length >= 1 && (
-                                        <View className="w-100 justify-center items-center">
-                                            <TouchableOpacity onPress={handleSubmitPress}>
-                                                <Feather
-                                                    name="send"
-                                                    size={24}
-                                                    color={Colors.tertiary}
-                                                />
-                                            </TouchableOpacity>
-                                        </View>
-                                    )}
+                                    <View className="w-100 justify-center items-center">
+                                        <IconButton
+                                            onPress={handleSubmitPress}
+                                            IconSet="Feather"
+                                            iconName="send"
+                                            disabled={input ? false : true}
+                                            className={`${input ? 'opacity-1' : 'opacity-0'}`}
+                                            iconSize={24}
+                                            iconColor={Colors.tertiary}
+                                        />
+                                    </View>
                                 </View>
                             </View>
                         )}
