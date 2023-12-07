@@ -1,7 +1,15 @@
-import { AntDesign, Feather, FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign, Feather, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import { DocumentData, addDoc, collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
-import dummyComments from '../../test/DummyComment';
+import {
+    DocumentData,
+    addDoc,
+    collection,
+    deleteDoc,
+    doc,
+    getDoc,
+    getDocs,
+    setDoc,
+} from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import {
     FlatList,
@@ -76,8 +84,19 @@ const CustomModal: React.FC<ICustomModal> = ({
             setComments(comments);
         };
         //fetchReactions();
-        // fetchComments();
+        //fetchComments();
     }, [currentPicture, fetch]);
+
+    const handleDeleteComment = async (commentId: string) => {
+        //console.info(commentId);
+        if (currentPicture?.id === undefined) {
+            return alert('Comment does not exist!');
+        }
+        // Collection(comments) -> Document(pictureId) -> Sub collection (commentId)
+        const commentRef = doc(firebase_db, commentsDoc, currentPicture.id, commentsDoc, commentId);
+        await deleteDoc(commentRef);
+        setComments((prev) => prev.filter((com) => com.id !== commentId));
+    };
 
     const handleOnPressClose = () => {
         onPress && onPress();
@@ -92,10 +111,11 @@ const CustomModal: React.FC<ICustomModal> = ({
     const handleCommentChange = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
         setInput(e.nativeEvent.text);
     };
+
     const handleShowCommentPress = () => {
         setShowComment((prev) => !prev);
-        console.log(showComment);
     };
+
     const handleSubmitPress = () => {
         if (currentPicture?.id === undefined) {
             return alert('Picture does not exist!');
@@ -106,44 +126,47 @@ const CustomModal: React.FC<ICustomModal> = ({
     const handleLike = () => {
         updateFirestoreReaction(true);
     };
+
     const handleDislike = () => {
         updateFirestoreReaction(false);
     };
 
     const updateFirestoreReaction = async (state: boolean) => {
-        if (currentPicture?.id !== undefined) {
-            const pictureRef = doc(firebase_db, reactionsDoc, currentPicture.id);
-
-            const reactionDoc = await getDoc(pictureRef);
-            setFeedback((prev) => {
-                return {
-                    likes: (prev.likes = reactionDoc.data()?.likes),
-                    dislikes: (prev.dislikes = reactionDoc.data()?.dislikes),
-                };
-            });
-
-            // user can either like or dislike
-            let like = state ? 1 : -1;
-            let dislike = state ? -1 : 1;
-
-            // guard not below 0
-            like = like < 0 ? 0 : like;
-            dislike = dislike < 0 ? 0 : dislike;
-            await setDoc(
-                pictureRef,
-                {
-                    likes: like,
-                    dislikes: dislike,
-                    pictureId: currentPicture.id,
-                    userId: 'User123',
-                },
-                { merge: true }
-            );
-            setFetch(true);
+        if (currentPicture?.id === undefined) {
+            return alert('Picture does not exist!');
         }
+        const pictureRef = doc(firebase_db, reactionsDoc, currentPicture.id);
+
+        const reactionDoc = await getDoc(pictureRef);
+        setFeedback((prev) => {
+            return {
+                likes: (prev.likes = reactionDoc.data()?.likes),
+                dislikes: (prev.dislikes = reactionDoc.data()?.dislikes),
+            };
+        });
+
+        // user can either like or dislike
+        let like = state ? 1 : -1;
+        let dislike = state ? -1 : 1;
+
+        // guard not below 0
+        like = like < 0 ? 0 : like;
+        dislike = dislike < 0 ? 0 : dislike;
+        await setDoc(
+            pictureRef,
+            {
+                likes: like,
+                dislikes: dislike,
+                pictureId: currentPicture.id,
+                userId: 'User123',
+            },
+            { merge: true }
+        );
+        setFetch(true);
     };
+
     const updateFirestoreComments = async (pictureId: string, userId: string) => {
-        console.log(input);
+        //console.table(input);
         const pictureRef = doc(firebase_db, commentsDoc, pictureId);
         const commentCol = collection(pictureRef, commentsDoc);
         await addDoc(commentCol, {
@@ -154,6 +177,7 @@ const CustomModal: React.FC<ICustomModal> = ({
         });
         setInput('');
     };
+
     return (
         toggleModal && (
             <BlurView intensity={intensity || 5} tint="dark" className={className}>
@@ -177,8 +201,8 @@ const CustomModal: React.FC<ICustomModal> = ({
                             </TouchableOpacity>
                         </View>
                         <FlatList
-                            className="basis-3/4 w-full h-64 border-2 border-[#Faa]"
-                            data={dummyComments}
+                            className="basis-3/4 w-full h-64"
+                            data={comments}
                             keyExtractor={(item: DocumentData) => item.id}
                             renderItem={({ item }) => (
                                 <View className="p-2">
@@ -190,9 +214,20 @@ const CustomModal: React.FC<ICustomModal> = ({
                                             : {item.comment}
                                         </Text>
                                     </View>
-                                    <Text className="text-neutral font-handjet-light">
-                                        {item.timeStamp.toUTCString()}
-                                    </Text>
+                                    <View className="justify-between items-center flex-row">
+                                        <Text className="text-neutral font-handjet-light">
+                                            {item.timeStamp.toDate().toUTCString()}
+                                        </Text>
+                                        <TouchableOpacity
+                                            onPress={() => handleDeleteComment(item.id)}
+                                        >
+                                            <FontAwesome
+                                                name="trash-o"
+                                                size={20}
+                                                color={Colors.neutral200}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             )}
                         />
@@ -236,7 +271,7 @@ const CustomModal: React.FC<ICustomModal> = ({
                                         </Text>
                                     </View>
                                     <View className="px-2 flex-row">
-                                        <TouchableOpacity onPress={() => setShowComment(true)}>
+                                        <TouchableOpacity onPress={handleShowCommentPress}>
                                             <FontAwesome5
                                                 name="comment-alt"
                                                 size={24}
@@ -245,7 +280,7 @@ const CustomModal: React.FC<ICustomModal> = ({
                                         </TouchableOpacity>
                                     </View>
                                 </View>
-                                
+
                                 <View className="w-[250px] h-[60px] overflow-hidden flex-row">
                                     <TextInput
                                         onChange={handleCommentChange}
