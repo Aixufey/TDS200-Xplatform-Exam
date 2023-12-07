@@ -8,10 +8,10 @@ import {
 import { Asset, addAssetsToAlbumAsync, createAlbumAsync, getAlbumAsync } from 'expo-media-library';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
+import { useUploadImageToFirebase, coordinates } from '../useUploadImageToFirebase';
 import { TDS200 } from '../../constants';
 import { useGalleryContext } from '../../context';
 import { useManipulateImage } from '../useManipulateImage';
-import { useUploadImageToFirebase } from '../useUploadImageToFirebase';
 
 // Type definitions is taken from Expo Camera
 export type ProImageType = {
@@ -45,11 +45,18 @@ export type BroImageType = {
 };
 export type MergedImageType = BroImageType & ProImageType & Partial<ImagePickerAsset>;
 export type BucketListType = Pick<MergedImageType, 'id' | 'uri' | 'coordinates' | 'exif'>;
+type CacheData = {
+    id: string;
+    blob: Blob;
+    exif: Partial<MediaTrackSettings> | any;
+    coordinates: coordinates;
+};
 const useLaunchCamera = () => {
     const [DoesNotWorkUsingMyOwnState, requestPermission] = useCameraPermissions();
     const [hasPermission, setHasPermission] = useState<boolean>(false);
     const broCameraRef = useRef<Camera>(null);
-    const { handleTakenPictures, setCurrentPicture } = useGalleryContext();
+    const { handleTakenPictures, setCurrentPicture, currentPicture } = useGalleryContext();
+    const [cacheData, setCacheData] = useState<CacheData | undefined>(undefined);
 
     const fetchCamera = useCallback(async () => {
         try {
@@ -91,6 +98,20 @@ const useLaunchCamera = () => {
             setCurrentPicture(proWithId);
             handleTakenPictures(proWithId);
         }
+    };
+
+    /**
+     * Upload snapshot on save.
+     * Could have solve it differently, but it works🤷‍♂️
+     */
+    const handleSubmitPhoto = async () => {
+        if (cacheData === undefined) {
+            return alert(`No cache data`);
+        }
+        await useUploadImageToFirebase(cacheData.id, cacheData.blob, cacheData.exif, {
+            latitude: cacheData.coordinates.latitude,
+            longitude: cacheData.coordinates.longitude,
+        })
     };
 
     /**
@@ -153,11 +174,22 @@ const useLaunchCamera = () => {
                      */
                     const resp = await fetch(uri);
                     const blob = await resp.blob();
-                    await useUploadImageToFirebase(compressedBroWithId.id, blob, exif, {
-                        latitude: compressedBroWithId.latitude,
-                        longitude: compressedBroWithId.longitude,
-                    });
+
+                    // await useUploadImageToFirebase(compressedBroWithId.id, blob, exif, {
+                    //     latitude: compressedBroWithId.latitude,
+                    //     longitude: compressedBroWithId.longitude,
+                    // });
                     handleTakenPictures(compressedBroWithId);
+                    // Cache the data when user is satisfied with captions then save on demand.
+                    setCacheData({
+                        id: compressedBroWithId.id,
+                        blob,
+                        exif,
+                        coordinates: {
+                            latitude: compressedBroWithId.latitude,
+                            longitude: compressedBroWithId.longitude,
+                        },
+                    });
                 }
             }
         } catch (e) {
@@ -167,6 +199,7 @@ const useLaunchCamera = () => {
 
     return {
         broCameraRef,
+        handleSubmitPhoto,
         handleLaunchCameraPro,
         handleLaunchCameraBro,
     };

@@ -5,7 +5,7 @@ import { bucketURl } from '../../constants';
  * Helper: Expecting a binary large object and upload to fire storage
  * @param blob
  */
-interface coordinates {
+export interface coordinates {
     latitude: number;
     longitude: number;
 }
