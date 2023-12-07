@@ -355,17 +355,17 @@ const CustomModal: React.FC<ICustomModal> = ({
                                         placeholderTextColor={Colors.neutral700}
                                         className="px-1 text-neutral font-handjet-light w-[220px]"
                                     />
-                                    {input.length >= 1 && (
-                                        <View className="w-100 justify-center items-center">
-                                            <IconButton
-                                                onPress={handleSubmitPress}
-                                                IconSet="Feather"
-                                                iconName="send"
-                                                iconSize={24}
-                                                iconColor={Colors.tertiary}
-                                            />
-                                        </View>
-                                    )}
+                                    <View className="w-100 justify-center items-center">
+                                        <IconButton
+                                            onPress={handleSubmitPress}
+                                            IconSet="Feather"
+                                            iconName="send"
+                                            disabled={input ? false : true}
+                                            className={`${input ? 'opacity-1' : 'opacity-0'}`}
+                                            iconSize={24}
+                                            iconColor={Colors.tertiary}
+                                        />
+                                    </View>
                                 </View>
                             </View>
                         )}

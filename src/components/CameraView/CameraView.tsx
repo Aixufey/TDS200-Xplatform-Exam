@@ -10,7 +10,7 @@ import DesignSystem from '../../styles';
 import { Button, IconButton } from '../Button';
 import { CustomModal } from '../Modal';
 const CameraView: React.FC = () => {
-    const { handleLaunchCameraBro, broCameraRef } = useLaunchCamera();
+    const { handleLaunchCameraBro, broCameraRef, handleSubmitPhoto } = useLaunchCamera();
     const { currentPicture } = useGalleryContext();
     const [togglePreviewModal, setTogglePreviewModal] = useState<boolean>(false);
     const [togglePictureModal, setTogglePictureModal] = useState<boolean>(false);
@@ -43,7 +43,14 @@ const CameraView: React.FC = () => {
         setCaptions([]);
     }
 
+    /**
+     * Upload cacheData from taken snapshot on save
+     * Upload captions if any
+     * Close Picture modal
+     * Imperative reset for new captions
+     */
     const handleSavePress = () => {
+        handleSubmitPhoto();
         updateFirestoreCaptions();
         handleTogglePictureModal();
         setCaptions([]);
@@ -83,7 +90,7 @@ const CameraView: React.FC = () => {
         setInput(txt);
     };
 
-    const RenderPreviewModal: React.FC = () => {
+    const renderPreviewModal = () => {
         return (
             togglePreviewModal && (
                 <CustomModal
@@ -95,7 +102,7 @@ const CameraView: React.FC = () => {
         );
     };
 
-    const RenderPictureModal: React.FC = () => {
+    const renderPictureModal = () => {
         return (
             togglePictureModal && (
                 <Modal
@@ -214,9 +221,9 @@ const CameraView: React.FC = () => {
                         iconColor={Colors.neutral100}
                     />
                 </View>
-                {<RenderPreviewModal />}
+                {renderPreviewModal()}
             </View>
-            {<RenderPictureModal />}
+            {renderPictureModal()}
         </View>
     );
 };
