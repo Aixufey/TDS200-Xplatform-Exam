@@ -4,28 +4,28 @@ This is the Exam 2023 in Cross-platform at Høyskolen Kristiania.<br />
 The project will fail to run if `.env` for **Firebase** is not configured.<br />
 Rename the `.env template` and set it up with your Firebase application configuration.
 
-- [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
-  - [Introduction](#introduction)
-  - [Issues \& bugs](#issues--bugs)
-  - [Dependencies](#dependencies)
-    - [Expo](#expo)
-    - [Expo-Blur](#expo-blur)
-    - [Firebase](#firebase)
-    - [Image Manipulator](#image-manipulator)
-    - [Fonts](#fonts)
-    - [Linear Gradient](#linear-gradient)
-    - [Local storage](#local-storage)
-    - [Expo Location](#expo-location)
-    - [Media Library](#media-library)
-    - [Navigation](#navigation)
-    - [Prettier](#prettier)
-    - [React Native dotenv](#react-native-dotenv)
-    - [Splash screen](#splash-screen)
-    - [Safe Area](#safe-area)
-    - [TailWind \& NativeWind](#tailwind--nativewind)
-    - [Vector Icons](#vector-icons)
-  - [GitHooks](#githooks)
-    - [Instructions](#instructions)
+-   [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
+    -   [Introduction](#introduction)
+    -   [Issues \& bugs](#issues--bugs)
+    -   [Dependencies](#dependencies)
+        -   [Expo](#expo)
+        -   [Expo-Blur](#expo-blur)
+        -   [Firebase](#firebase)
+        -   [Image Manipulator](#image-manipulator)
+        -   [Fonts](#fonts)
+        -   [Linear Gradient](#linear-gradient)
+        -   [Local storage](#local-storage)
+        -   [Expo Location](#expo-location)
+        -   [Media Library](#media-library)
+        -   [Navigation](#navigation)
+        -   [Prettier](#prettier)
+        -   [React Native dotenv](#react-native-dotenv)
+        -   [Splash screen](#splash-screen)
+        -   [Safe Area](#safe-area)
+        -   [TailWind \& NativeWind](#tailwind--nativewind)
+        -   [Vector Icons](#vector-icons)
+    -   [GitHooks](#githooks)
+        -   [Instructions](#instructions)
 
 ## Introduction
 
@@ -113,20 +113,20 @@ The local storage works exactly like on web browser where we can store data in f
 
 Expo location allows reading geolocation using `npx expo install expo-location`
 Setting configuration inside **app.json/app.config.js**
+
 ```json
 {
-  "expo": {
-    "plugins": [
-      [
-        "expo-location",
-        {
-          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
-        }
-      ]
-    ]
-  }
+    "expo": {
+        "plugins": [
+            [
+                "expo-location",
+                {
+                    "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+                }
+            ]
+        ]
+    }
 }
-
 ```
 
 ---
@@ -134,6 +134,12 @@ Setting configuration inside **app.json/app.config.js**
 ### [Media Library](https://docs.expo.dev/versions/latest/sdk/media-library/)
 
 The photo asset can be saved to album using `npx expo install expo-media-library` and store the image object as **uri**
+
+---
+
+### [Map View](https://github.com/react-native-maps/react-native-maps/blob/master/docs/installation.md)
+
+Using React Native Map for showing geolocation. `"npm install react-native-maps@1.7.1` using latest version will cause current dependencies to break. For Android SDK, iOS SDK we need GCP developer API key.
 
 ---
 
