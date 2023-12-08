@@ -84,7 +84,7 @@ const useLaunchCamera = () => {
     useEffect(() => {
         fetchCamera();
         //console.log(captions);
-        console.info(coords)
+        console.info(coords);
     }, [captions, fetchCamera, hasPermission, coords]);
 
     const handleLaunchCameraPro = async () => {
@@ -184,7 +184,7 @@ const useLaunchCamera = () => {
                         id: uniqueId,
                         ...compressedBro,
                         latitude: coords.latitude,
-                        longitude: coords.longitude
+                        longitude: coords.longitude,
                     };
                     // For Modal preview
                     setCurrentPicture(compressedBroWithId);

@@ -178,8 +178,8 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
     };
 
     /**
-     * Refactored helper func to set favorite 
-     * @param input 
+     * Refactored helper func to set favorite
+     * @param input
      */
     const handleStoreFavorite = async (input: MergedImageType[]) => {
         await AsyncStorage.setItem(favoriteItems, JSON.stringify(input));

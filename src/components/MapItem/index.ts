@@ -1,4 +1,2 @@
-import MapItem from "./MapItem";
-export {
-    MapItem
-}
+import MapItem from './MapItem';
+export { MapItem };

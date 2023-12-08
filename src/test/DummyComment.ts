@@ -1,4 +1,4 @@
-import { DocumentData } from "firebase/firestore";
+import { DocumentData } from 'firebase/firestore';
 
 const dummyComment = [
     {
