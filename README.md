@@ -1,30 +1,31 @@
 # TDS200-Xplatform-Exam
 
 This is the Exam 2023 in Cross-platform at Høyskolen Kristiania.<br />
-The project will fail to run if `.env` for **Firebase** is not configured.<br /> 
+The project will fail to run if `.env` for **Firebase** is not configured.<br />
 Rename the `.env template` and set it up with your Firebase application configuration.
 
--   [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
-    -   [Introduction](#introduction)
-    -   [Issues \& bugs](#issues--bugs)
-    -   [Dependencies](#dependencies)
-        -   [Expo](#expo)
-        -   [Expo-Blur](#expo-blur)
-        -   [Firebase](#firebase)
-        -   [Image Manipulator](#image-manipulator)
-        -   [Fonts](#fonts)
-        -   [Linear Gradient](#linear-gradient)
-        -   [Local storage](#local-storage)
-        -   [Media Library](#media-library)
-        -   [Navigation](#navigation)
-        -   [Prettier](#prettier)
-        -   [React Native dotenv](#react-native-dotenv)
-        -   [Splash screen](#splash-screen)
-        -   [Safe Area](#safe-area)
-        -   [TailWind \& NativeWind](#tailwind--nativewind)
-        -   [Vector Icons](#vector-icons)
-    -   [GitHooks](#githooks)
-        -   [Instructions](#instructions)
+- [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
+  - [Introduction](#introduction)
+  - [Issues \& bugs](#issues--bugs)
+  - [Dependencies](#dependencies)
+    - [Expo](#expo)
+    - [Expo-Blur](#expo-blur)
+    - [Firebase](#firebase)
+    - [Image Manipulator](#image-manipulator)
+    - [Fonts](#fonts)
+    - [Linear Gradient](#linear-gradient)
+    - [Local storage](#local-storage)
+    - [Expo Location](#expo-location)
+    - [Media Library](#media-library)
+    - [Navigation](#navigation)
+    - [Prettier](#prettier)
+    - [React Native dotenv](#react-native-dotenv)
+    - [Splash screen](#splash-screen)
+    - [Safe Area](#safe-area)
+    - [TailWind \& NativeWind](#tailwind--nativewind)
+    - [Vector Icons](#vector-icons)
+  - [GitHooks](#githooks)
+    - [Instructions](#instructions)
 
 ## Introduction
 
@@ -105,6 +106,28 @@ React Native does not support gradients. We use Expo-LinearGradient from `npx ex
 ### [Local storage](https://react-native-async-storage.github.io/async-storage/docs/usage)
 
 The local storage works exactly like on web browser where we can store data in form of key and value pairs. &nbsp;&nbsp; Install via `npm install @react-native-async-storage/async-storage`.
+
+---
+
+### [Expo Location](https://docs.expo.dev/versions/latest/sdk/location/)
+
+Expo location allows reading geolocation using `npx expo install expo-location`
+Setting configuration inside **app.json/app.config.js**
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+    ]
+  }
+}
+
+```
 
 ---
 

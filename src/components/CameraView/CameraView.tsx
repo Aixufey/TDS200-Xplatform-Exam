@@ -1,6 +1,7 @@
 import { Camera, CameraType } from 'expo-camera';
+import * as Location from 'expo-location';
 import { doc, setDoc } from 'firebase/firestore';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { captionsDoc } from '../../constants';
 import { useGalleryContext } from '../../context';
@@ -10,7 +11,8 @@ import DesignSystem from '../../styles';
 import { Button, IconButton } from '../Button';
 import { CustomModal } from '../Modal';
 const CameraView: React.FC = () => {
-    const { handleLaunchCameraBro, broCameraRef, handleSubmitPhoto, updateCaptions } = useLaunchCamera();
+    const { handleLaunchCameraBro, broCameraRef, handleSubmitPhoto, updateCaptions, setCoords } =
+        useLaunchCamera();
     const { currentPicture } = useGalleryContext();
     const [togglePreviewModal, setTogglePreviewModal] = useState<boolean>(false);
     const [togglePictureModal, setTogglePictureModal] = useState<boolean>(false);
@@ -19,6 +21,25 @@ const CameraView: React.FC = () => {
     const [captions, setCaptions] = useState<string[]>([]);
     const { Colors } = DesignSystem();
     const { firebase_db } = useFireBase();
+    const [location, setLocation] = useState<any>();
+    // refactor this into hook and save localstorage for permission
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            // console.log(status);
+
+            let location = await Location.getCurrentPositionAsync({
+                //accuracy: Location.Accuracy.Highest,
+            });
+            console.log('lat ', location.coords.latitude);
+            console.log('long ', location.coords.longitude);
+            setCoords({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+            });
+            setLocation(location);
+        })();
+    }, []);
 
     const handleTogglePreviewModal = () => {
         if (!currentPicture) return;
@@ -41,7 +62,7 @@ const CameraView: React.FC = () => {
     const handleCancelPress = () => {
         handleTogglePictureModal();
         setCaptions([]);
-    }
+    };
 
     /**
      * Upload cacheData from taken snapshot on save
@@ -77,20 +98,20 @@ const CameraView: React.FC = () => {
     };
 
     /**
-     * 
+     *
      * Arbitrary decision to uplift the captions during submissions instead of making extra firebase calls
      * Usually you would normalize the table, but in this case this is the easiest solution🤷‍♂️
      * States in React are always async, so explicit returning the data will assure updateCaption receive most recent data.
      */
     const handleDeleteCaption = (item: string) => {
-        setCaptions(prevCaptions => {
+        setCaptions((prevCaptions) => {
             const updatedCaptions = prevCaptions.filter((i) => i !== item);
             updateCaptions(updatedCaptions);
             return updatedCaptions;
         });
     };
     const handleCaptionPress = () => {
-        setCaptions(prevCaptions => {
+        setCaptions((prevCaptions) => {
             const updatedCaptions = [input, ...prevCaptions];
             updateCaptions(updatedCaptions);
             return updatedCaptions;
