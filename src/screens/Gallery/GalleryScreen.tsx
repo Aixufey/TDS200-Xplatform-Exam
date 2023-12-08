@@ -75,12 +75,13 @@ const GalleryScreen: React.FC = () => {
     };
 
     const handleTextChange = (input: string) => {
+        let santize = input.toLowerCase().trim();
         setInput(input);
         if (input) {
             const filter = bucket.filter(
                 (item) =>
                     item.captions?.some((cap) =>
-                        cap.toLowerCase().trim().includes(input.toLowerCase().trim())
+                        cap.toLowerCase().trim().includes(santize)
                     )
             );
             updateData(filter);
