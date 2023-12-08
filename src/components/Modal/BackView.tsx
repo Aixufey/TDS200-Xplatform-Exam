@@ -18,8 +18,8 @@ const BackView: React.FC<IBackView> = ({ children, id, uri, coordinates }) => {
                     Long: {coordinates?.longitude} - Lat: {coordinates?.latitude}
                 </Text>
             </View>
-            <View className="flex-auto h-[50%] w-[95%] border-tertiary border-[0.3px] rounded-md justify-center items-center">
                 <Text className="font-handjet-light text-neutral">Map</Text>
+            <View className="flex-auto h-[75%] w-[95%] border-tertiary border-[2px] mb-2 rounded-md justify-center items-center">
                 {children}
             </View>
         </View>

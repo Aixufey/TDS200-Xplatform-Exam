@@ -26,6 +26,7 @@ import { useFireBase } from '../../context/FireBaseContext.tsx';
 import DesignSystem from '../../styles';
 import { IconButton } from '../Button';
 import BackView from './BackView';
+import { MapItem } from '../MapItem';
 interface ICustomModal {
     intensity?: number;
     children?: React.ReactNode;
@@ -380,7 +381,17 @@ const CustomModal: React.FC<ICustomModal> = ({
                                     longitude: currentPicture.coordinates?.longitude,
                                     latitude: currentPicture.coordinates?.latitude,
                                 }}
-                            />
+                            >
+                                <MapItem
+                                    className="w-[100%] h-[100%] rounded-xl"
+                                    title="Pyongyang"
+                                    description="Pyongyang, North Korea"
+                                    coordinate={{
+                                        latitude: Number(currentPicture.coordinates?.latitude),
+                                        longitude: Number(currentPicture.coordinates?.longitude)
+                                    }}
+                                />
+                            </BackView>
                         )}
 
                         <View className="absolute top-0 right-0 h-[15%] flex-row justify-end items-center">
