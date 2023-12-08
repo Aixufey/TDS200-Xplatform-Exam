@@ -1,7 +1,7 @@
 import { requestPermissionsAsync } from 'expo-media-library';
 import { useCallback, useState } from 'react';
 /**
- * 
+ *
  * @returns permission response and request for permission function
  */
 const useRequestPermission = () => {

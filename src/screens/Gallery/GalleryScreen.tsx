@@ -44,7 +44,7 @@ const GalleryScreen: React.FC = () => {
             }
         };
         const fetchData = async () => {
-            await fetchBucketList()
+            await fetchBucketList();
             updateData(bucket);
         };
         checkPermission();
@@ -79,10 +79,7 @@ const GalleryScreen: React.FC = () => {
         setInput(input);
         if (input) {
             const filter = bucket.filter(
-                (item) =>
-                    item.captions?.some((cap) =>
-                        cap.toLowerCase().trim().includes(santize)
-                    )
+                (item) => item.captions?.some((cap) => cap.toLowerCase().trim().includes(santize))
             );
             updateData(filter);
         } else {

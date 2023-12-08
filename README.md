@@ -4,28 +4,28 @@ This is the Exam 2023 in Cross-platform at Høyskolen Kristiania.<br />
 The project will fail to run if `.env` for **Firebase** is not configured.<br />
 Rename the `.env template` and set it up with your Firebase application configuration.
 
--   [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
-    -   [Introduction](#introduction)
-    -   [Issues \& bugs](#issues--bugs)
-    -   [Dependencies](#dependencies)
-        -   [Expo](#expo)
-        -   [Expo-Blur](#expo-blur)
-        -   [Firebase](#firebase)
-        -   [Image Manipulator](#image-manipulator)
-        -   [Fonts](#fonts)
-        -   [Linear Gradient](#linear-gradient)
-        -   [Local storage](#local-storage)
-        -   [Expo Location](#expo-location)
-        -   [Media Library](#media-library)
-        -   [Navigation](#navigation)
-        -   [Prettier](#prettier)
-        -   [React Native dotenv](#react-native-dotenv)
-        -   [Splash screen](#splash-screen)
-        -   [Safe Area](#safe-area)
-        -   [TailWind \& NativeWind](#tailwind--nativewind)
-        -   [Vector Icons](#vector-icons)
-    -   [GitHooks](#githooks)
-        -   [Instructions](#instructions)
+- [TDS200-Xplatform-Exam](#tds200-xplatform-exam)
+  - [Introduction](#introduction)
+  - [Issues \& bugs](#issues--bugs)
+  - [Dependencies](#dependencies)
+    - [Expo](#expo)
+    - [Expo-Blur](#expo-blur)
+    - [Firebase](#firebase)
+    - [Image Manipulator](#image-manipulator)
+    - [Fonts](#fonts)
+    - [Linear Gradient](#linear-gradient)
+    - [Local storage](#local-storage)
+    - [Expo Location](#expo-location)
+    - [Media Library](#media-library)
+    - [Navigation](#navigation)
+    - [Prettier](#prettier)
+    - [React Native dotenv](#react-native-dotenv)
+    - [Splash screen](#splash-screen)
+    - [Safe Area](#safe-area)
+    - [TailWind \& NativeWind](#tailwind--nativewind)
+    - [Vector Icons](#vector-icons)
+  - [GitHooks](#githooks)
+    - [Instructions](#instructions)
 
 ## Introduction
 
@@ -285,12 +285,12 @@ A library that provides various vector icons via `npm i @expo/vector-icons` &nbs
 
 ## GitHooks
 
--   GitHooks is running a bash script named `post-checkout.sh` that does pulling from remote branch
+- GitHooks is running a bash script named `post-checkout.sh` that does pulling from remote branch
     asserting that you are always developing from the latest update.
--   This will reduce the merge conflict to a certain extent.
+- This will reduce the merge conflict to a certain extent.
     Developers will be able to branch out new features from the "developer" branch.
--   Hooks are running locally inside hidden folder .git/hooks when a git repository is initialized.
--   In order to provide the team with the hooks in their environment, a symbolic link has to be created.
+- Hooks are running locally inside hidden folder .git/hooks when a git repository is initialized.
+- In order to provide the team with the hooks in their environment, a symbolic link has to be created.
 
 ### Instructions
 
@@ -300,5 +300,5 @@ A library that provides various vector icons via `npm i @expo/vector-icons` &nbs
 4. `ln -s -f ../../githooks/post-switch.sh .git/hooks/post-switch`<br />
 5. Make sure .sh has permissions `chmod +x .git/hooks/post-*`
 
--   The Hooks should be working now with both commands like `switch` or `checkout` whichever the developer prefers. It may be tested running `git checkout developer` and you should see a prompt "_Checked out developer branch, pulling latest from origin/developer..._"
--   `ln` links in Unix `-s` pointer to a file `-f` force override <br />
+- The Hooks should be working now with both commands like `switch` or `checkout` whichever the developer prefers. It may be tested running `git checkout developer` and you should see a prompt "_Checked out developer branch, pulling latest from origin/developer..._"
+- `ln` links in Unix `-s` pointer to a file `-f` force override <br />

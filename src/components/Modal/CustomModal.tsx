@@ -388,7 +388,7 @@ const CustomModal: React.FC<ICustomModal> = ({
                                     description="Pyongyang, North Korea"
                                     coordinate={{
                                         latitude: Number(currentPicture.coordinates?.latitude),
-                                        longitude: Number(currentPicture.coordinates?.longitude)
+                                        longitude: Number(currentPicture.coordinates?.longitude),
                                     }}
                                 />
                             </BackView>
