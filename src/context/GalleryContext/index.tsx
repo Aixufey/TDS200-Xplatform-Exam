@@ -58,18 +58,18 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
     }, []);
 
     // Debugging
-    useEffect(() => {
-        // console.log(`Pressed `, isPress)
-        // console.log(`LongPress `, isLongPress)
-        // console.log(data.length);
-        // console.log('Current selected length ', selectedPictures.length);
-        // console.log('current Picture? ', currentPicture);
-        // console.log('Favorites', favorite);
-        // console.log('favorite length', favorite.length);
-        // console.log(`pictures `, pictures.length);
-        // console.log('Current selected length', selectedPictures.length);
-        // console.log('Current selected', selectedPictures);
-    }, [takenPictures, currentPicture, isLongPress, isPress, selectedPictures]);
+    // useEffect(() => {
+    //     // console.log(`Pressed `, isPress)
+    //     // console.log(`LongPress `, isLongPress)
+    //     // console.log("data length ", data?.length);
+    //     // console.log('Current selected length ', selectedPictures.length);
+    //     // console.log('current Picture? ', currentPicture);
+    //     // console.log('Favorites', favorite);
+    //     // console.log('favorite length', favorite.length);
+    //     // console.log(`pictures `, pictures.length);
+    //     // console.log('Current selected length', selectedPictures.length);
+    //     // console.log('Current selected', selectedPictures);
+    // }, [takenPictures, data, currentPicture, isLongPress, isPress, selectedPictures]);
 
     /**
      *

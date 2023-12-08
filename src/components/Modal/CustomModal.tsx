@@ -123,7 +123,8 @@ const CustomModal: React.FC<ICustomModal> = ({
     };
 
     const handleCommentChange = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-        setInput(e.nativeEvent.text);
+        let sanitize = e.nativeEvent.text.toLowerCase().trim();
+        setInput(sanitize);
     };
 
     const handleShowCommentPress = () => {
@@ -348,6 +349,7 @@ const CustomModal: React.FC<ICustomModal> = ({
 
                                 <View className="w-[250px] h-[60px] overflow-hidden flex-row">
                                     <TextInput
+                                        value={input}
                                         onChange={handleCommentChange}
                                         multiline={true}
                                         numberOfLines={10}

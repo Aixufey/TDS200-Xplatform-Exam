@@ -8,10 +8,10 @@ import {
 import { Asset, addAssetsToAlbumAsync, createAlbumAsync, getAlbumAsync } from 'expo-media-library';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
-import { useUploadImageToFirebase, coordinates } from '../useUploadImageToFirebase';
 import { TDS200 } from '../../constants';
 import { useGalleryContext } from '../../context';
 import { useManipulateImage } from '../useManipulateImage';
+import { coordinates, useUploadImageToFirebase } from '../useUploadImageToFirebase';
 
 // Type definitions is taken from Expo Camera
 export type ProImageType = {
@@ -30,6 +30,7 @@ export type ProImageType = {
         longitude?: number | undefined;
         latitude?: number | undefined;
     };
+    captions?: string[];
 };
 export type BroImageType = {
     id: string;
@@ -42,9 +43,13 @@ export type BroImageType = {
         longitude?: number | undefined;
         latitude?: number | undefined;
     };
+    captions?: string[];
 };
 export type MergedImageType = BroImageType & ProImageType & Partial<ImagePickerAsset>;
-export type BucketListType = Pick<MergedImageType, 'id' | 'uri' | 'coordinates' | 'exif'>;
+export type BucketListType = Pick<
+    MergedImageType,
+    'id' | 'uri' | 'coordinates' | 'exif' | 'captions'
+>;
 type CacheData = {
     id: string;
     blob: Blob;
@@ -57,6 +62,7 @@ const useLaunchCamera = () => {
     const broCameraRef = useRef<Camera>(null);
     const { handleTakenPictures, setCurrentPicture, currentPicture } = useGalleryContext();
     const [cacheData, setCacheData] = useState<CacheData | undefined>(undefined);
+    const [captions, setCaptions] = useState<string[]>([]);
 
     const fetchCamera = useCallback(async () => {
         try {
@@ -73,7 +79,8 @@ const useLaunchCamera = () => {
 
     useEffect(() => {
         fetchCamera();
-    }, [fetchCamera, hasPermission]);
+        console.log(captions);
+    }, [captions, fetchCamera, hasPermission]);
 
     const handleLaunchCameraPro = async () => {
         if (!hasPermission) return Alert.alert(`Camera access not granted.`);
@@ -100,6 +107,10 @@ const useLaunchCamera = () => {
         }
     };
 
+    const updateCaptions = (input: string[]) => {
+        setCaptions(input);
+    };
+
     /**
      * Upload snapshot on save.
      * Could have solve it differently, but it works🤷‍♂️
@@ -108,10 +119,17 @@ const useLaunchCamera = () => {
         if (cacheData === undefined) {
             return alert(`No cache data`);
         }
-        await useUploadImageToFirebase(cacheData.id, cacheData.blob, cacheData.exif, {
-            latitude: cacheData.coordinates.latitude,
-            longitude: cacheData.coordinates.longitude,
-        })
+        console.log('saving captions to db', captions.length);
+        await useUploadImageToFirebase(
+            cacheData.id,
+            cacheData.blob,
+            cacheData.exif,
+            {
+                latitude: cacheData.coordinates.latitude,
+                longitude: cacheData.coordinates.longitude,
+            },
+            captions
+        );
     };
 
     /**
@@ -202,6 +220,7 @@ const useLaunchCamera = () => {
         handleSubmitPhoto,
         handleLaunchCameraPro,
         handleLaunchCameraBro,
+        updateCaptions,
     };
 };
 export default useLaunchCamera;
