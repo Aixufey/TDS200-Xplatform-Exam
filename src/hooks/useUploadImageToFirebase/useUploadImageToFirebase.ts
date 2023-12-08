@@ -12,8 +12,9 @@ export interface coordinates {
 const useUploadImageToFirebase = async (
     name: string,
     blob: Blob,
-    exif?: Partial<MediaTrackSettings> | any,
-    coordinates?: coordinates
+    exif: Partial<MediaTrackSettings> | any,
+    coordinates: coordinates,
+    captions: string[],
 ) => {
     try {
         const storage = await getStorage();
@@ -27,6 +28,7 @@ const useUploadImageToFirebase = async (
             customMetadata: {
                 exif: JSON.stringify(exif ?? ''),
                 coordinates: JSON.stringify(coordinatesMeta),
+                captions: JSON.stringify(captions),
             },
         })
             .then(async (snapshot) => {

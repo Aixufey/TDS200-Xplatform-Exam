@@ -19,8 +19,12 @@ const useFetchBucketList = <T extends BucketListType>() => {
                     try {
                         const url = await getDownloadURL(itemRef);
                         const meta = await getMetadata(itemRef);
+                        let captions = meta.customMetadata?.captions;
                         let coordinates = meta.customMetadata?.coordinates;
                         let id = meta.name;
+                        if (captions) {
+                            captions = JSON.parse(captions);
+                        }
                         if (coordinates) {
                             coordinates = JSON.parse(coordinates);
                         }
@@ -33,6 +37,7 @@ const useFetchBucketList = <T extends BucketListType>() => {
                             id: id,
                             uri: url,
                             coordinates: coordinates,
+                            captions: captions,
                         } as T;
                     } catch (e) {
                         return console.error(e);
