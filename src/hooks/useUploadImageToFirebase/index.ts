@@ -1,2 +1,2 @@
-import useUploadImageToFirebase, { coordinates } from './useUploadImageToFirebase';
-export { coordinates, useUploadImageToFirebase };
+import useUploadImageToFirebase, { ICoordinates } from './useUploadImageToFirebase';
+export { ICoordinates, useUploadImageToFirebase };

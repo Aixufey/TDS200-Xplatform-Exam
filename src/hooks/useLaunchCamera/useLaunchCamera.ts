@@ -11,7 +11,7 @@ import { Alert } from 'react-native';
 import { TDS200 } from '../../constants';
 import { useGalleryContext } from '../../context';
 import { useManipulateImage } from '../useManipulateImage';
-import { coordinates, useUploadImageToFirebase } from '../useUploadImageToFirebase';
+import { ICoordinates, useUploadImageToFirebase } from '../useUploadImageToFirebase';
 
 // Type definitions is taken from Expo Camera
 export type ProImageType = {
@@ -54,7 +54,7 @@ type CacheData = {
     id: string;
     blob: Blob;
     exif: Partial<MediaTrackSettings> | any;
-    coordinates: coordinates;
+    coordinates: ICoordinates;
 };
 const useLaunchCamera = () => {
     const [DoesNotWorkUsingMyOwnState, requestPermission] = useCameraPermissions();
@@ -63,6 +63,10 @@ const useLaunchCamera = () => {
     const { handleTakenPictures, setCurrentPicture, currentPicture } = useGalleryContext();
     const [cacheData, setCacheData] = useState<CacheData | undefined>(undefined);
     const [captions, setCaptions] = useState<string[]>([]);
+    const [coords, setCoords] = useState<ICoordinates>({
+        latitude: 0.0,
+        longitude: 0.0,
+    });
 
     const fetchCamera = useCallback(async () => {
         try {
@@ -79,8 +83,9 @@ const useLaunchCamera = () => {
 
     useEffect(() => {
         fetchCamera();
-        console.log(captions);
-    }, [captions, fetchCamera, hasPermission]);
+        //console.log(captions);
+        console.info(coords)
+    }, [captions, fetchCamera, hasPermission, coords]);
 
     const handleLaunchCameraPro = async () => {
         if (!hasPermission) return Alert.alert(`Camera access not granted.`);
@@ -178,8 +183,8 @@ const useLaunchCamera = () => {
                     const compressedBroWithId = {
                         id: uniqueId,
                         ...compressedBro,
-                        longitude: 0.0,
-                        latitude: 0.0,
+                        latitude: coords.latitude,
+                        longitude: coords.longitude
                     };
                     // For Modal preview
                     setCurrentPicture(compressedBroWithId);
@@ -221,6 +226,7 @@ const useLaunchCamera = () => {
         handleLaunchCameraPro,
         handleLaunchCameraBro,
         updateCaptions,
+        setCoords,
     };
 };
 export default useLaunchCamera;
