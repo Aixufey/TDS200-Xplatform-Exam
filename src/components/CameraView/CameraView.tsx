@@ -10,7 +10,7 @@ import DesignSystem from '../../styles';
 import { Button, IconButton } from '../Button';
 import { CustomModal } from '../Modal';
 const CameraView: React.FC = () => {
-    const { handleLaunchCameraBro, broCameraRef, handleSubmitPhoto } = useLaunchCamera();
+    const { handleLaunchCameraBro, broCameraRef, handleSubmitPhoto, updateCaptions } = useLaunchCamera();
     const { currentPicture } = useGalleryContext();
     const [togglePreviewModal, setTogglePreviewModal] = useState<boolean>(false);
     const [togglePictureModal, setTogglePictureModal] = useState<boolean>(false);
@@ -76,18 +76,31 @@ const CameraView: React.FC = () => {
         }
     };
 
+    /**
+     * 
+     * Arbitrary decision to uplift the captions during submissions instead of making extra firebase calls
+     * Usually you would normalize the table, but in this case this is the easiest solution🤷‍♂️
+     * States in React are always async, so explicit returning the data will assure updateCaption receive most recent data.
+     */
     const handleDeleteCaption = (item: string) => {
-        //console.info('delete ', item);
-        setCaptions(captions.filter((i) => i !== item));
+        setCaptions(prevCaptions => {
+            const updatedCaptions = prevCaptions.filter((i) => i !== item);
+            updateCaptions(updatedCaptions);
+            return updatedCaptions;
+        });
     };
-
     const handleCaptionPress = () => {
-        setCaptions((prev) => [...prev, input]);
+        setCaptions(prevCaptions => {
+            const updatedCaptions = [input, ...prevCaptions];
+            updateCaptions(updatedCaptions);
+            return updatedCaptions;
+        });
         setInput('');
     };
 
     const handleCaptionChange = (txt: string) => {
-        setInput(txt);
+        let sanitize = txt.toLowerCase().trim();
+        setInput(sanitize);
     };
 
     const renderPreviewModal = () => {
