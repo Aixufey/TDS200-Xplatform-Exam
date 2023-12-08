@@ -5,7 +5,7 @@ import { bucketURl } from '../../constants';
  * Helper: Expecting a binary large object and upload to fire storage
  * @param blob
  */
-export interface coordinates {
+export interface ICoordinates {
     latitude: number;
     longitude: number;
 }
@@ -13,8 +13,8 @@ const useUploadImageToFirebase = async (
     name: string,
     blob: Blob,
     exif: Partial<MediaTrackSettings> | any,
-    coordinates: coordinates,
-    captions: string[],
+    coordinates: ICoordinates,
+    captions: string[]
 ) => {
     try {
         const storage = await getStorage();
