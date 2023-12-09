@@ -11,6 +11,7 @@ import {
 } from '@env';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { Firestore, getFirestore } from 'firebase/firestore';
+import { Auth, getAuth } from 'firebase/auth';
 import { FirebaseStorage, StorageReference, getStorage, ref } from 'firebase/storage';
 
 // Optionally import the services that you want to use
@@ -37,17 +38,20 @@ const firebase_app: FirebaseApp = initializeApp(firebaseConfig);
 const firebase_db: Firestore = getFirestore(firebase_app);
 const firebase_storage: FirebaseStorage = getStorage(firebase_app);
 const storageRef: StorageReference = ref(firebase_storage);
+const firebase_auth: Auth = getAuth(firebase_app);
 
 export interface IFIREBASE {
     firebase_app: FirebaseApp;
     firebase_db: Firestore;
     firebase_storage: FirebaseStorage;
     storageRef: StorageReference;
+    firebase_auth: Auth;
 }
 const FIREBASE: IFIREBASE = {
     firebase_app,
     firebase_db,
     firebase_storage,
     storageRef,
+    firebase_auth,
 };
 export default FIREBASE;
