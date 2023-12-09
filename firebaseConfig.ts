@@ -11,8 +11,9 @@ import {
 } from '@env';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { Firestore, getFirestore } from 'firebase/firestore';
+import { Auth, getReactNativePersistence, initializeAuth } from 'firebase/auth';
 import { FirebaseStorage, StorageReference, getStorage, ref } from 'firebase/storage';
-
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 // Optionally import the services that you want to use
 // import {...} from "firebase/auth";
 // import {...} from "firebase/database";
@@ -37,17 +38,28 @@ const firebase_app: FirebaseApp = initializeApp(firebaseConfig);
 const firebase_db: Firestore = getFirestore(firebase_app);
 const firebase_storage: FirebaseStorage = getStorage(firebase_app);
 const storageRef: StorageReference = ref(firebase_storage);
+/**
+ * @description Firebase Auth
+ *   For some reason, it's yapping about the persistance when using getAuth, so I'm using initializeAuth. 
+ *   And of course, typescript is not recognizing the declared modules in firebase/auth
+ *   The solution is to declare in tsconfig.json
+ */
+const firebase_auth: Auth = initializeAuth(firebase_app, {
+    persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+});
 
 export interface IFIREBASE {
     firebase_app: FirebaseApp;
     firebase_db: Firestore;
     firebase_storage: FirebaseStorage;
     storageRef: StorageReference;
+    firebase_auth: Auth;
 }
 const FIREBASE: IFIREBASE = {
     firebase_app,
     firebase_db,
     firebase_storage,
     storageRef,
+    firebase_auth,
 };
 export default FIREBASE;

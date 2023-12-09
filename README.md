@@ -37,6 +37,19 @@ The initial idea was to post the pictures in a batch, but firebase does not allo
 
 ## Dependencies
 
+### [Authentication]()
+
+Using Firebase auth for authentication. User can create, login or browse as guest user. To store the authentication state we need to persist it. Somehow the typescript does not recognize the declared files so we have to add this into **tsconfig.json**
+
+```json
+  // Firebase auth module declaration
+  "paths": {
+      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
+  }
+```
+
+---
+
 ### [Expo](https://docs.expo.dev/)
 
 The bare bone is installed using **Expo Go** `npx create-expo-app -t` with TypeScript template. Flag `-t` for template.&nbsp;&nbsp;<br />
