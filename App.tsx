@@ -2,8 +2,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useCallback, useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SafeView } from './src/components';
-import { AuthContextProvider, GalleryContextProvider, UIContextProvider } from './src/context';
-import { FireBaseContextProvider } from './src/context/FireBaseContext';
+import { AuthContextProvider } from './src/context';
 import { useCustomFonts } from './src/hooks';
 import WelcomeRoutes from './src/routes';
 
@@ -43,18 +42,12 @@ export default function App() {
     }
 
     return (
-        <AuthContextProvider>
-            <FireBaseContextProvider>
-                <SafeAreaProvider>
-                    <SafeView onLayout={onLayoutRootView} className="flex-1">
-                        <UIContextProvider>
-                            <GalleryContextProvider>
-                                <WelcomeRoutes />
-                            </GalleryContextProvider>
-                        </UIContextProvider>
-                    </SafeView>
-                </SafeAreaProvider>
-            </FireBaseContextProvider>
-        </AuthContextProvider>
+        <SafeAreaProvider>
+            <SafeView onLayout={onLayoutRootView} className="flex-1">
+                <AuthContextProvider>
+                    <WelcomeRoutes />
+                </AuthContextProvider>
+            </SafeView>
+        </SafeAreaProvider>
     );
 }
