@@ -27,7 +27,7 @@ export const useAuth = () => {
 
 const AuthContextProvider: React.FC<ProviderProps> = ({ children }) => {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
-    const { firebase_auth } = FIREBASE;
+    const { firebase_auth } = FIREBASE;   
     useEffect(() => {
         const unsubscribe = firebase_auth.onAuthStateChanged((user) => {
             setCurrentUser(user);

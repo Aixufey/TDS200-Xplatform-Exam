@@ -7,6 +7,10 @@
         "checkJs": false,
         "esModuleInterop": true,
         // Declarative modules *.d.ts files
-        "typeRoots": ["./src/types"]
+        "typeRoots": ["./src/types"],
+        // Firebase auth module declaration
+        "paths": {
+            "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
+        }
     }
 }

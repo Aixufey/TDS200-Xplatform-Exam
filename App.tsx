@@ -2,10 +2,10 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useCallback, useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SafeView } from './src/components';
-import { GalleryContextProvider, UIContextProvider } from './src/context';
+import { AuthContextProvider, GalleryContextProvider, UIContextProvider } from './src/context';
+import { FireBaseContextProvider } from './src/context/FireBaseContext';
 import { useCustomFonts } from './src/hooks';
 import WelcomeRoutes from './src/routes';
-import { FireBaseContextProvider } from './src/context/FireBaseContext.tsx';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -43,16 +43,18 @@ export default function App() {
     }
 
     return (
-        <FireBaseContextProvider>
-            <SafeAreaProvider>
-                <SafeView onLayout={onLayoutRootView} className="flex-1">
-                    <UIContextProvider>
-                        <GalleryContextProvider>
-                            <WelcomeRoutes />
-                        </GalleryContextProvider>
-                    </UIContextProvider>
-                </SafeView>
-            </SafeAreaProvider>
-        </FireBaseContextProvider>
+        <AuthContextProvider>
+            <FireBaseContextProvider>
+                <SafeAreaProvider>
+                    <SafeView onLayout={onLayoutRootView} className="flex-1">
+                        <UIContextProvider>
+                            <GalleryContextProvider>
+                                <WelcomeRoutes />
+                            </GalleryContextProvider>
+                        </UIContextProvider>
+                    </SafeView>
+                </SafeAreaProvider>
+            </FireBaseContextProvider>
+        </AuthContextProvider>
     );
 }
