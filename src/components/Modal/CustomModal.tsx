@@ -22,11 +22,11 @@ import {
 } from 'react-native';
 import { commentsDoc, reactionsDoc } from '../../constants';
 import { useGalleryContext, useUIContext } from '../../context';
-import { useFireBase } from '../../context/FireBaseContext.tsx';
+import { useFireBase } from '../../context/FireBaseContext';
 import DesignSystem from '../../styles';
 import { IconButton } from '../Button';
-import BackView from './BackView';
 import { MapItem } from '../MapItem';
+import BackView from './BackView';
 interface ICustomModal {
     intensity?: number;
     children?: React.ReactNode;

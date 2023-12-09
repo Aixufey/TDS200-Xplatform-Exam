@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { captionsDoc } from '../../constants';
 import { useGalleryContext } from '../../context';
-import { useFireBase } from '../../context/FireBaseContext.tsx';
+import { useFireBase } from '../../context/FireBaseContext';
 import { useLaunchCamera } from '../../hooks';
 import DesignSystem from '../../styles';
 import { Button, IconButton } from '../Button';

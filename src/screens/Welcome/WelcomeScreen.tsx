@@ -8,7 +8,6 @@ import { DefaultCoordinates, GradientCoordinatesType } from '../../components/Ca
 import { useCustomNavigation } from '../../hooks';
 import DesignSystem from '../../styles';
 import { randomGradient } from '../../utils';
-import getRandomColorKey from '../../utils/randomColorKeys';
 
 const WelcomeScreen: React.FC = () => {
     const [gradientCoordinates, setGradientCoordinates] =
