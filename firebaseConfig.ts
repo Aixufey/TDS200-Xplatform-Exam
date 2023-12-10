@@ -11,7 +11,7 @@ import {
 } from '@env';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { Firestore, getFirestore } from 'firebase/firestore';
-import { Auth, getReactNativePersistence, initializeAuth } from 'firebase/auth';
+import { Auth, getReactNativePersistence, initializeAuth, signOut } from 'firebase/auth';
 import { FirebaseStorage, StorageReference, getStorage, ref } from 'firebase/storage';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 // Optionally import the services that you want to use
