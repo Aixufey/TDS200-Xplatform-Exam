@@ -60,7 +60,7 @@ const SignIn: React.FC<SignInProps> = ({ className, signUp }) => {
             setIsLoadingGuest(true);
             const guest = await signInAnonymously(firebase_auth);
             setIsLoadingGuest(false);
-            console.info(guest.user);
+            //console.info(guest.user);
         } catch (e) {
             console.log(e);
         }

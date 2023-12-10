@@ -12,12 +12,16 @@ const HomeScreen: React.FC = () => {
         <Background>
             <View className="flex-1 w-full h-full justify-evenly items-center">
                 <View className="m-2 basis-12 justify-center">
-                    <Text className="text-neutral font-handjet-light text-xl">
-                        Welcome home,{' '}
-                        <Text className="text-secondary font-handjet-light">
-                            {currentUser?.displayName}{' '}
+                    {currentUser && (
+                        <Text className="text-neutral font-handjet-light text-xl">
+                            Welcome{currentUser.isAnonymous ? ', ' : ' back, '}
+                            <Text className="text-secondary font-handjet-light">
+                                {currentUser.isAnonymous
+                                    ? 'Anonymous one'
+                                    : currentUser.displayName}
+                            </Text>
                         </Text>
-                    </Text>
+                    )}
                 </View>
                 <View className="basis-4/5 w-full items-center">
                     <Text className="text-neutral tracking-widest font-handjet-black text-[150px]">
