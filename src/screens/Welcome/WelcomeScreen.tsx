@@ -1,11 +1,10 @@
 import { Entypo } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { Pressable, StatusBar, StyleProp, Text, View, ViewStyle } from 'react-native';
 import Background from '../../components/Background/Background';
 import { DefaultCoordinates, GradientCoordinatesType } from '../../components/Canvas/Canvas';
-import { useAuth } from '../../context';
 import { useCustomNavigation } from '../../hooks';
 import DesignSystem from '../../styles';
 import { randomGradient } from '../../utils';
@@ -17,15 +16,10 @@ const WelcomeScreen: React.FC = () => {
     const { navigate } = useCustomNavigation();
     const isFocused = useIsFocused();
     const { Colors } = DesignSystem();
-    const { currentUser, firebase_auth } = useAuth();
     const [isSignUp, setIsSignUp] = useState<boolean>(false);
     useLayoutEffect(() => {
         setGradientCoordinates({ start: randomGradient().start, end: randomGradient().end });
     }, [isFocused]);
-
-    useEffect(() => {
-        console.log(isSignUp);
-    }, [isSignUp]);
 
     const handleSignUpPress = () => {
         setIsSignUp((prev) => !prev);
@@ -75,7 +69,11 @@ const WelcomeScreen: React.FC = () => {
             <StatusBar barStyle={'light-content'} />
             <Background>
                 <View className="flex-1 w-full h-full justify-center items-center">
-                    {isSignUp ? <SignUp signUp={handleSignUpPress}/> : <SignIn signUp={handleSignUpPress} />}
+                    {isSignUp ? (
+                        <SignUp signUp={handleSignUpPress} />
+                    ) : (
+                        <SignIn signUp={handleSignUpPress} />
+                    )}
                 </View>
             </Background>
         </View>
