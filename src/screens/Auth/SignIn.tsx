@@ -1,13 +1,23 @@
+import { Ionicons } from '@expo/vector-icons';
 import { signInAnonymously, signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
 import { useAuth } from '../../context';
+import DesignSystem from '../../styles';
+
 interface IUser {
     email: string;
     password: string;
 }
-const SignIn: React.FC = () => {
-    const { firebase_auth, currentUser } = useAuth();
+type SignInProps = {
+    className?: string;
+    signUp: () => void;
+};
+const SignIn: React.FC<SignInProps> = ({ className, signUp }) => {
+    const { firebase_auth } = useAuth();
+    const { Colors } = DesignSystem();
+    const [isLoadingUser, setIsLoadingUser] = useState<boolean>(false);
+    const [isLoadingGuest, setIsLoadingGuest] = useState<boolean>(false);
     const [user, setUser] = useState<IUser>({
         email: '',
         password: '',
@@ -17,6 +27,7 @@ const SignIn: React.FC = () => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailPattern.test(email);
     };
+
     const isPasswordValid = (password: string): boolean => {
         const passPattern = password.length >= 6;
         return passPattern;
@@ -35,8 +46,10 @@ const SignIn: React.FC = () => {
                 alert('Password must be at least 6 characters');
                 return;
             }
+            setIsLoadingUser(true);
             const userCred = await signInWithEmailAndPassword(firebase_auth, email, password);
-            console.info(userCred);
+            setIsLoadingUser(false);
+            //console.info(userCred);
         } catch (e) {
             console.log(e);
         }
@@ -44,40 +57,107 @@ const SignIn: React.FC = () => {
 
     const handleSignInGuestPress = async () => {
         try {
+            setIsLoadingGuest(true);
             const guest = await signInAnonymously(firebase_auth);
+            setIsLoadingGuest(false);
             console.info(guest.user);
         } catch (e) {
             console.log(e);
         }
     };
-    console.debug(currentUser);
+
     return (
-        <View className="flex-1 justify-center items-center">
-            <View className="border-2 border-white w-[50%] ">
-                <TextInput
-                    inputMode="email"
-                    className="text-white"
-                    placeholder="Email"
-                    placeholderTextColor="gray"
-                    onChangeText={(text) => setUser({ ...user, email: text })}
-                    value={user.email}
-                />
-                <TextInput
-                    secureTextEntry={true}
-                    passwordRules="minlength: 6;"
-                    className="text-white"
-                    placeholderTextColor="gray"
-                    placeholder="Password"
-                    onChangeText={(text) => setUser({ ...user, password: text })}
-                    value={user.password}
-                />
+        <View className="justify-center items-center">
+            <View className="justify-center items-center">
+                <Text className="text-[42px] text-neutral font-handjet-regular tracking-widest">
+                    Log in
+                </Text>
             </View>
-            <Text onPress={handleSignInPress} className="text-neutral">
-                SignIn
-            </Text>
-            <Text onPress={handleSignInGuestPress} className="text-neutral">
-                Guest
-            </Text>
+            <View className={className ?? 'rounded p-1 w-[250px]'}>
+                <View className="border-[0.3px] border-neutral rounded p-1 bg-dark200">
+                    <TextInput
+                        style={{ fontFamily: 'Handjet-Light' }}
+                        inputMode="email"
+                        className="text-neutral font-handjet-light tracking-widest"
+                        placeholder="Email..."
+                        placeholderTextColor={Colors.neutral400}
+                        onChangeText={(text) => setUser({ ...user, email: text.trim() })}
+                        value={user.email}
+                    />
+                </View>
+                <View className="mt-2 border-[0.3px] border-neutral rounded p-1 bg-dark200">
+                    <TextInput
+                        style={{ fontFamily: 'Handjet-Light' }}
+                        secureTextEntry={true}
+                        passwordRules="minlength: 6;"
+                        className="text-neutral font-handjet-light tracking-widest"
+                        placeholderTextColor={Colors.neutral400}
+                        placeholder="Password..."
+                        onChangeText={(text) => setUser({ ...user, password: text.trim() })}
+                        value={user.password}
+                    />
+                </View>
+                {isLoadingUser ? (
+                    <ActivityIndicator
+                        className="mt-4"
+                        size="large"
+                        color={Colors.tertiary}
+                        animating
+                    />
+                ) : (
+                    <Pressable className="mt-4 h-[40px] border-2 border-rei rounded-xl bg-rei justify-center items-center">
+                        <Text
+                            className="text-neutral font-handjet-light tracking-widest"
+                            onPress={handleSignInPress}
+                        >
+                            Log in
+                        </Text>
+                    </Pressable>
+                )}
+                <View className="mt-4 justify-evenly items-center flex-row overflow-hidden">
+                    <View className="mr-6 border-b-[0.5px] border-white w-[50%]" />
+                    <Text className="text-neutral font-handjet-light tracking-widest"> OR </Text>
+                    <View className="ml-6 border-b-[0.5px] border-white w-[50%]" />
+                </View>
+                {isLoadingGuest ? (
+                    <ActivityIndicator
+                        className="mt-4"
+                        size="large"
+                        color={Colors.tertiary}
+                        animating
+                    />
+                ) : (
+                    <View className="mt-4 justify-center items-center flex-row">
+                        <View className="top-[-2px]">
+                            <Ionicons name="md-person-outline" size={15} color={Colors.neutral} />
+                        </View>
+                        <Text
+                            className="pl-1 text-neutral font-handjet-light tracking-widest text-xl"
+                            onPress={handleSignInGuestPress}
+                        >
+                            Browse as guest
+                        </Text>
+                    </View>
+                )}
+                <View className="mt-6 justify-center items-center">
+                    <Pressable onPress={() => console.log('Reset pw')}>
+                        <Text className="text-neutral font-handjet-light tracking-widest">
+                            Forgot password?
+                        </Text>
+                    </Pressable>
+                </View>
+                <View className="mt-6 justify-center items-center h-[50px] flex-row">
+                    <Text className="text-neutral font-handjet-light tracking-widest">
+                        Don't have an account?
+                    </Text>
+                    <Text
+                        className="text-tertiary px-1 font-handjet-regular tracking-widest"
+                        onPress={signUp}
+                    >
+                        Sign up
+                    </Text>
+                </View>
+            </View>
         </View>
     );
 };
