@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { GalleryContextProvider, UIContextProvider, useAuth } from '../context';
 import { FireBaseContextProvider } from '../context/FireBaseContext';
+import SharedContextProvider from '../context/SharedContext';
 import { WelcomeScreen } from '../screens';
 import RootRoutes from './Root.Routes';
 
@@ -42,9 +43,11 @@ const WelcomeRoutes: React.FC = () => {
     );
 
     return (
-        <NavigationContainer independent={true}>
-            {currentUser ? <AppStackScreen /> : <AuthStackScreen />}
-        </NavigationContainer>
+        <SharedContextProvider>
+            <NavigationContainer independent={true}>
+                {currentUser ? <AppStackScreen /> : <AuthStackScreen />}
+            </NavigationContainer>
+        </SharedContextProvider>
     );
 };
 export default WelcomeRoutes;
