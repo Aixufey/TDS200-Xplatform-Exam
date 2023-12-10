@@ -12,7 +12,7 @@ type GalleryContextProviderProp = {
  * Asset[] type is from Expo's Media Library that we get from album with assets
  * @example const media = await MediaLibrary.getAssetsAsync()
  */
-interface IGalleryContext {
+export interface IGalleryContext {
     data: Asset[] | MergedImageType[] | null;
     updateData: (data: Asset[] | MergedImageType[]) => void;
     selectedPictures: MergedImageType[];
