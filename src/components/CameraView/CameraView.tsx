@@ -4,7 +4,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { captionsDoc } from '../../constants';
-import { useGalleryContext } from '../../context';
+import { useAuth, useGalleryContext } from '../../context';
 import { useFireBase } from '../../context/FireBaseContext';
 import { useLaunchCamera } from '../../hooks';
 import DesignSystem from '../../styles';
@@ -22,6 +22,7 @@ const CameraView: React.FC = () => {
     const { Colors } = DesignSystem();
     const { firebase_db } = useFireBase();
     const [location, setLocation] = useState<any>();
+    const { currentUser } = useAuth();
     // refactor this into hook and save localstorage for permission
     useEffect(() => {
         (async () => {
@@ -81,13 +82,16 @@ const CameraView: React.FC = () => {
         if (currentPicture?.id === undefined) {
             return alert('Picture does not exist');
         }
+        if (currentUser === null) {
+            return alert('User does not exist');
+        }
         const captionsRef = doc(firebase_db, captionsDoc, currentPicture.id);
         try {
             await setDoc(
                 captionsRef,
                 {
                     pictureId: currentPicture.id,
-                    userId: 'User123',
+                    userId: currentUser.displayName,
                     captions,
                 },
                 { merge: true }

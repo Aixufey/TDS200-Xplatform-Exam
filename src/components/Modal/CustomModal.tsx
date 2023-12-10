@@ -21,7 +21,7 @@ import {
     View,
 } from 'react-native';
 import { commentsDoc, reactionsDoc } from '../../constants';
-import { useGalleryContext, useUIContext } from '../../context';
+import { useAuth, useGalleryContext, useUIContext } from '../../context';
 import { useFireBase } from '../../context/FireBaseContext';
 import DesignSystem from '../../styles';
 import { IconButton } from '../Button';
@@ -45,6 +45,7 @@ const CustomModal: React.FC<ICustomModal> = ({
     const { firebase_db } = useFireBase();
     const { currentPicture } = useGalleryContext();
     const { resetUIState } = useUIContext();
+    const { currentUser } = useAuth();
     const [fetch, setFetch] = useState<boolean>(false);
     const [flip, setFlip] = useState<boolean>(false);
     const [showComment, setShowComment] = useState<boolean>(false);
@@ -136,7 +137,10 @@ const CustomModal: React.FC<ICustomModal> = ({
         if (currentPicture?.id === undefined) {
             return alert('Picture does not exist!');
         }
-        updateFirestoreComments(currentPicture?.id, 'User333222111');
+        if (currentUser === null) {
+            return alert('User does not exist!');
+        }
+        updateFirestoreComments(currentPicture?.id, currentUser.displayName ?? "Anonymous");
     };
 
     const handleLike = () => {
@@ -150,6 +154,9 @@ const CustomModal: React.FC<ICustomModal> = ({
     const updateFirestoreReaction = async (state: boolean) => {
         if (currentPicture?.id === undefined) {
             return alert('Picture does not exist!');
+        }
+        if (currentUser === null) {
+            return alert('User does not exist!');
         }
         const pictureRef = doc(firebase_db, reactionsDoc, currentPicture.id);
 
@@ -174,7 +181,7 @@ const CustomModal: React.FC<ICustomModal> = ({
                 likes: like,
                 dislikes: dislike,
                 pictureId: currentPicture.id,
-                userId: 'User123',
+                userId: currentUser.displayName,
             },
             { merge: true }
         );
