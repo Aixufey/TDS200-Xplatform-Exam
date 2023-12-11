@@ -13,7 +13,7 @@ const useFetchBucketList = <T extends BucketListType>() => {
     const listRef = ref(storage, bucketURl);
 
     /**
-     * @description Slighly modified the purpose of a hook, but this can fetch a promise and set the data synchronously
+     * @description Slighly modified the hook, but this can fetch a promise and set the data synchronously
      * @returns a promise of the bucket list
      */
     const fetchBucketList = async (): Promise<T[]> =>

@@ -11,25 +11,27 @@ import {
     Picture,
 } from '../../components';
 import { libPermission } from '../../constants';
-import { useGalleryContext, useUIContext } from '../../context';
-import { useFetchBucketList, useRequestPermission } from '../../hooks';
+import { useGalleryContext, useShared, useUIContext } from '../../context';
+import {
+    BucketListType,
+    MergedImageType,
+    useFetchBucketList,
+    useRequestPermission,
+} from '../../hooks';
 import DesignSystem from '../../styles';
 const GalleryScreen: React.FC = () => {
+    const [permissionSaved, setPermissionSaved] = useState<boolean>(false);
+    const [shallowCopyData, setShallowCopyData] = useState<BucketListType[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [toggleModal, setToggleModal] = useState<boolean>(false);
     const [input, setInput] = useState<string>('');
-    const { favorite, resetGalleryState, updateData, data } = useGalleryContext();
+    const { favorite, resetGalleryState } = useGalleryContext();
     const { resetUIState, isPress, isLongPress } = useUIContext();
+    const { updateData, data } = useShared();
     const { hasPermission, requestPermission } = useRequestPermission();
-    const [permissionSaved, setPermissionSaved] = useState<boolean>(false);
-    const { bucket, fetchBucketList } = useFetchBucketList();
-    const { Colors } = DesignSystem();
+    const { fetchBucketList } = useFetchBucketList();
     const isFocused = useIsFocused();
-    // Reconcile when memoized fetchAlbum is changed.
-    // TODO: Pictures taken is not updated in UI - having it as dependency cause heavy rendering fix this?
-    // 1. Fetch from firebase on load
-    // 2. while screen is active, manipulation of data should be on a shallow copy - not on the original
-    // 3. when unmounting - update the firebase by pushing changes to firebase.
+    const { Colors } = DesignSystem();
 
     useLayoutEffect(() => {
         setIsLoading(true);
@@ -43,11 +45,17 @@ const GalleryScreen: React.FC = () => {
                 await AsyncStorage.setItem(libPermission, JSON.stringify(hasPermission));
             }
         };
+        /**
+         * @description Fetch bucket list from firebase
+         * Explicitly made it return a promise of BucketListType[] to gain more control over the data.
+         */
         const fetchData = async () => {
-            await fetchBucketList();
-            updateData(bucket);
+            const bucketList = await fetchBucketList();
+            updateData(bucketList);
+            setShallowCopyData(bucketList.reverse());
         };
         checkPermission();
+        console.info('Mounted Gallery Screen');
         fetchData();
     }, [isFocused, hasPermission]);
 
@@ -74,32 +82,93 @@ const GalleryScreen: React.FC = () => {
         setToggleModal(false);
     };
 
+    /**
+     * @description Handle text change for search query
+     * @param input search query
+     */
     const handleTextChange = (input: string) => {
         let santize = input.toLowerCase().trim();
         setInput(input);
-        if (input) {
-            const filter = bucket.filter(
-                (item) => item.captions?.some((cap) => cap.toLowerCase().trim().includes(santize))
+        if (input && data) {
+            const filter = data.filter(
+                (item: BucketListType) =>
+                    item.captions?.some((cap) => cap.toLowerCase().trim().includes(santize))
             );
-            updateData(filter);
-        } else {
-            updateData(bucket);
+            setShallowCopyData(filter);
+        } else if (data) {
+            setShallowCopyData(data);
         }
     };
 
+    /**
+     * @description Press search for captions in the bucket list
+     * Need explicit type as BucketListType to access captions array
+     * If input and data exists, filter the data based on the input and update the data with filtered result.
+     * else update the data with the copy of the original data.
+     * The gotcha: FlatList is having a single source of truth, so the data should be updated in the same source. Otherwise, it will not update when we search and delete.
+     */
     const handleSearchPress = () => {
-        if (input) {
-            const filter = bucket.filter(
-                (item) =>
+        if (input && data) {
+            console.log('has input');
+            const filter = data.filter(
+                (item: BucketListType) =>
                     item.captions?.some((cap) =>
                         cap.toLowerCase().trim().includes(input.toLowerCase().trim())
                     )
             );
-            updateData(filter);
-        } else {
-            updateData(bucket);
+            setShallowCopyData(filter);
+        } else if (data) {
+            console.log('pressed');
+            setShallowCopyData(data);
         }
         setInput('');
+    };
+
+    /**
+     * @description Conditional render for FlatList
+     * If data exist, check if it's empty, if not empty, render the * FlatList, else render empty data.
+     * Otherwise, render loading indicator.
+     *
+     * @returns FlatList of pictures
+     */
+    const conditionalRender = () => {
+        return data ? (
+            data.length > 0 ? (
+                <FlatList
+                    className="h-[50%] w-[95%]"
+                    // If screen unmounts data assign fetched bucket else assign data due to async state update.
+                    data={shallowCopyData}
+                    keyExtractor={(item: BucketListType) => item.id}
+                    renderItem={({ item, index }) => (
+                        <Picture
+                            key={index}
+                            id={item.id}
+                            uri={item.uri}
+                            coordinates={{
+                                latitude: item.coordinates?.latitude,
+                                longitude: item.coordinates?.longitude,
+                            }}
+                        />
+                    )}
+                    removeClippedSubviews={true}
+                    showsVerticalScrollIndicator={false}
+                    initialNumToRender={10}
+                    maxToRenderPerBatch={20}
+                    numColumns={4}
+                    windowSize={5}
+                />
+            ) : (
+                <View className="justify-center items-center  w-full h-[50%]">
+                    <Text className="text-[28px] text-neutral font-handjet-light tracking-widest">
+                        Data is empty
+                    </Text>
+                </View>
+            )
+        ) : (
+            <View className="w-[50%] h-[50%] justify-center items-center">
+                <ActivityIndicator size={'large'} color={Colors.tertiary} animating />
+            </View>
+        );
     };
 
     return (
@@ -119,7 +188,7 @@ const GalleryScreen: React.FC = () => {
 
                                 <FlatList
                                     data={favorite}
-                                    keyExtractor={(item: any) => item.id}
+                                    keyExtractor={(item: MergedImageType) => item.id}
                                     renderItem={({ item, index }) => (
                                         <Picture
                                             key={index}
@@ -166,39 +235,7 @@ const GalleryScreen: React.FC = () => {
                                         iconColor={Colors.neutral}
                                     />
                                 </View>
-                                {bucket && bucket.length > 0 ? (
-                                    <FlatList
-                                        className="h-[50%] w-[95%]"
-                                        // If screen unmounts data assign fetched bucket else assign data due to async state update.
-                                        data={data && data.length === 0 ? bucket : data}
-                                        keyExtractor={(item: any) => item.id}
-                                        renderItem={({ item, index }) => (
-                                            <Picture
-                                                key={index}
-                                                id={item.id}
-                                                uri={item.uri}
-                                                coordinates={{
-                                                    latitude: item.coordinates?.latitude,
-                                                    longitude: item.coordinates?.longitude,
-                                                }}
-                                            />
-                                        )}
-                                        removeClippedSubviews={true}
-                                        showsVerticalScrollIndicator={false}
-                                        initialNumToRender={10}
-                                        maxToRenderPerBatch={20}
-                                        numColumns={4}
-                                        windowSize={5}
-                                    />
-                                ) : (
-                                    <View className="w-[50%] h-[50%] justify-center items-center">
-                                        <ActivityIndicator
-                                            size={'large'}
-                                            color={Colors.rei}
-                                            animating
-                                        />
-                                    </View>
-                                )}
+                                {conditionalRender()}
                             </View>
                         </View>
                     </Canvas>
