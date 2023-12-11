@@ -12,11 +12,14 @@ import {
 } from '../../components';
 import { libPermission } from '../../constants';
 import { useGalleryContext, useShared, useUIContext } from '../../context';
+import { useFireBase } from '../../context/FireBaseContext';
 import {
     BucketListType,
     MergedImageType,
     useFetchBucketList,
+    useImagePicker,
     useRequestPermission,
+    useUploadImageToFirebase,
 } from '../../hooks';
 import DesignSystem from '../../styles';
 const GalleryScreen: React.FC = () => {
@@ -30,6 +33,8 @@ const GalleryScreen: React.FC = () => {
     const { updateSharedData } = useShared();
     const { hasPermission, requestPermission } = useRequestPermission();
     const { fetchBucketList } = useFetchBucketList();
+    const { pickImage, image } = useImagePicker();
+    const { firebase_storage } = useFireBase();
     const isFocused = useIsFocused();
     const { Colors } = DesignSystem();
 
@@ -56,6 +61,7 @@ const GalleryScreen: React.FC = () => {
             setShallowCopyData(reverse);
         };
         checkPermission();
+        console.info('Mounted Gallery Screen');
         fetchData();
     }, [isFocused, hasPermission]);
 
@@ -65,6 +71,8 @@ const GalleryScreen: React.FC = () => {
             setShallowCopyData(data);
             updateSharedData(data);
         }
+        // Upload picked img to firebase
+        console.log(image);
         return () => {
             // Reset states when leaving the screen
             // Reset drawer state, press state, long press state, all selected pictures
@@ -72,7 +80,7 @@ const GalleryScreen: React.FC = () => {
             resetGalleryState();
             // console.log('Unmounted Gallery Screen');
         };
-    }, [isFocused, data]);
+    }, [isFocused, data, image]);
 
     useEffect(() => {
         // Open modal on item click.
@@ -114,7 +122,6 @@ const GalleryScreen: React.FC = () => {
      */
     const handleSearchPress = () => {
         if (input && data) {
-            console.log('has input');
             const filter = data.filter(
                 (item: BucketListType) =>
                     item.captions?.some((cap) =>
@@ -123,10 +130,28 @@ const GalleryScreen: React.FC = () => {
             );
             setShallowCopyData(filter);
         } else if (data) {
-            console.log('pressed');
             setShallowCopyData(data);
         }
         setInput('');
+    };
+
+    const handleUploadPress = async () => {
+        try {
+            pickImage();
+            if (image) {
+                const response = await fetch(image.uri);
+                const blob = await response.blob();
+                await useUploadImageToFirebase(
+                    image.id,
+                    blob,
+                    image.exif,
+                    { latitude: 0, longitude: 0 },
+                    []
+                );
+            }
+        } catch {
+            console.log('error');
+        }
     };
 
     /**
@@ -217,9 +242,19 @@ const GalleryScreen: React.FC = () => {
                                 />
                             </View>
                             <View className="justify-center items-center py-1">
-                                <Text className="w-full p-2 text-neutral font-handjet-light">
-                                    Gallery
-                                </Text>
+                                <View className="w-full justify-between items-center flex-row">
+                                    <Text className="p-2 text-neutral font-handjet-light">
+                                        Gallery
+                                    </Text>
+                                    <IconButton
+                                        onPress={handleUploadPress}
+                                        className="px-1"
+                                        IconSet="Ionicons"
+                                        iconName="add"
+                                        iconSize={24}
+                                        iconColor={Colors.neutral}
+                                    />
+                                </View>
                                 <View className="h-[45px] w-[75%] flex-row justify-between overflow-hidden border-[0.3px] border-neutral rounded-xl m-1">
                                     <TextInput
                                         value={input}
