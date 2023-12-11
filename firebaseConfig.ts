@@ -40,12 +40,12 @@ const firebase_storage: FirebaseStorage = getStorage(firebase_app);
 const storageRef: StorageReference = ref(firebase_storage);
 /**
  * @description Firebase Auth
- *   For some reason, it's yapping about the persistance when using getAuth, so I'm using initializeAuth. 
+ *   For some reason, it's yapping about the persistance when using getAuth, so I'm using initializeAuth.
  *   And of course, typescript is not recognizing the declared modules in firebase/auth
  *   The solution is to declare in tsconfig.json
  */
 const firebase_auth: Auth = initializeAuth(firebase_app, {
-    persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+    persistence: getReactNativePersistence(ReactNativeAsyncStorage),
 });
 
 export interface IFIREBASE {

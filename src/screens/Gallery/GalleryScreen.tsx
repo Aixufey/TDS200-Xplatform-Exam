@@ -251,7 +251,12 @@ const GalleryScreen: React.FC = () => {
                                         Gallery
                                     </Text>
                                     {isUpload ? (
-                                        <ActivityIndicator className='px-1' size={'small'} color={Colors.tertiary} animating/>
+                                        <ActivityIndicator
+                                            className="px-1"
+                                            size={'small'}
+                                            color={Colors.tertiary}
+                                            animating
+                                        />
                                     ) : (
                                         <IconButton
                                             onPress={handleUploadPress}
