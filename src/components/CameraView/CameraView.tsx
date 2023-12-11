@@ -6,7 +6,7 @@ import { Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } fro
 import { captionsDoc } from '../../constants';
 import { useAuth, useGalleryContext } from '../../context';
 import { useFireBase } from '../../context/FireBaseContext';
-import { useLaunchCamera } from '../../hooks';
+import { useLaunchCamera, useLocation } from '../../hooks';
 import DesignSystem from '../../styles';
 import { Button, IconButton } from '../Button';
 import { CustomModal } from '../Modal';
@@ -21,25 +21,22 @@ const CameraView: React.FC = () => {
     const [captions, setCaptions] = useState<string[]>([]);
     const { Colors } = DesignSystem();
     const { firebase_db } = useFireBase();
-    const [location, setLocation] = useState<any>();
+    const [currentLocation, setCurrentLocation] = useState<Location.LocationObject>();
+    const { getLocation } = useLocation();
     const { currentUser } = useAuth();
-    // refactor this into hook and save localstorage for permission
-    useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            // console.log(status);
 
-            let location = await Location.getCurrentPositionAsync({
-                //accuracy: Location.Accuracy.Highest,
-            });
-            console.log('lat ', location.coords.latitude);
-            console.log('long ', location.coords.longitude);
-            setCoords({
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-            });
-            setLocation(location);
-        })();
+    useEffect(() => {
+        const fetchLocation = async () => {
+            const location = await getLocation();
+            setCurrentLocation(location);
+            if (location) {
+                setCoords({
+                    latitude: location?.coords.latitude,
+                    longitude: location?.coords.longitude,
+                });
+            }
+        };
+        fetchLocation();
     }, []);
 
     const handleTogglePreviewModal = () => {

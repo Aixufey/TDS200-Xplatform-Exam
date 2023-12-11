@@ -4,6 +4,7 @@ export * from './useFetchAlbum';
 export * from './useFetchBucketList';
 export * from './useImagePicker';
 export * from './useLaunchCamera';
+export * from './useLocation';
 export * from './useManipulateImage';
 export * from './useRequestPermission';
 export * from './useUploadImageToFirebase';
