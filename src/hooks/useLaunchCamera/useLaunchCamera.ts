@@ -84,7 +84,7 @@ const useLaunchCamera = () => {
     useEffect(() => {
         fetchCamera();
         //console.log(captions);
-        console.info(coords);
+        //console.info(coords);
     }, [captions, fetchCamera, hasPermission, coords]);
 
     const handleLaunchCameraPro = async () => {
