@@ -27,7 +27,7 @@ const GalleryScreen: React.FC = () => {
     const [input, setInput] = useState<string>('');
     const { favorite, resetGalleryState, data, updateData } = useGalleryContext();
     const { resetUIState, isPress, isLongPress } = useUIContext();
-    const {  } = useShared();
+    const { updateSharedData } = useShared();
     const { hasPermission, requestPermission } = useRequestPermission();
     const { fetchBucketList } = useFetchBucketList();
     const isFocused = useIsFocused();
@@ -63,6 +63,7 @@ const GalleryScreen: React.FC = () => {
         // Observing changes in the data - GalleryContext is the source of truth
         if (data?.length) {
             setShallowCopyData(data);
+            updateSharedData(data);
         }
         return () => {
             // Reset states when leaving the screen
