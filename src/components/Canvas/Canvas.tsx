@@ -50,7 +50,7 @@ const Canvas: React.FC<IGalleryCanvas> = ({ children, title, isFocused }) => {
                     className="absolute w-full h-full justify-center items-center rounded"
                 >
                     <View id="Canvas-Title" className="w-full items-center justify-start">
-                        <Text className="text-neutral font-handjet-regular text-[32px] tracking-[10px]">
+                        <Text className="text-neutral font-handjet-light text-[32px] tracking-[10px]">
                             {title}
                         </Text>
                     </View>

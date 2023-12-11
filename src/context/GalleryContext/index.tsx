@@ -1,8 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Asset } from 'expo-media-library';
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { favoriteItems } from '../../constants';
+import { deleteObject, ref } from 'firebase/storage';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { bucketURl, favoriteItems } from '../../constants';
 import { MergedImageType } from '../../hooks';
+import { useFireBase } from '../FireBaseContext';
 import { useUIContext } from '../UIContext';
 type GalleryContextProviderProp = {
     children: React.ReactNode;
@@ -25,6 +27,7 @@ export interface IGalleryContext {
     handleDeletePicture: (picture: MergedImageType[]) => void;
     handleTakenPictures: (picture: MergedImageType) => void;
     pictures: MergedImageType[];
+    deletePictures: (picture: MergedImageType[]) => void;
 }
 
 const GalleryContext = createContext<IGalleryContext>({
@@ -40,6 +43,7 @@ const GalleryContext = createContext<IGalleryContext>({
     handleDeletePicture: () => {},
     handleTakenPictures: () => {},
     pictures: [],
+    deletePictures: () => {},
 });
 
 export const useGalleryContext = () => useContext(GalleryContext);
@@ -51,25 +55,39 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
     const [favorite, setFavorite] = useState<MergedImageType[]>([]);
     const [takenPictures, setTakenPictures] = useState<MergedImageType[]>([]);
     const { isLongPress, isPress, setIsLongPress, setIsLongPressMenu } = useUIContext();
+    const { storageRef } = useFireBase();
 
     // Load favorites
     useEffect(() => {
         handleGetStoredFavorite();
     }, []);
 
+    useEffect(() => {
+        if (isLongPress) {
+            if (currentPicture === null) return;
+            setSelectedPictures((prevSelected) => {
+                if (prevSelected.some((dupes) => dupes.id === currentPicture?.id)) {
+                    return prevSelected;
+                } else {
+                    return [currentPicture, ...prevSelected];
+                }
+            });
+        }
+    }, [currentPicture]);
+
     // Debugging
-    // useEffect(() => {
-    //     // console.log(`Pressed `, isPress)
-    //     // console.log(`LongPress `, isLongPress)
-    //     // console.log("data length ", data?.length);
-    //     // console.log('Current selected length ', selectedPictures.length);
-    //     // console.log('current Picture? ', currentPicture);
-    //     // console.log('Favorites', favorite);
-    //     // console.log('favorite length', favorite.length);
-    //     // console.log(`pictures `, pictures.length);
-    //     // console.log('Current selected length', selectedPictures.length);
-    //     // console.log('Current selected', selectedPictures);
-    // }, [takenPictures, data, currentPicture, isLongPress, isPress, selectedPictures]);
+    useEffect(() => {
+        // console.log(`Pressed `, isPress)
+        // console.log(`LongPress `, isLongPress)
+        console.log("data length ", data?.length);
+        // console.log('Current selected length ', selectedPictures.length);
+        // console.log('current Picture? ', currentPicture);
+        // console.log('Favorites', favorite);
+        // console.log('favorite length', favorite.length);
+        // console.log(`pictures `, pictures.length);
+        // console.log('Current selected length', selectedPictures.length);
+        // console.log('Current selected', selectedPictures);
+    }, [takenPictures, data, currentPicture, isLongPress, isPress, selectedPictures]);
 
     /**
      *
@@ -95,14 +113,6 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
         if (!picture) return;
 
         setCurrentPicture(picture);
-
-        setSelectedPictures((prevSelected) => {
-            if (prevSelected.some((dupes) => dupes.id === picture.id)) {
-                return prevSelected;
-            } else {
-                return [picture, ...prevSelected];
-            }
-        });
     };
 
     /**
@@ -132,6 +142,35 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
 
         // Clean selections
         cleanSelections();
+    };
+
+    /**
+     * @description Refactored helper func to delete pictures
+     * @param input selected pictures to be deleted from firebase storage
+     */
+    const deletePictures = async (input: MergedImageType[]) => {
+        await handleDeletePicture(input);
+        //await deleteFirebasePictures(input);
+    };
+
+    /**
+     * @description Delete selected pictures from firebase storage
+     * @param input selected pictures to be deleted from firebase storage
+     */
+    const deleteFirebasePictures = async (input: MergedImageType[]) => {
+        if (!Array.isArray(input) || input.length === 0) return;
+        await Promise.all(
+            input.map(async (picture) => {
+                let path = bucketURl.concat(picture.id).concat('.jpg');
+                const pictureRef = ref(storageRef, path);
+                console.log('pictureRef', pictureRef);
+                try {
+                    await deleteObject(pictureRef);
+                } catch (e) {
+                    console.error(`Failed to delete picture with id ${picture.id}`, e);
+                }
+            })
+        );
     };
 
     /**
@@ -232,6 +271,7 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
             handleDeletePicture,
             handleTakenPictures,
             pictures: takenPictures,
+            deletePictures,
         };
     }, [data, currentPicture, favorite, selectedPictures]);
 
