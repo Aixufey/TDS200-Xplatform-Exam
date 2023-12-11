@@ -1,11 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Asset } from 'expo-media-library';
+import { collection, getDocs, query, where, writeBatch } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { bucketURl, favoriteItems } from '../../constants';
+import { bucketURl, captionsDoc, commentsDoc, favoriteItems, reactionsDoc } from '../../constants';
 import { MergedImageType } from '../../hooks';
 import { useFireBase } from '../FireBaseContext';
 import { useUIContext } from '../UIContext';
+
 type GalleryContextProviderProp = {
     children: React.ReactNode;
 };
@@ -55,7 +57,7 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
     const [favorite, setFavorite] = useState<MergedImageType[]>([]);
     const [takenPictures, setTakenPictures] = useState<MergedImageType[]>([]);
     const { isLongPress, isPress, setIsLongPress, setIsLongPressMenu } = useUIContext();
-    const { storageRef } = useFireBase();
+    const { storageRef, firebase_db, firebase_app } = useFireBase();
 
     // Load favorites
     useEffect(() => {
@@ -76,18 +78,18 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
     }, [currentPicture]);
 
     // Debugging
-    useEffect(() => {
-        // console.log(`Pressed `, isPress)
-        // console.log(`LongPress `, isLongPress)
-        console.log("data length ", data?.length);
-        // console.log('Current selected length ', selectedPictures.length);
-        // console.log('current Picture? ', currentPicture);
-        // console.log('Favorites', favorite);
-        // console.log('favorite length', favorite.length);
-        // console.log(`pictures `, pictures.length);
-        // console.log('Current selected length', selectedPictures.length);
-        // console.log('Current selected', selectedPictures);
-    }, [takenPictures, data, currentPicture, isLongPress, isPress, selectedPictures]);
+    // useEffect(() => {
+    //     // console.log(`Pressed `, isPress)
+    //     // console.log(`LongPress `, isLongPress)
+    //     //console.log('data length ', data?.length);
+    //     // console.log('Current selected length ', selectedPictures.length);
+    //     // console.log('current Picture? ', currentPicture);
+    //     // console.log('Favorites', favorite);
+    //     // console.log('favorite length', favorite.length);
+    //     // console.log(`pictures `, pictures.length);
+    //     // console.log('Current selected length', selectedPictures.length);
+    //     // console.log('Current selected', selectedPictures);
+    // }, [takenPictures, data, currentPicture, isLongPress, isPress, selectedPictures]);
 
     /**
      *
@@ -150,6 +152,9 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
      */
     const deletePictures = async (input: MergedImageType[]) => {
         await deleteFirebasePictures(input);
+
+        await deleteOnCascade(input);
+
         await handleDeletePicture(input);
     };
 
@@ -163,7 +168,7 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
             input.map(async (picture) => {
                 let path = bucketURl.concat(picture.id).concat('.jpg');
                 const pictureRef = ref(storageRef, path);
-                console.log('pictureRef', pictureRef);
+                //console.log('pictureRef', pictureRef);
                 try {
                     await deleteObject(pictureRef);
                 } catch (e) {
@@ -203,6 +208,49 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
         // Clean selections
         setSelectedPictures([]);
         setCurrentPicture(null);
+    };
+
+    /**
+     * @description Delete all related data on cascade
+     * Iterating through all three collections, having a reference for each collection, and query
+     * for pictureId field equal to the pictureId that is being deleted, in order to get associated documents. For each document, delete it.
+     * @param pictureId is the id of the picture to be deleted
+     */
+    const deleteOnCascade = async (input: MergedImageType[]) => {
+        const collections = [captionsDoc, reactionsDoc];
+        for (const picture of input) {
+            for (const coll of collections) {
+                // Db for captions and reactions: /captions/{pictureId} and /reactions/{pictureId}
+                const collectionRef = collection(firebase_db, coll);
+                const q = query(collectionRef, where('pictureId', '==', picture.id));
+                const querySnapshot = await getDocs(q);
+
+                const batch = writeBatch(firebase_db);
+                querySnapshot.forEach(async (doc) => {
+                    try {
+                        batch.delete(doc.ref);
+                        await batch.commit();
+                        console.info(`Successfully deleted collections`);
+                    } catch {
+                        console.error(`Failed to delete collections`);
+                    }
+                });
+            }
+            // Storage for comments: /comments/{pictureId}/comments/{commentId}
+            const commentsColRef = collection(firebase_db, commentsDoc, picture.id, commentsDoc);
+            const querySnapshot = await getDocs(commentsColRef);
+
+            const batch = writeBatch(firebase_db);
+            querySnapshot.forEach(async (doc) => {
+                try {
+                    batch.delete(doc.ref);
+                    await batch.commit();
+                    console.info(`Successfully deleted comments`);
+                } catch {
+                    console.error(`Failed to delete comments`);
+                }
+            });
+        }
     };
 
     /**
