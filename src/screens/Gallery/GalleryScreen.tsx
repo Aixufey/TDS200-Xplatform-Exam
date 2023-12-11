@@ -12,12 +12,12 @@ import {
 } from '../../components';
 import { libPermission } from '../../constants';
 import { useGalleryContext, useShared, useUIContext } from '../../context';
-import { useFireBase } from '../../context/FireBaseContext';
 import {
     BucketListType,
     MergedImageType,
     useFetchBucketList,
     useImagePicker,
+    useLocation,
     useRequestPermission,
     useUploadImageToFirebase,
 } from '../../hooks';
@@ -26,6 +26,7 @@ const GalleryScreen: React.FC = () => {
     const [permissionSaved, setPermissionSaved] = useState<boolean>(false);
     const [shallowCopyData, setShallowCopyData] = useState<BucketListType[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isUpload, setIsUpload] = useState<boolean>(false);
     const [toggleModal, setToggleModal] = useState<boolean>(false);
     const [input, setInput] = useState<string>('');
     const { favorite, resetGalleryState, data, updateData } = useGalleryContext();
@@ -34,7 +35,7 @@ const GalleryScreen: React.FC = () => {
     const { hasPermission, requestPermission } = useRequestPermission();
     const { fetchBucketList } = useFetchBucketList();
     const { pickImage, image } = useImagePicker();
-    const { firebase_storage } = useFireBase();
+    const { getLocation } = useLocation();
     const isFocused = useIsFocused();
     const { Colors } = DesignSystem();
 
@@ -61,7 +62,7 @@ const GalleryScreen: React.FC = () => {
             setShallowCopyData(reverse);
         };
         checkPermission();
-        console.info('Mounted Gallery Screen');
+        // console.info('Mounted Gallery Screen');
         fetchData();
     }, [isFocused, hasPermission]);
 
@@ -72,7 +73,7 @@ const GalleryScreen: React.FC = () => {
             updateSharedData(data);
         }
         // Upload picked img to firebase
-        console.log(image);
+        //console.log(image);
         return () => {
             // Reset states when leaving the screen
             // Reset drawer state, press state, long press state, all selected pictures
@@ -137,7 +138,9 @@ const GalleryScreen: React.FC = () => {
 
     const handleUploadPress = async () => {
         try {
-            pickImage();
+            const loc = await getLocation();
+            await pickImage();
+            setIsUpload(true);
             if (image) {
                 const response = await fetch(image.uri);
                 const blob = await response.blob();
@@ -145,9 +148,10 @@ const GalleryScreen: React.FC = () => {
                     image.id,
                     blob,
                     image.exif,
-                    { latitude: 0, longitude: 0 },
+                    { latitude: loc.coords.latitude, longitude: loc.coords.longitude },
                     []
                 );
+                setIsUpload(false);
             }
         } catch {
             console.log('error');
@@ -246,14 +250,18 @@ const GalleryScreen: React.FC = () => {
                                     <Text className="p-2 text-neutral font-handjet-light">
                                         Gallery
                                     </Text>
-                                    <IconButton
-                                        onPress={handleUploadPress}
-                                        className="px-1"
-                                        IconSet="Ionicons"
-                                        iconName="add"
-                                        iconSize={24}
-                                        iconColor={Colors.neutral}
-                                    />
+                                    {isUpload ? (
+                                        <ActivityIndicator className='px-1' size={'small'} color={Colors.tertiary} animating/>
+                                    ) : (
+                                        <IconButton
+                                            onPress={handleUploadPress}
+                                            className="px-1"
+                                            IconSet="Ionicons"
+                                            iconName="add"
+                                            iconSize={24}
+                                            iconColor={Colors.neutral}
+                                        />
+                                    )}
                                 </View>
                                 <View className="h-[45px] w-[75%] flex-row justify-between overflow-hidden border-[0.3px] border-neutral rounded-xl m-1">
                                     <TextInput
