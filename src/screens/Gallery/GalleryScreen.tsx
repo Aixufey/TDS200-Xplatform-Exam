@@ -20,23 +20,18 @@ import {
 } from '../../hooks';
 import DesignSystem from '../../styles';
 const GalleryScreen: React.FC = () => {
+    const [permissionSaved, setPermissionSaved] = useState<boolean>(false);
+    const [shallowCopyData, setShallowCopyData] = useState<BucketListType[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [toggleModal, setToggleModal] = useState<boolean>(false);
     const [input, setInput] = useState<string>('');
-    const { favorite, resetGalleryState, updateData, data } = useGalleryContext();
-    const {} = useShared();
+    const { favorite, resetGalleryState } = useGalleryContext();
     const { resetUIState, isPress, isLongPress } = useUIContext();
+    const { updateData, data } = useShared();
     const { hasPermission, requestPermission } = useRequestPermission();
-    const [permissionSaved, setPermissionSaved] = useState<boolean>(false);
-    const { bucket, fetchBucketList } = useFetchBucketList();
-    const [shallowCopyData, setShallowCopyData] = useState<BucketListType[]>([]);
-    const { Colors } = DesignSystem();
+    const { fetchBucketList } = useFetchBucketList();
     const isFocused = useIsFocused();
-    // Reconcile when memoized fetchAlbum is changed.
-    // TODO: Pictures taken is not updated in UI - having it as dependency cause heavy rendering fix this?
-    // 1. Fetch from firebase on load
-    // 2. while screen is active, manipulation of data should be on a shallow copy - not on the original
-    // 3. when unmounting - update the firebase by pushing changes to firebase.
+    const { Colors } = DesignSystem();
 
     useLayoutEffect(() => {
         setIsLoading(true);
@@ -57,7 +52,7 @@ const GalleryScreen: React.FC = () => {
         const fetchData = async () => {
             const bucketList = await fetchBucketList();
             updateData(bucketList);
-            setShallowCopyData(bucketList);
+            setShallowCopyData(bucketList.reverse());
         };
         checkPermission();
         console.info('Mounted Gallery Screen');
@@ -133,7 +128,7 @@ const GalleryScreen: React.FC = () => {
      * @description Conditional render for FlatList
      * If data exist, check if it's empty, if not empty, render the * FlatList, else render empty data.
      * Otherwise, render loading indicator.
-     * 
+     *
      * @returns FlatList of pictures
      */
     const conditionalRender = () => {

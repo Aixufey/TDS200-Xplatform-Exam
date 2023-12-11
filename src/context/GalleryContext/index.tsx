@@ -149,8 +149,8 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
      * @param input selected pictures to be deleted from firebase storage
      */
     const deletePictures = async (input: MergedImageType[]) => {
+        await deleteFirebasePictures(input);
         await handleDeletePicture(input);
-        //await deleteFirebasePictures(input);
     };
 
     /**
