@@ -140,7 +140,7 @@ const CustomModal: React.FC<ICustomModal> = ({
         if (currentUser === null) {
             return alert('User does not exist!');
         }
-        updateFirestoreComments(currentPicture?.id, currentUser.displayName ?? "Anonymous");
+        updateFirestoreComments(currentPicture?.id, currentUser.displayName ?? 'Anonymous');
     };
 
     const handleLike = () => {

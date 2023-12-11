@@ -8,7 +8,7 @@ const HomeScreen: React.FC = () => {
     const { data } = useShared();
     const { Colors } = DesignSystem();
     const { currentUser, firebase_auth } = useAuth();
-    
+
     const handleSignOutPress = async () => {
         signOut(firebase_auth);
     };
@@ -36,8 +36,10 @@ const HomeScreen: React.FC = () => {
                             }}
                         />
                     </View>
-                    <View className='px-2 w-full justify-center items-start '>
-                        <Text className='font-handjet-light text-neutral tracking-widest text-[28px]'>Latest feed</Text>
+                    <View className="px-2 w-full justify-center items-start ">
+                        <Text className="font-handjet-light text-neutral tracking-widest text-[28px]">
+                            Latest feed
+                        </Text>
                     </View>
                 </View>
                 <View className="w-[95%] bg-dark500 border-[0.5px] border-tertiary justify-between items-center flex-auto">

@@ -79,7 +79,7 @@ const SignUp: React.FC<SignUpProps> = ({ className, signUp }) => {
             if (!isName) return alert('Name is required');
             if (!isEmail) return alert('Email is required');
             if (!isPassword) return alert('Password is required');
-            
+
             setIsLoading(true);
             await createUserWithEmailAndPassword(firebase_auth, newUser.email, newUser.password)
                 .then(async (user) => {
