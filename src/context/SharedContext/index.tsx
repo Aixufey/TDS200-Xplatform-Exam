@@ -1,17 +1,19 @@
 import { Asset } from 'expo-media-library';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { BucketListType } from '../../hooks';
+import { BucketListType, MergedImageType } from '../../hooks';
 import { useFetchBucketList } from '../../hooks/useFetchBucketList';
 import { IGalleryContext } from '../GalleryContext';
 
 type ProviderProps = {
     children: React.ReactNode;
 };
-type SharedContextType = Pick<IGalleryContext, 'data' | 'updateData'>;
-
-const SharedContext = createContext<SharedContextType>({
+type SharedContextType = {
+    updateSharedData: (data: Asset[] | BucketListType[]) => void;
+};
+type SharedContextTypeMerged = SharedContextType & Pick<IGalleryContext, 'data'>;
+const SharedContext = createContext<SharedContextTypeMerged>({
     data: [],
-    updateData: () => {},
+    updateSharedData: () => {},
 });
 
 export const useShared = () => {
@@ -23,18 +25,17 @@ export const useShared = () => {
 };
 
 /**
- * 
+ *
  * @description SharedContextProvider shares data for guest and user
- * @returns observable data and updateData function
+ * @returns observable data and updateSharedData function
  */
 const SharedContextProvider: React.FC<ProviderProps> = ({ children }) => {
-    const [data, setData] = useState<BucketListType[] | null>(null);
+    const [data, setData] = useState<Asset[] | MergedImageType[] | null>(null);
     const { fetchBucketList } = useFetchBucketList();
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const bucketList = await fetchBucketList();
-                // console.log('SharedContextProvider bucketList', bucketList?.length);
                 setData(bucketList.reverse());
             } catch (error) {
                 console.log(error);
@@ -43,12 +44,12 @@ const SharedContextProvider: React.FC<ProviderProps> = ({ children }) => {
         fetchData();
     }, []);
 
-    const updateData = (data: Asset[] | BucketListType[]) => {
+    const updateSharedData = (data: Asset[] | BucketListType[]) => {
         setData(data);
     };
     const ContextValue = {
         data,
-        updateData,
+        updateSharedData,
     };
     return <SharedContext.Provider value={ContextValue}>{children}</SharedContext.Provider>;
 };
