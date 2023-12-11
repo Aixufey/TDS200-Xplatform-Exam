@@ -7,7 +7,7 @@ import { CameraScreen, GalleryScreen, HomeScreen } from '../screens';
 import DesignSystem from '../styles';
 const RootRoutes: React.FC = () => {
     const Tab = createBottomTabNavigator();
-    const { toggleFavorite, selectedPictures, handleDeletePicture, resetGalleryState } =
+    const { toggleFavorite, selectedPictures, deletePictures, resetGalleryState } =
         useGalleryContext();
     const { isLongPressMenu, resetUIState } = useUIContext();
     const { Colors } = DesignSystem();
@@ -150,7 +150,7 @@ const RootRoutes: React.FC = () => {
                                     <AntDesign
                                         onPress={() =>
                                             selectedPictures && selectedPictures.length > 0
-                                                ? handleDeletePicture(selectedPictures)
+                                                ? deletePictures(selectedPictures)
                                                 : null
                                         }
                                         name="delete"

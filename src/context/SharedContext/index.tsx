@@ -22,6 +22,11 @@ export const useShared = () => {
     return context;
 };
 
+/**
+ * 
+ * @description SharedContextProvider shares data for guest and user
+ * @returns observable data and updateData function
+ */
 const SharedContextProvider: React.FC<ProviderProps> = ({ children }) => {
     const [data, setData] = useState<BucketListType[] | null>(null);
     const { fetchBucketList } = useFetchBucketList();
@@ -30,7 +35,7 @@ const SharedContextProvider: React.FC<ProviderProps> = ({ children }) => {
             try {
                 const bucketList = await fetchBucketList();
                 // console.log('SharedContextProvider bucketList', bucketList?.length);
-                setData(bucketList);
+                setData(bucketList.reverse());
             } catch (error) {
                 console.log(error);
             }
