@@ -25,9 +25,9 @@ const GalleryScreen: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [toggleModal, setToggleModal] = useState<boolean>(false);
     const [input, setInput] = useState<string>('');
-    const { favorite, resetGalleryState } = useGalleryContext();
+    const { favorite, resetGalleryState, data, updateData } = useGalleryContext();
     const { resetUIState, isPress, isLongPress } = useUIContext();
-    const { updateData, data } = useShared();
+    const {  } = useShared();
     const { hasPermission, requestPermission } = useRequestPermission();
     const { fetchBucketList } = useFetchBucketList();
     const isFocused = useIsFocused();
@@ -51,15 +51,19 @@ const GalleryScreen: React.FC = () => {
          */
         const fetchData = async () => {
             const bucketList = await fetchBucketList();
-            updateData(bucketList);
-            setShallowCopyData(bucketList.reverse());
+            const reverse = bucketList.reverse();
+            updateData(reverse);
+            setShallowCopyData(reverse);
         };
         checkPermission();
-        console.info('Mounted Gallery Screen');
         fetchData();
     }, [isFocused, hasPermission]);
 
     useEffect(() => {
+        // Observing changes in the data - GalleryContext is the source of truth
+        if (data?.length) {
+            setShallowCopyData(data);
+        }
         return () => {
             // Reset states when leaving the screen
             // Reset drawer state, press state, long press state, all selected pictures
@@ -67,7 +71,7 @@ const GalleryScreen: React.FC = () => {
             resetGalleryState();
             // console.log('Unmounted Gallery Screen');
         };
-    }, [isFocused]);
+    }, [isFocused, data]);
 
     useEffect(() => {
         // Open modal on item click.

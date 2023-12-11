@@ -57,7 +57,7 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
     const [favorite, setFavorite] = useState<MergedImageType[]>([]);
     const [takenPictures, setTakenPictures] = useState<MergedImageType[]>([]);
     const { isLongPress, isPress, setIsLongPress, setIsLongPressMenu } = useUIContext();
-    const { storageRef, firebase_db, firebase_app } = useFireBase();
+    const { storageRef, firebase_db } = useFireBase();
 
     // Load favorites
     useEffect(() => {
@@ -81,7 +81,7 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
     // useEffect(() => {
     //     // console.log(`Pressed `, isPress)
     //     // console.log(`LongPress `, isLongPress)
-    //     //console.log('data length ', data?.length);
+    //     console.log('data length ', data?.length);
     //     // console.log('Current selected length ', selectedPictures.length);
     //     // console.log('current Picture? ', currentPicture);
     //     // console.log('Favorites', favorite);
