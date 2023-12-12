@@ -1,25 +1,43 @@
 import { useIsFocused } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { Background, Button, CameraView } from '../../components';
-import { useLaunchCamera } from '../../hooks';
+import { Background, Button, CameraView, ProPicture } from '../../components';
+import { useGalleryContext } from '../../context';
+import { useLaunchCamera, useLocation } from '../../hooks';
 
 const CameraScreen: React.FC = () => {
-    const { handleLaunchCameraPro } = useLaunchCamera();
+    const { handleLaunchCameraPro, setCoords } = useLaunchCamera();
     const [isBroCam, setIsBroCam] = useState<boolean>(false);
+    const { currentPicture } = useGalleryContext();
+    const { getLocation, location } = useLocation();
     const isFocused = useIsFocused();
+
     useEffect(() => {
         return () => setIsBroCam(false);
     }, [isFocused]);
     const handlePressBro = () => setIsBroCam((prev) => !prev);
 
+    const handlePressPro = async () => {
+        const loc = await getLocation();
+        if (!loc) return alert('Camera needs location access');
+        setCoords({
+            latitude: loc.coords.latitude,
+            longitude: loc.coords.longitude,
+        });
+        await handleLaunchCameraPro();
+    };
+
     return (
         <Background>
             <View className="w-full h-full justify-center items-center">
+                {currentPicture && (
+                    <ProPicture location={location} pictureUri={currentPicture.uri} />
+                )}
+
                 {isBroCam && <CameraView />}
                 <View className="absolute bottom-[10%] w-full justify-evenly items-center flex-row">
                     <Button
-                        onPress={handleLaunchCameraPro}
+                        onPress={handlePressPro}
                         text="Pro"
                         className="bg-cyan-400 justify-center items-center rounded-[10px] border-[1px] border-tertiary w-[85px] h-[55px]"
                     />
