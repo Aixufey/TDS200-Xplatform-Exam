@@ -93,10 +93,12 @@ const SignUp: React.FC<SignUpProps> = ({ className, signUp }) => {
                     setIsLoading(false);
                 })
                 .catch((e) => {
-                    console.log(e);
+                    console.error(e);
+                    setIsLoading(false);
                 });
         } catch (e) {
-            console.log(e);
+            console.error(e);
+            setIsLoading(false);
         }
     };
 
