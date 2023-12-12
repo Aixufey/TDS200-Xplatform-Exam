@@ -23,8 +23,6 @@ export default function App() {
         } catch (e) {
             console.warn(e);
         }
-
-        return console.log('App ready', appIsReady);
         // splash screen is dependent on fonts to be loaded, reconcile the dependencies.
     }, [fontsLoaded]);
 
@@ -32,6 +30,7 @@ export default function App() {
         // useCallback hook execute an async anonymous function to remove the splash screen.
         // The 'callBacker' is the anonymous async storing the promise and ready to use it when the app is ready.
         if (appIsReady) {
+            console.info('App is ready, hiding splash screen');
             await SplashScreen.hideAsync();
         }
     }, [appIsReady]);
