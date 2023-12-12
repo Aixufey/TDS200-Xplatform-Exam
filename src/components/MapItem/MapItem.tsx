@@ -10,6 +10,12 @@ type MapItemProps = {
         longitude: number;
     };
 };
+/**
+ * @warning Size can't be less than 100px X 100px
+ * @description A Map needs a minimum size to render properly, i.e. 100x100.
+ * Thus, a default styling is provided if this component is not styled.
+ * @returns Map view with a marker of the location
+ */
 const MapItem: React.FC<MapItemProps> = ({ className, title, description, coordinate }) => {
     let latitude = isNaN(coordinate.latitude) ? 39.01972053389763 : coordinate.latitude;
     let longitude = isNaN(coordinate.longitude) ? 125.75310718337947 : coordinate.longitude;
@@ -17,7 +23,7 @@ const MapItem: React.FC<MapItemProps> = ({ className, title, description, coordi
         <View
             className={
                 className ??
-                'flex-1 absolute top-0 bottom-0 left-0 right-0 border-2 border-primary w-[250px] h-[250px]'
+                'flex-1 absolute top-0 bottom-0 left-0 right-0 border-2 border-primary w-[100px] h-[100px]'
             }
         >
             <MapView

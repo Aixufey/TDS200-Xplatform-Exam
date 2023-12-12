@@ -1,2 +1,3 @@
 import Picture from './Picture';
-export { Picture };
+import ProPicture from './ProPicture';
+export { Picture, ProPicture };
