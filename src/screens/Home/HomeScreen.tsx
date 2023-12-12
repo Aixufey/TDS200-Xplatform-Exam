@@ -1,5 +1,5 @@
 import { signOut } from 'firebase/auth';
-import { ActivityIndicator, FlatList, Image, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
 import { Background, Button } from '../../components';
 import { useAuth, useShared } from '../../context';
 import { BucketListType } from '../../hooks';

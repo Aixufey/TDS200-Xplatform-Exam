@@ -79,7 +79,6 @@ const GalleryScreen: React.FC = () => {
             // Reset drawer state, press state, long press state, all selected pictures
             resetUIState();
             resetGalleryState();
-            // console.log('Unmounted Gallery Screen');
         };
     }, [isFocused, data, image]);
 

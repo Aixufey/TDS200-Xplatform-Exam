@@ -16,7 +16,7 @@ const useLocation = () => {
         let location = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.Balanced,
         });
-        console.info(`lat: ${location.coords.latitude} - long:${location.coords.longitude}`);
+        // console.info(`lat: ${location.coords.latitude} - long:${location.coords.longitude}`);
         setLocation(location);
         return location;
     };

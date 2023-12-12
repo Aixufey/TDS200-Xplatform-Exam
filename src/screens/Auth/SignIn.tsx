@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { signInAnonymously, signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
 import { useAuth } from '../../context';
 import DesignSystem from '../../styles';
 
@@ -48,7 +48,7 @@ const SignIn: React.FC<SignInProps> = ({ className, signUp }) => {
             }
             setIsLoadingUser(true);
             const userCred = await signInWithEmailAndPassword(firebase_auth, email, password);
-            console.log(userCred.user)
+            console.log(userCred.user);
             setIsLoadingUser(false);
             //console.info(userCred);
         } catch (e) {
