@@ -104,8 +104,8 @@ const useLaunchCamera = () => {
             const proWithId = {
                 id: uniqueId,
                 ...snapshot.assets[0],
-                longitude: 0.0,
-                latitude: 0.0,
+                longitude: coords.longitude,
+                latitude: coords.latitude,
             };
             setCurrentPicture(proWithId);
             handleTakenPictures(proWithId);
@@ -124,7 +124,7 @@ const useLaunchCamera = () => {
         if (cacheData === undefined) {
             return alert(`No cache data`);
         }
-        console.log('saving captions to db', captions.length);
+        //console.log('saving captions to db', captions.length);
         await useUploadImageToFirebase(
             cacheData.id,
             cacheData.blob,
@@ -174,7 +174,7 @@ const useLaunchCamera = () => {
                 const { exif } = snapshot;
                 // Bro don't have ID, so we slap on an ID using regex to rm all colons and trim whitespace
                 const uniqueId: string = snapshot.exif.DateTime.replace(/[:\s]/g, '');
-                console.log(uniqueId);
+                console.info(uniqueId);
                 // Bro too huge, we compress bro
                 const compressedBro = await useManipulateImage(snapshot.uri);
                 if (compressedBro) {
