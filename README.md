@@ -29,15 +29,33 @@ Rename the `.env template` and set it up with your Firebase application configur
 
 ## Introduction
 
-When application load the context, it will fetch to firebase and return the galleries from storage.
+- When application load the context, it will fetch to firebase and return the galleries from storage.
 The decision for when to query firebase when you take a picture or cache the assets then query the firebase based on some condition was thought thoroughly.
-The initial idea was to post the pictures in a batch, but firebase does not allow post in batch. The workaround is to cache the pictures for this session in a collection then iterate over each item and post to firebase.
+- The initial idea was to post the pictures in a batch, but firebase does not allow post in batch. The workaround is to cache the pictures for this session in a collection then iterate over each item and post to firebase. This is of course not implemented.
+The current state is to request for neccessarily API's on certain screen when focused, i.e. 'GalleryScreen' component.
+- A separate navigation is created for authenticated user and guest for security. Extensive functions are only available if a user is logged in, and a shared data is available for both parties.
+
+- A test user is provided for the sake of demonstration
+email: *`2009@mail.com`*
+password: *`123123`*
 
 ## Issues & bugs
 
+- Not any well known bugs per `12/12/2023`. Take this with a grain of salt.
+
+- The user can **not** reset the password via email, so remember your password when creating a new user.
+
+- **Physical device** an Android phone was used for developing and testing for the project.
+
+- **Android** emulator was tested on a `Pixel5 API34`. It is worth to note that network configuration has to be setup in the device in order to run the app. Static IP is required with DNS and a cold boot will do. Instructions can be found [here](https://stackoverflow.com/a/52765004)
+
+- **iOS** emulator should work in theory. Phyiscal device is at unknown state.
+
+- **Webpack** does not compile on this project. Many dependencies are not supported for react-native-web.
+
 ## Dependencies
 
-### [Authentication]()
+### [Authentication](https://firebase.google.com/docs/auth/web/manage-users?hl=en&authuser=1)
 
 Using Firebase auth for authentication. User can create, login or browse as guest user. To store the authentication state we need to persist it. Somehow the typescript does not recognize the declared files so we have to add this into **tsconfig.json**
 
@@ -307,11 +325,11 @@ A library that provides various vector icons via `npm i @expo/vector-icons` &nbs
 
 ### Instructions
 
-1. Make sure you are in the root directory `pwd` _~/TDS200-Xplatform-Exam_
+1. Make sure you are in the root directory `pwd` *~/TDS200-Xplatform-Exam*
 2. Create **two** Symbolic Links from the provided script `post-checkout.sh` using command:
 3. `ln -s -f ../../githooks/post-checkout.sh .git/hooks/post-checkout`
 4. `ln -s -f ../../githooks/post-switch.sh .git/hooks/post-switch`<br />
 5. Make sure .sh has permissions `chmod +x .git/hooks/post-*`
 
-- The Hooks should be working now with both commands like `switch` or `checkout` whichever the developer prefers. It may be tested running `git checkout developer` and you should see a prompt "_Checked out developer branch, pulling latest from origin/developer..._"
+- The Hooks should be working now with both commands like `switch` or `checkout` whichever the developer prefers. It may be tested running `git checkout developer` and you should see a prompt "*Checked out developer branch, pulling latest from origin/developer...*"
 - `ln` links in Unix `-s` pointer to a file `-f` force override <br />
