@@ -8,7 +8,7 @@ import HandjetMedium from '../../assets/fonts/Handjet-Medium.ttf';
 import HandjetRegular from '../../assets/fonts/Handjet-Regular.ttf';
 import HandjetSemiBold from '../../assets/fonts/Handjet-SemiBold.ttf';
 import HandjetThin from '../../assets/fonts/Handjet-Thin.ttf';
-// // Ubuntu
+// Ubuntu
 import UbuntuBold from '../../assets/fonts/Ubuntu-Bold.ttf';
 import UbuntuBoldItalic from '../../assets/fonts/Ubuntu-BoldItalic.ttf';
 import UbuntuItalic from '../../assets/fonts/Ubuntu-Italic.ttf';

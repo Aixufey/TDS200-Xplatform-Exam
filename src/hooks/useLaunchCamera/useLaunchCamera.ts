@@ -198,10 +198,7 @@ const useLaunchCamera = () => {
                     const resp = await fetch(uri);
                     const blob = await resp.blob();
 
-                    // await useUploadImageToFirebase(compressedBroWithId.id, blob, exif, {
-                    //     latitude: compressedBroWithId.latitude,
-                    //     longitude: compressedBroWithId.longitude,
-                    // });
+                    // Caching taken pictures for later use if needed.
                     handleTakenPictures(compressedBroWithId);
                     // Cache the data when user is satisfied with captions then save on demand.
                     setCacheData({

@@ -221,7 +221,7 @@ const CameraView: React.FC = () => {
 
     return (
         <View className="flex-1 justify-center items-center">
-            <View className="absolute h-[450px] bg-dark500 items-center border-[0.5px] border-[#FFA]">
+            <View className="absolute h-[450px] bg-dark500 items-center border-[0.5px] border-secondary">
                 <Camera
                     ratio="1:1"
                     className="w-[350px] h-[350px]"
