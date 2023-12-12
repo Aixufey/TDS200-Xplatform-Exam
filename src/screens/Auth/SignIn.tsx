@@ -48,7 +48,7 @@ const SignIn: React.FC<SignInProps> = ({ className, signUp }) => {
             }
             setIsLoadingUser(true);
             const userCred = await signInWithEmailAndPassword(firebase_auth, email, password);
-            console.log(userCred.user);
+            console.info(`User: ${userCred.user.displayName}, signed in`);
             setIsLoadingUser(false);
             //console.info(userCred);
         } catch (e) {
@@ -62,6 +62,7 @@ const SignIn: React.FC<SignInProps> = ({ className, signUp }) => {
         try {
             setIsLoadingGuest(true);
             const guest = await signInAnonymously(firebase_auth);
+            console.info(`Guest signed in`);
             setIsLoadingGuest(false);
             //console.info(guest.user);
         } catch (e) {
