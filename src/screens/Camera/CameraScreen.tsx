@@ -22,7 +22,7 @@ const CameraScreen: React.FC = () => {
 
     const handlePressBro = () => {
         setIsProCam(false);
-        setIsBroCam((prev) => !prev)
+        setIsBroCam((prev) => !prev);
     };
 
     const handlePressPro = async () => {
@@ -30,7 +30,7 @@ const CameraScreen: React.FC = () => {
         setIsProCam(true);
         const loc = await getLocation();
         if (!loc) return alert('Camera needs location access');
-       
+
         await handleLaunchCameraPro();
     };
 
