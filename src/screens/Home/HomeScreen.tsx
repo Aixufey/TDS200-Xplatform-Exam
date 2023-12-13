@@ -8,7 +8,7 @@ import DesignSystem from '../../styles';
 const HomeScreen: React.FC = () => {
     const { data } = useShared();
     const { Colors } = DesignSystem();
-    const { currentUser, firebase_auth } = useAuth();
+    const { currentUser, firebase_auth, currentUserDisplayName } = useAuth();
 
     useEffect(() => {
         const reloadUser = async () => {
@@ -32,7 +32,7 @@ const HomeScreen: React.FC = () => {
                             <Text className="text-secondary font-handjet-light">
                                 {currentUser.isAnonymous
                                     ? 'Anonymous one'
-                                    : currentUser.displayName}
+                                    : currentUserDisplayName}
                             </Text>
                         </Text>
                     )}
