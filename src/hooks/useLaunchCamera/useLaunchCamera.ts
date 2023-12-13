@@ -10,6 +10,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 import { TDS200 } from '../../constants';
 import { useGalleryContext } from '../../context';
+import { useLocation } from '../useLocation';
 import { useManipulateImage } from '../useManipulateImage';
 import { ICoordinates, useUploadImageToFirebase } from '../useUploadImageToFirebase';
 
@@ -60,9 +61,10 @@ const useLaunchCamera = () => {
     const [DoesNotWorkUsingMyOwnState, requestPermission] = useCameraPermissions();
     const [hasPermission, setHasPermission] = useState<boolean>(false);
     const broCameraRef = useRef<Camera>(null);
-    const { handleTakenPictures, setCurrentPicture, currentPicture } = useGalleryContext();
+    const { handleTakenPictures, setCurrentPicture } = useGalleryContext();
     const [cacheData, setCacheData] = useState<CacheData | undefined>(undefined);
     const [captions, setCaptions] = useState<string[]>([]);
+    const { getLocation } = useLocation();
     const [coords, setCoords] = useState<ICoordinates>({
         latitude: 0.0,
         longitude: 0.0,
@@ -83,9 +85,16 @@ const useLaunchCamera = () => {
 
     useEffect(() => {
         fetchCamera();
-        //console.log(captions);
-        //console.info(coords);
-    }, [captions, fetchCamera, hasPermission, coords]);
+        // console.log(captions);
+        const fetchLocation = async () => {
+            const location = await getLocation();
+            setCoords({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+            });
+        };
+        fetchLocation();
+    }, [captions, fetchCamera, hasPermission]);
 
     const handleLaunchCameraPro = async () => {
         if (!hasPermission) return Alert.alert(`Camera access not granted.`);
@@ -175,6 +184,7 @@ const useLaunchCamera = () => {
                 // Bro don't have ID, so we slap on an ID using regex to rm all colons and trim whitespace
                 const uniqueId: string = snapshot.exif.DateTime.replace(/[:\s]/g, '');
                 console.info(uniqueId);
+
                 // Bro too huge, we compress bro
                 const compressedBro = await useManipulateImage(snapshot.uri);
                 if (compressedBro) {
@@ -183,33 +193,38 @@ const useLaunchCamera = () => {
                     const compressedBroWithId = {
                         id: uniqueId,
                         ...compressedBro,
-                        latitude: coords.latitude,
-                        longitude: coords.longitude,
+                        // Adding coordinates to the picture
+                        coordinates: {   
+                            latitude: coords.latitude,
+                            longitude: coords.longitude,
+                        }
                     };
-                    // For Modal preview
-                    setCurrentPicture(compressedBroWithId);
 
-                    /**
-                     * Placeholder for all snapped pictures.
-                     * The decision when to upload to firebase.
-                     * 1. For synchronization - upload to firebase every time you snap a picture
-                     * 2. Greener API - upload in batch when unmounting gallery screen, user can still see the snapped picture(s)
-                     */
+                    // Making BLOB file for firebase
                     const resp = await fetch(uri);
                     const blob = await resp.blob();
 
-                    // Caching taken pictures for later use if needed.
-                    handleTakenPictures(compressedBroWithId);
                     // Cache the data when user is satisfied with captions then save on demand.
                     setCacheData({
                         id: compressedBroWithId.id,
                         blob,
                         exif,
                         coordinates: {
-                            latitude: compressedBroWithId.latitude,
-                            longitude: compressedBroWithId.longitude,
+                            latitude: compressedBroWithId.coordinates.latitude,
+                            longitude: compressedBroWithId.coordinates.longitude,
                         },
                     });
+                    
+                    // For Modal preview
+                    setCurrentPicture(compressedBroWithId);
+                    // Caching taken pictures for later use if needed.
+                    handleTakenPictures(compressedBroWithId);
+                    /**
+                     * Placeholder for all snapped pictures.
+                     * The decision when to upload to firebase.
+                     * 1. For synchronization - upload to firebase every time you snap a picture
+                     * 2. Greener API - upload in batch when unmounting gallery screen, user can still see the snapped picture(s)
+                    */
                 }
             }
         } catch (e) {

@@ -172,7 +172,6 @@ const CustomModal: React.FC<ICustomModal> = ({
      * @param reaction Reaction can be like or dislike
      */
     const updateFirestoreReaction = async (reaction: ReactionType) => {
-        console.info('Pressed');
         if (currentPicture?.id === undefined) {
             return alert('Picture does not exist!');
         }
@@ -181,8 +180,6 @@ const CustomModal: React.FC<ICustomModal> = ({
         }
         const pictureRef = doc(firebase_db, reactionsDoc, currentPicture.id);
         const reactionDoc = await getDoc(pictureRef);
-        console.log(pictureRef);
-        console.log(reactionDoc);
         let data: DocumentData;
         if (reactionDoc.exists()) {
             data = reactionDoc.data();
@@ -456,10 +453,7 @@ const CustomModal: React.FC<ICustomModal> = ({
                             <BackView
                                 id={currentPicture.id}
                                 uri={currentPicture.uri}
-                                coordinates={{
-                                    longitude: currentPicture.coordinates?.longitude,
-                                    latitude: currentPicture.coordinates?.latitude,
-                                }}
+                                coordinates={currentPicture.coordinates}
                             >
                                 <MapItem
                                     className="w-[100%] h-[100%] rounded-xl"

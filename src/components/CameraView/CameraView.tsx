@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import { Camera, CameraType } from 'expo-camera';
 import * as Location from 'expo-location';
 import { doc, setDoc } from 'firebase/firestore';
