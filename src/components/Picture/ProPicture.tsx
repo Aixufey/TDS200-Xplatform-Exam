@@ -6,11 +6,7 @@ interface IProPicture extends ViewProps {
     pictureUri: string;
     location: LocationObject | undefined;
 }
-const ProPicture: React.FC<IProPicture> = ({
-    pictureUri,
-    location,
-    className,
-}) => {
+const ProPicture: React.FC<IProPicture> = ({ pictureUri, location, className }) => {
     if (!location) return null;
     const { latitude, longitude } = location.coords;
     return (

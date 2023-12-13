@@ -41,8 +41,6 @@ const WelcomeRoutes: React.FC = () => {
             </UIContextProvider>
         </FireBaseContextProvider>
     );
-    
-   
 
     return (
         <SharedContextProvider>

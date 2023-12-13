@@ -194,10 +194,10 @@ const useLaunchCamera = () => {
                         id: uniqueId,
                         ...compressedBro,
                         // Adding coordinates to the picture
-                        coordinates: {   
+                        coordinates: {
                             latitude: coords.latitude,
                             longitude: coords.longitude,
-                        }
+                        },
                     };
 
                     // Making BLOB file for firebase
@@ -214,7 +214,7 @@ const useLaunchCamera = () => {
                             longitude: compressedBroWithId.coordinates.longitude,
                         },
                     });
-                    
+
                     // For Modal preview
                     setCurrentPicture(compressedBroWithId);
                     // Caching taken pictures for later use if needed.
@@ -224,7 +224,7 @@ const useLaunchCamera = () => {
                      * The decision when to upload to firebase.
                      * 1. For synchronization - upload to firebase every time you snap a picture
                      * 2. Greener API - upload in batch when unmounting gallery screen, user can still see the snapped picture(s)
-                    */
+                     */
                 }
             }
         } catch (e) {
