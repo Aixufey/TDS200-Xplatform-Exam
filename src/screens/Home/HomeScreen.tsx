@@ -1,4 +1,5 @@
 import { signOut } from 'firebase/auth';
+import { useEffect } from 'react';
 import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
 import { Background, Button } from '../../components';
 import { useAuth, useShared } from '../../context';
@@ -8,6 +9,15 @@ const HomeScreen: React.FC = () => {
     const { data } = useShared();
     const { Colors } = DesignSystem();
     const { currentUser, firebase_auth } = useAuth();
+
+    useEffect(() => {
+        const reloadUser = async () => {
+            if (currentUser) {
+                await currentUser.reload();
+            }
+        };
+        reloadUser();
+    }, []);
 
     const handleSignOutPress = async () => {
         signOut(firebase_auth);

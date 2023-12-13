@@ -14,7 +14,7 @@ type SignInProps = {
     signUp: () => void;
 };
 const SignIn: React.FC<SignInProps> = ({ className, signUp }) => {
-    const { firebase_auth } = useAuth();
+    const { firebase_auth, setCurrentUserDisplayName } = useAuth();
     const { Colors } = DesignSystem();
     const [isLoadingUser, setIsLoadingUser] = useState<boolean>(false);
     const [isLoadingGuest, setIsLoadingGuest] = useState<boolean>(false);
@@ -49,6 +49,7 @@ const SignIn: React.FC<SignInProps> = ({ className, signUp }) => {
             setIsLoadingUser(true);
             const userCred = await signInWithEmailAndPassword(firebase_auth, email, password);
             console.info(`User: ${userCred.user.displayName}, signed in`);
+            setCurrentUserDisplayName((prev) => (prev = userCred.user.displayName ?? ''));
             setIsLoadingUser(false);
             //console.info(userCred);
         } catch (e) {
