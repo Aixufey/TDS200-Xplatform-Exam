@@ -63,7 +63,8 @@ password: *`123123`*
 
 - **Android** emulator was tested on a `Pixel5 API34`. It is worth to note that network configuration has to be setup in the device in order to run the app. Static IP is required with DNS and a cold boot will do. Instructions can be found [here](https://stackoverflow.com/a/52765004)
 
-![Pixel5](./assets/pixel5.png)
+![Pixel5](./assets/screens.jpg)
+![Emulator](./assets/emulator.png)
 
 - **iOS** emulator should work in theory. Phyiscal device is at unknown state.
 
