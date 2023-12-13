@@ -129,7 +129,7 @@ const CustomModal: React.FC<ICustomModal> = ({
     };
 
     const handleCommentChange = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-        let sanitize = e.nativeEvent.text.toLowerCase().trim();
+        const sanitize = e.nativeEvent.text.toLowerCase().trimStart();
         setInput(sanitize);
     };
 
@@ -264,7 +264,7 @@ const CustomModal: React.FC<ICustomModal> = ({
         await addDoc(commentCol, {
             userId: userId,
             pictureId: pictureId,
-            comment: input,
+            comment: input.trim(),
             timeStamp: new Date(),
         });
         setInput('');
