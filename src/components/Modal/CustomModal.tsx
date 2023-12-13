@@ -34,6 +34,10 @@ interface ICustomModal {
     onPress?: () => void;
     toggleModal?: () => void;
 }
+enum ReactionType {
+    Like = 'likes',
+    Dislike = 'dislikes',
+}
 const CustomModal: React.FC<ICustomModal> = ({
     onPress,
     className,
@@ -144,14 +148,31 @@ const CustomModal: React.FC<ICustomModal> = ({
     };
 
     const handleLike = () => {
-        updateFirestoreReaction(true);
+        updateFirestoreReaction(ReactionType.Like);
     };
 
     const handleDislike = () => {
-        updateFirestoreReaction(false);
+        updateFirestoreReaction(ReactionType.Dislike);
     };
 
-    const updateFirestoreReaction = async (state: boolean) => {
+    /**
+     * @description Update the reaction to a picture
+     * Basic data structure for collection(reactions)
+     * reaction -> picture object -> dislikes, likes, pictureId, userId, reactions
+     * picture: {
+     *  likes: 2,
+     *  dislikes: 1,
+     *  pictureId: '123',
+     *  userId: '2009',
+     *  reactions: {
+     *    likes: ['2009', '2010'],
+     *    dislikes: ['2011']
+     *  }
+     * }
+     * @param reaction Reaction can be like or dislike
+     */
+    const updateFirestoreReaction = async (reaction: ReactionType) => {
+        console.info('Pressed');
         if (currentPicture?.id === undefined) {
             return alert('Picture does not exist!');
         }
@@ -159,27 +180,78 @@ const CustomModal: React.FC<ICustomModal> = ({
             return alert('User does not exist!');
         }
         const pictureRef = doc(firebase_db, reactionsDoc, currentPicture.id);
-
         const reactionDoc = await getDoc(pictureRef);
-        setFeedback((prev) => {
-            return {
-                likes: (prev.likes = reactionDoc.data()?.likes),
-                dislikes: (prev.dislikes = reactionDoc.data()?.dislikes),
+        console.log(pictureRef);
+        console.log(reactionDoc);
+        let data: DocumentData;
+        if (reactionDoc.exists()) {
+            data = reactionDoc.data();
+        } else {
+            // If the picture does not exist in the database create a new document
+            data = {
+                userId: currentUser.displayName,
+                pictureId: currentPicture.id,
+                likes: 0,
+                dislikes: 0,
+                reactions: {
+                    likes: [],
+                    dislikes: [],
+                },
             };
-        });
+            await setDoc(pictureRef, data);
+        }
+        let newLikes = data.likes;
+        let newDislikes = data.dislikes;
 
-        // user can either like or dislike
-        let like = state ? 1 : -1;
-        let dislike = state ? -1 : 1;
-
-        // guard not below 0
-        like = like < 0 ? 0 : like;
-        dislike = dislike < 0 ? 0 : dislike;
+        // Reaction is like
+        if (reaction === ReactionType.Like) {
+            // If the user has not liked the picture
+            if (!data.reactions.likes.includes(currentUser.displayName)) {
+                newLikes++;
+                // Track the user's like
+                data.reactions.likes = [currentUser.displayName, ...data.reactions.likes];
+            } else {
+                // If user decide to unlike the picture
+                newLikes--;
+                data.reactions.likes = data.reactions.likes.filter(
+                    (name: string) => name !== currentUser.displayName
+                );
+            }
+            // Check if the user has previously disliked the picture
+            if (data.reactions.dislikes.includes(currentUser.displayName)) {
+                newDislikes--;
+                data.reactions.dislikes = data.reactions.dislikes.filter(
+                    (name: string) => name !== currentUser.displayName
+                );
+            }
+            // Reaction is dislike
+        } else if (reaction === ReactionType.Dislike) {
+            // If the user has not disliked the picture
+            if (!data.reactions.dislikes.includes(currentUser.displayName)) {
+                newDislikes++;
+                data.reactions.dislikes = [currentUser.displayName, ...data.reactions.dislikes];
+            } else {
+                // If user decide to undislike the picture
+                newDislikes--;
+                data.reactions.dislikes = data.reactions.dislikes.filter(
+                    (name: string) => name !== currentUser.displayName
+                );
+            }
+            // Check if the user has previously liked the picture
+            if (data.reactions.likes.includes(currentUser.displayName)) {
+                newLikes--;
+                data.reactions.likes = data.reactions.likes.filter(
+                    (name: string) => name !== currentUser.displayName
+                );
+            }
+        }
+        // Set structure, merging the new values with the old values
         await setDoc(
             pictureRef,
             {
-                likes: like,
-                dislikes: dislike,
+                likes: newLikes,
+                dislikes: newDislikes,
+                reactions: data.reactions,
                 pictureId: currentPicture.id,
                 userId: currentUser.displayName,
             },
