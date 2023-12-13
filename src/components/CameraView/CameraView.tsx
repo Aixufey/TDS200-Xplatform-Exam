@@ -114,7 +114,7 @@ const CameraView: React.FC = () => {
     };
     const handleCaptionPress = () => {
         setCaptions((prevCaptions) => {
-            const updatedCaptions = [input, ...prevCaptions];
+            const updatedCaptions = [input.trim(), ...prevCaptions];
             updateCaptions(updatedCaptions);
             return updatedCaptions;
         });
@@ -122,7 +122,7 @@ const CameraView: React.FC = () => {
     };
 
     const handleCaptionChange = (txt: string) => {
-        let sanitize = txt.toLowerCase().trim();
+        const sanitize = txt.trimStart();
         setInput(sanitize);
     };
 
