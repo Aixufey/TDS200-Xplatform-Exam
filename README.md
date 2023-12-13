@@ -55,6 +55,7 @@ password: *`123123`*
 ## Issues & bugs
 
 - Not any well known bugs per `12/12/2023`. Take this with a grain of salt.
+- A minor patch has been done when newly created user name is not displayed immediately. Due to firebase function updating a user name is not in the same operation, combined with React state asynchrounus state batching the name is not setting before next event trigger. Thus, we implemented an additional state and doing a functional state update, while forcing React to reconcile before returning the **SignUp** component. *This was discovered accidentally whereas HomeScreen was showing immediate name even without utilizing our created state.*
 
 - The user can **not** reset the password via email, so remember your password when creating a new user.
 
