@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, reload, updateProfile } from 'firebase/auth';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
 import { useAuth } from '../../context';
@@ -90,6 +90,7 @@ const SignUp: React.FC<SignUpProps> = ({ className, signUp }) => {
                             .concat(newUser.name.slice(1)),
                     });
                     console.info(user.user);
+                    await reload(user.user);
                     setIsLoading(false);
                 })
                 .catch((e) => {
