@@ -452,7 +452,6 @@ const CustomModal: React.FC<ICustomModal> = ({
                         {flip && currentPicture && (
                             <BackView
                                 id={currentPicture.id}
-                                uri={currentPicture.uri}
                                 coordinates={currentPicture.coordinates}
                             >
                                 <MapItem

@@ -14,7 +14,7 @@ type SignUpProps = {
     signUp: () => void;
 };
 const SignUp: React.FC<SignUpProps> = ({ className, signUp }) => {
-    const { firebase_auth } = useAuth();
+    const { firebase_auth, setCurrentUserDisplayName } = useAuth();
     const { Colors } = DesignSystem();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [newUser, setNewUser] = useState<IUser>({
@@ -83,14 +83,16 @@ const SignUp: React.FC<SignUpProps> = ({ className, signUp }) => {
             setIsLoading(true);
             await createUserWithEmailAndPassword(firebase_auth, newUser.email, newUser.password)
                 .then(async (user) => {
+                    const newUserName = newUser.name
+                        .slice(0, 1)
+                        .toUpperCase()
+                        .concat(newUser.name.slice(1));
                     await updateProfile(user.user, {
-                        displayName: newUser.name
-                            .slice(0, 1)
-                            .toUpperCase()
-                            .concat(newUser.name.slice(1)),
+                        displayName: newUserName,
                     });
                     console.info(user.user);
                     await reload(user.user);
+                    setCurrentUserDisplayName((prev) => (prev = newUserName));
                     setIsLoading(false);
                 })
                 .catch((e) => {
