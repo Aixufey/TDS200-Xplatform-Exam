@@ -6,31 +6,38 @@ import { useGalleryContext } from '../../context';
 import { useLaunchCamera, useLocation } from '../../hooks';
 
 const CameraScreen: React.FC = () => {
-    const { handleLaunchCameraPro, setCoords } = useLaunchCamera();
+    const { handleLaunchCameraPro } = useLaunchCamera();
     const [isBroCam, setIsBroCam] = useState<boolean>(false);
+    const [isProCam, setIsProCam] = useState<boolean>(false);
     const { currentPicture } = useGalleryContext();
     const { getLocation, location } = useLocation();
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        return () => setIsBroCam(false);
+        return () => {
+            setIsBroCam(false);
+            setIsProCam(false);
+        };
     }, [isFocused]);
-    const handlePressBro = () => setIsBroCam((prev) => !prev);
+
+    const handlePressBro = () => {
+        setIsProCam(false);
+        setIsBroCam((prev) => !prev)
+    };
 
     const handlePressPro = async () => {
+        setIsBroCam(false);
+        setIsProCam(true);
         const loc = await getLocation();
         if (!loc) return alert('Camera needs location access');
-        setCoords({
-            latitude: loc.coords.latitude,
-            longitude: loc.coords.longitude,
-        });
+       
         await handleLaunchCameraPro();
     };
 
     return (
         <Background>
             <View className="w-full h-full justify-center items-center">
-                {currentPicture && (
+                {currentPicture && isProCam && (
                     <ProPicture location={location} pictureUri={currentPicture.uri} />
                 )}
 
