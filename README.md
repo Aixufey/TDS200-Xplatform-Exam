@@ -1,5 +1,9 @@
 # TDS200-Xplatform-Exam
 
+## Candidate 2009
+
+![logo](./assets/2009logo.jpg)
+
 This is the Exam 2023 in Cross-platform at Høyskolen Kristiania.<br />
 The project will fail to run if `.env` for **Firebase** is not configured.<br />
 Rename the `.env template` and set it up with your Firebase application configuration.
@@ -39,6 +43,15 @@ The current state is to request for neccessarily API's on certain screen when fo
 email: *`2009@mail.com`*
 password: *`123123`*
 
+---
+
+## How to use
+
+- Install all dependencies `npm i`
+- To run, `npx expo start`, or run on android `npx expo start --android`
+
+---
+
 ## Issues & bugs
 
 - Not any well known bugs per `12/12/2023`. Take this with a grain of salt.
@@ -49,9 +62,13 @@ password: *`123123`*
 
 - **Android** emulator was tested on a `Pixel5 API34`. It is worth to note that network configuration has to be setup in the device in order to run the app. Static IP is required with DNS and a cold boot will do. Instructions can be found [here](https://stackoverflow.com/a/52765004)
 
+![Pixel5](./assets/pixel5.png)
+
 - **iOS** emulator should work in theory. Phyiscal device is at unknown state.
 
 - **Webpack** does not compile on this project. Many dependencies are not supported for react-native-web.
+
+---
 
 ## Dependencies
 
