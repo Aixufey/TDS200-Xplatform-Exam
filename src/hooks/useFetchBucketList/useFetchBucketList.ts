@@ -23,12 +23,14 @@ const useFetchBucketList = <T extends BucketListType>() => {
                     try {
                         const url = await getDownloadURL(itemRef);
                         const meta = await getMetadata(itemRef);
+                        const customMetadata = meta.customMetadata;
                         let captions = meta.customMetadata?.captions;
                         let coordinates = meta.customMetadata?.coordinates;
                         let id = meta.name;
                         let createdTime;
                         if (meta.customMetadata?.exif) {
                             const exif = JSON.parse(meta.customMetadata?.exif);
+                            // Format: "YYYY:MM:DD HH:mm:ss" i.e. 2023:12:14 20:46:36
                             if (exif.DateTimeOriginal) {
                                 createdTime = new Date(
                                     exif.DateTime.replace(/(\d{4}):(\d{2}):(\d{2})/, '$1-$2-$3')
@@ -50,8 +52,9 @@ const useFetchBucketList = <T extends BucketListType>() => {
                             id: id,
                             uri: url,
                             coordinates: coordinates,
+                            exif: customMetadata,
                             captions: captions,
-                            exif: createdTime,
+                            timeStamp: createdTime,
                         } as T;
                     } catch (e) {
                         return console.error(e);

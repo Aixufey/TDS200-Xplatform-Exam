@@ -135,6 +135,9 @@ const GalleryScreen: React.FC = () => {
         setInput('');
     };
 
+    /**
+     * @description Upload an image to firebase using image picker
+     */
     const handleUploadPress = async () => {
         try {
             const loc = await getLocation();
@@ -148,7 +151,8 @@ const GalleryScreen: React.FC = () => {
                     blob,
                     image.exif,
                     { latitude: loc.coords.latitude, longitude: loc.coords.longitude },
-                    []
+                    [],
+                    new Date(),
                 );
                 setIsUpload(false);
             }
@@ -177,10 +181,13 @@ const GalleryScreen: React.FC = () => {
                             key={index}
                             id={item.id}
                             uri={item.uri}
+                            exif={item.exif}
                             coordinates={{
                                 latitude: item.coordinates?.latitude,
                                 longitude: item.coordinates?.longitude,
                             }}
+                            timeStamp={item.timeStamp}
+                            captions={item.exif.captions}
                         />
                     )}
                     removeClippedSubviews={true}

@@ -14,7 +14,8 @@ const useUploadImageToFirebase = async (
     blob: Blob,
     exif: Partial<MediaTrackSettings> | any,
     coordinates: ICoordinates,
-    captions: string[]
+    captions: string[],
+    timeStamp: Date,
 ) => {
     try {
         const storage = await getStorage();
@@ -29,6 +30,7 @@ const useUploadImageToFirebase = async (
                 exif: JSON.stringify(exif ?? ''),
                 coordinates: JSON.stringify(coordinatesMeta),
                 captions: JSON.stringify(captions),
+                timeStamp: timeStamp.toISOString(),
             },
         })
             .then(async (snapshot) => {
