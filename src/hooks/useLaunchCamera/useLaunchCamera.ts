@@ -13,6 +13,7 @@ import { useGalleryContext } from '../../context';
 import { useLocation } from '../useLocation';
 import { useManipulateImage } from '../useManipulateImage';
 import { ICoordinates, useUploadImageToFirebase } from '../useUploadImageToFirebase';
+import { FullMetadata } from 'firebase/storage';
 
 // Type definitions is taken from Expo Camera
 export type ProImageType = {
@@ -24,7 +25,7 @@ export type ProImageType = {
     type?: 'image' | 'video';
     fileName?: string | null;
     fileSize?: number;
-    exif?: Partial<MediaTrackSettings> | any;
+    exif?: Partial<MediaTrackSettings> | FullMetadata | any;
     base64?: string | null;
     duration?: number | null;
     coordinates?: {
@@ -32,6 +33,7 @@ export type ProImageType = {
         latitude?: number | undefined;
     };
     captions?: string[];
+    timeStamp?: Date | undefined;
 };
 export type BroImageType = {
     id: string;
@@ -39,23 +41,26 @@ export type BroImageType = {
     width?: number;
     height?: number;
     base64?: string | null;
-    exif?: Partial<MediaTrackSettings> | any;
+    exif?: Partial<MediaTrackSettings> | FullMetadata | any;
     coordinates?: {
         longitude?: number | undefined;
         latitude?: number | undefined;
     };
     captions?: string[];
+    timeStamp?: Date | undefined;
 };
 export type MergedImageType = BroImageType & ProImageType & Partial<ImagePickerAsset>;
 export type BucketListType = Pick<
     MergedImageType,
-    'id' | 'uri' | 'coordinates' | 'exif' | 'captions'
+    'id' | 'uri' | 'coordinates' | 'exif' | 'captions' | 'timeStamp'
 >;
 type CacheData = {
     id: string;
     blob: Blob;
     exif: Partial<MediaTrackSettings> | any;
     coordinates: ICoordinates;
+    captions: string[];
+    timeStamp: Date;
 };
 const useLaunchCamera = () => {
     const [DoesNotWorkUsingMyOwnState, requestPermission] = useCameraPermissions();
@@ -142,7 +147,8 @@ const useLaunchCamera = () => {
                 latitude: cacheData.coordinates.latitude,
                 longitude: cacheData.coordinates.longitude,
             },
-            captions
+            captions,
+            cacheData.timeStamp
         );
     };
 
@@ -198,6 +204,7 @@ const useLaunchCamera = () => {
                             latitude: coords.latitude,
                             longitude: coords.longitude,
                         },
+                        timeStamp: new Date(),
                     };
 
                     // Making BLOB file for firebase
@@ -213,8 +220,9 @@ const useLaunchCamera = () => {
                             latitude: compressedBroWithId.coordinates.latitude,
                             longitude: compressedBroWithId.coordinates.longitude,
                         },
+                        captions: captions,
+                        timeStamp: compressedBroWithId.timeStamp,
                     });
-
                     // For Modal preview
                     setCurrentPicture(compressedBroWithId);
                     // Caching taken pictures for later use if needed.
