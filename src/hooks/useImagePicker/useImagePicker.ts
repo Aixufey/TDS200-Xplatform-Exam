@@ -6,7 +6,7 @@ import { useManipulateImage } from '../useManipulateImage';
 const useImagePicker = () => {
     const [image, setImage] = useState<MergedImageType>();
 
-    const pickImage = async () => {
+    const pickImage = async (): Promise<ImagePicker.ImagePickerResult> => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -37,6 +37,7 @@ const useImagePicker = () => {
                 setImage(compressedImage);
             }
         }
+        return result;
     };
     return {
         image,
