@@ -141,7 +141,10 @@ const GalleryScreen: React.FC = () => {
     const handleUploadPress = async () => {
         try {
             const loc = await getLocation();
-            await pickImage();
+            const result = await pickImage();
+            if (result.canceled) {
+                return setIsUpload(false);
+            }
             setIsUpload(true);
             if (image) {
                 const response = await fetch(image.uri);
@@ -152,7 +155,7 @@ const GalleryScreen: React.FC = () => {
                     image.exif,
                     { latitude: loc.coords.latitude, longitude: loc.coords.longitude },
                     [],
-                    new Date(),
+                    new Date()
                 );
                 setIsUpload(false);
             }

@@ -98,7 +98,7 @@ const CustomModal: React.FC<ICustomModal> = ({
 
             if (captionDoc.exists()) {
                 const data = captionDoc.data();
-                console.log(data);
+                // console.log(data);
                 setCaptions(data);
             }
         };
