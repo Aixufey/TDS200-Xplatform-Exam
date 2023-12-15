@@ -348,13 +348,16 @@ const CustomModal: React.FC<ICustomModal> = ({
                                                 <Text className="text-neutral font-handjet-light">
                                                     {item.timeStamp.toDate().toUTCString()}
                                                 </Text>
-                                                <IconButton
-                                                    onPress={() => handleDeleteComment(item.id)}
-                                                    IconSet="FontAwesome"
-                                                    iconSize={20}
-                                                    iconName="trash-o"
-                                                    iconColor={Colors.neutral200}
-                                                />
+                                                {item.userId === currentUser?.displayName && (
+                                                    // Only the user who posted the comment can delete it
+                                                    <IconButton
+                                                        onPress={() => handleDeleteComment(item.id)}
+                                                        IconSet="FontAwesome"
+                                                        iconSize={20}
+                                                        iconName="trash-o"
+                                                        iconColor={Colors.neutral200}
+                                                    />
+                                                )}
                                             </View>
                                         </View>
                                     )}
