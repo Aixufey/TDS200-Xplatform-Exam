@@ -15,7 +15,7 @@ const useUploadImageToFirebase = async (
     exif: Partial<MediaTrackSettings> | any,
     coordinates: ICoordinates,
     captions: string[],
-    timeStamp: Date,
+    timeStamp: Date
 ) => {
     try {
         const storage = await getStorage();

@@ -3,7 +3,15 @@ import { MergedImageType } from '../../hooks';
 interface IBackView extends MergedImageType {
     children?: React.ReactNode;
 }
-const BackView: React.FC<IBackView> = ({ children, id, uri, exif, coordinates, captions, timeStamp }) => {
+const BackView: React.FC<IBackView> = ({
+    children,
+    id,
+    uri,
+    exif,
+    coordinates,
+    captions,
+    timeStamp,
+}) => {
     return (
         <View className="flex-1 bg-dark500 w-full h-full absolute justify-center items-center">
             <View className="flex-auto h-[50%] w-[95%] justify-center items-center p-5">
