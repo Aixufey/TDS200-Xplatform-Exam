@@ -30,9 +30,7 @@ const HomeScreen: React.FC = () => {
                         <Text className="text-neutral font-handjet-light text-xl">
                             Welcome{currentUser.isAnonymous ? ', ' : ' back, '}
                             <Text className="text-secondary font-handjet-light">
-                                {currentUser.isAnonymous
-                                    ? 'Anonymous one'
-                                    : currentUserDisplayName}
+                                {currentUser.isAnonymous ? 'Anonymous one' : currentUserDisplayName}
                             </Text>
                         </Text>
                     )}
