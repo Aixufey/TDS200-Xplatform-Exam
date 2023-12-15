@@ -98,10 +98,11 @@ const CustomModal: React.FC<ICustomModal> = ({
 
             if (captionDoc.exists()) {
                 const data = captionDoc.data();
-                //console.log(data);
+                console.log(data);
                 setCaptions(data);
             }
         };
+
         fetchReactions();
         fetchComments();
         fetchCaptions();
@@ -364,19 +365,19 @@ const CustomModal: React.FC<ICustomModal> = ({
                         )}
                     </View>
                 ) : (
-                    <View className="absolute top-15 w-[75%] h-[460px] border-[1px] border-tertiary bg-dark300 rounded-2xl overflow-hidden justify-center items-center">
+                    <View className="absolute top-15 w-[75%] h-[480px] border-[1px] border-tertiary bg-dark300 rounded-2xl overflow-hidden justify-center items-center">
                         <View className="w-full h-full justify-start items-center absolute">
                             {children}
                         </View>
                         {currentPicture && (
-                            <View className="overflow-hidden justify-center h-[360px]">
+                            <View className="overflow-hidden justify-center h-[400px] top-[55px] absolute">
                                 <View className="overflow-hidden w-[250px] h-[250px] rounded-md">
                                     <Image
                                         className="w-full h-full"
                                         source={{ uri: currentPicture?.uri }}
                                     />
                                 </View>
-                                <View className="w-[250px] h-[50px] p-1 items-center flex-row">
+                                <View className="w-[250px] h-[40px] p-1 items-center flex-row">
                                     <View className="px-2 flex-row">
                                         <IconButton
                                             onPress={handleLike}
@@ -423,8 +424,17 @@ const CustomModal: React.FC<ICustomModal> = ({
                                         />
                                     </View>
                                 </View>
-
-                                <View className="w-[250px] h-[60px] overflow-hidden flex-row">
+                                {captions && captions.description && (
+                                    <ScrollView className="w-[250px] border-b-[1px] rounded border-dark50 px-1">
+                                        <Text
+                                            ellipsizeMode={'tail'}
+                                            className="text-neutral font-handjet-light py-1"
+                                        >
+                                            {captions.description}
+                                        </Text>
+                                    </ScrollView>
+                                )}
+                                <View className="w-[250px] h-[50px] overflow-hidden flex-row">
                                     <TextInput
                                         value={input}
                                         onChange={handleCommentChange}

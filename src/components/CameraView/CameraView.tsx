@@ -86,6 +86,10 @@ const CameraView: React.FC = () => {
         setCaptions([]);
     };
 
+    /**
+     * @description Upload to database, storing this picture's captions and description
+     * Keeping database normalized.
+     */
     const updateFirestoreCaptions = async () => {
         if (currentPicture?.id === undefined) {
             return alert('Picture does not exist');
