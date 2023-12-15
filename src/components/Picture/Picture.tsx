@@ -5,7 +5,7 @@ import { useGalleryContext, useUIContext } from '../../context';
 import { MergedImageType } from '../../hooks/useLaunchCamera/useLaunchCamera';
 import DesignSystem from '../../styles';
 
-const Picture: React.FC<MergedImageType> = memo(({ uri, id, coordinates }) => {
+const Picture: React.FC<MergedImageType> = memo(({ id, uri, exif, coordinates, captions, timeStamp }) => {
     const [select, setSelect] = useState<boolean>(false);
     const { Colors } = DesignSystem();
     const fallback = require('../../../assets/images/cicada.png');
@@ -29,7 +29,10 @@ const Picture: React.FC<MergedImageType> = memo(({ uri, id, coordinates }) => {
         setCurrentPicture({
             id: id,
             uri: uri,
+            exif: exif,
             coordinates: { longitude: coordinates?.longitude, latitude: coordinates?.latitude },
+            captions: captions,
+            timeStamp: timeStamp
         });
 
         // Multi select

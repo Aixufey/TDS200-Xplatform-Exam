@@ -1,8 +1,7 @@
-import { useIsFocused } from '@react-navigation/native';
 import { Camera, CameraType } from 'expo-camera';
 import * as Location from 'expo-location';
 import { doc, setDoc } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { captionsDoc } from '../../constants';
 import { useAuth, useGalleryContext } from '../../context';
@@ -15,15 +14,18 @@ const CameraView: React.FC = () => {
     const { handleLaunchCameraBro, broCameraRef, handleSubmitPhoto, updateCaptions, setCoords } =
         useLaunchCamera();
     const { currentPicture } = useGalleryContext();
+    const [isCaption, setIsCaption] = useState<boolean>(false);
     const [togglePreviewModal, setTogglePreviewModal] = useState<boolean>(false);
     const [togglePictureModal, setTogglePictureModal] = useState<boolean>(false);
-    const [input, setInput] = useState<string>('');
+    const [captionInput, setCaptionInput] = useState<string>('');
+    const [descriptionInput, setDescriptionInput] = useState<string>('');
     const [cameraType, setCameraType] = useState<CameraType>(CameraType.back);
     const [captions, setCaptions] = useState<string[]>([]);
     const { Colors } = DesignSystem();
     const { firebase_db } = useFireBase();
     const [currentLocation, setCurrentLocation] = useState<Location.LocationObject>();
     const { getLocation } = useLocation();
+    const descriptionOnBlurRef = useRef<TextInput>(null);
     const { currentUser } = useAuth();
 
     useEffect(() => {
@@ -39,6 +41,10 @@ const CameraView: React.FC = () => {
         };
         fetchLocation();
     }, []);
+
+    useEffect(() => {
+        console.log(isCaption);
+    }, [isCaption]);
 
     const handleTogglePreviewModal = () => {
         if (!currentPicture) return;
@@ -60,6 +66,8 @@ const CameraView: React.FC = () => {
 
     const handleCancelPress = () => {
         handleTogglePictureModal();
+        setIsCaption(false);
+        setDescriptionInput('');
         setCaptions([]);
     };
 
@@ -67,15 +75,21 @@ const CameraView: React.FC = () => {
      * Upload cacheData from taken snapshot on save
      * Upload captions if any
      * Close Picture modal
-     * Imperative reset for new captions
+     * Imperative reset for new input
      */
     const handleSavePress = () => {
         handleSubmitPhoto();
         updateFirestoreCaptions();
         handleTogglePictureModal();
+        setIsCaption(false);
+        setDescriptionInput('');
         setCaptions([]);
     };
 
+    /**
+     * @description Upload to database, storing this picture's captions and description
+     * Keeping database normalized.
+     */
     const updateFirestoreCaptions = async () => {
         if (currentPicture?.id === undefined) {
             return alert('Picture does not exist');
@@ -91,6 +105,7 @@ const CameraView: React.FC = () => {
                     pictureId: currentPicture.id,
                     userId: currentUser.displayName,
                     captions,
+                    description: descriptionInput.trim(),
                 },
                 { merge: true }
             );
@@ -114,16 +129,25 @@ const CameraView: React.FC = () => {
     };
     const handleCaptionPress = () => {
         setCaptions((prevCaptions) => {
-            const updatedCaptions = [input.trim(), ...prevCaptions];
+            const updatedCaptions = [captionInput.trim(), ...prevCaptions];
             updateCaptions(updatedCaptions);
             return updatedCaptions;
         });
-        setInput('');
+        setCaptionInput('');
     };
 
     const handleCaptionChange = (txt: string) => {
         const sanitize = txt.trimStart();
-        setInput(sanitize);
+        setCaptionInput(sanitize);
+    };
+
+    const handleDescriptionChange = (txt: string) => {
+        const sanitize = txt.trimStart();
+        setDescriptionInput(sanitize);
+    };
+
+    const handleIsCaptionPress = () => {
+        setIsCaption((prev) => !prev);
     };
 
     const renderPreviewModal = () => {
@@ -138,6 +162,9 @@ const CameraView: React.FC = () => {
         );
     };
 
+    /**
+     * @description Renders the modal for adding description and captions
+     */
     const renderPictureModal = () => {
         return (
             togglePictureModal && (
@@ -150,7 +177,7 @@ const CameraView: React.FC = () => {
                     <View className="flex justify-evenly items-center w-[100%] h-[100%] border-[1px] border-tertiary rounded-xl bg-dark200">
                         <View>
                             <Text className="text-neutral font-handjet-light text-[30px]">
-                                Caption
+                                Description
                             </Text>
                         </View>
                         <View className="py-2 w-[250px] h-[250px]">
@@ -159,49 +186,31 @@ const CameraView: React.FC = () => {
                                 source={{ uri: currentPicture?.uri }}
                             />
                         </View>
-                        <View className="w-[85%] h-[20%] border-[0.5px] p-1 rounded-xl border-tertiary p-2">
-                            <ScrollView className="">
-                                <View className="justify-center items-center m-1 flex-row flex-wrap">
-                                    {captions.length > 0 ? (
-                                        captions.map((caption, index) => (
-                                            <Text
-                                                onPress={() => handleDeleteCaption(caption)}
-                                                key={index}
-                                                className="text-neutral p-1 font-handjet-light tracking-wide"
-                                            >
-                                                {`#${caption}`}
-                                            </Text>
-                                        ))
-                                    ) : (
-                                        <Text className="text-neutral p-1 font-handjet-light tracking-wide">
-                                            No captions...
-                                        </Text>
-                                    )}
-                                </View>
-                            </ScrollView>
-                        </View>
-                        <View className="w-[85%] h-[10%] flex-row justify-center items-center">
-                            <View className="w-[85%] flex-wrap overflow-hidden">
-                                <TextInput
-                                    onChangeText={handleCaptionChange}
-                                    className="w-[100%] text-neutral font-handjet-light tracking-widest"
-                                    value={input}
-                                    multiline={true}
-                                    placeholder="Enter captions..."
-                                    placeholderTextColor={Colors.tertiaryRei}
+                        <View className="w-[85%] flex-row justify-end items-center px-2">
+                            <Text className="text-neutral font-handjet-light px-2">
+                                {isCaption ? 'Close' : 'Add'} caption
+                            </Text>
+                            {isCaption ? (
+                                <IconButton
+                                    onPress={handleIsCaptionPress}
+                                    IconSet="MaterialCommunityIcons"
+                                    iconName="toggle-switch"
+                                    iconSize={30}
+                                    iconColor={Colors.secondary}
                                 />
-                            </View>
-
-                            <IconButton
-                                disabled={input ? false : true}
-                                className={`${input ? 'opacity-1' : 'opacity-0'}`}
-                                onPress={handleCaptionPress}
-                                IconSet="Feather"
-                                iconName="send"
-                                iconSize={25}
-                                iconColor={Colors.neutral100}
-                            />
+                            ) : (
+                                <IconButton
+                                    onPress={handleIsCaptionPress}
+                                    IconSet="MaterialCommunityIcons"
+                                    iconName="toggle-switch-off"
+                                    iconSize={30}
+                                    iconColor={Colors.tertiary500}
+                                />
+                            )}
                         </View>
+
+                        {isCaption ? renderCaptionView() : renderDescriptionView()}
+
                         <View className="w-full h-[10%] justify-evenly items-center flex-row">
                             <Button
                                 onPress={handleCancelPress}
@@ -217,6 +226,92 @@ const CameraView: React.FC = () => {
                     </View>
                 </Modal>
             )
+        );
+    };
+    /**
+     * @description Renders the description input view logic
+     */
+    const renderDescriptionView = () => {
+        return (
+            <View className="w-[85%] h-[30%] border-[0.5px] border-tertiary rounded-xl justify-evenly items-center flex-row">
+                <View className="w-[85%] h-[85%] flex-wrap overflow-hidden">
+                    <TextInput
+                        ref={descriptionOnBlurRef}
+                        className="w-full h-full text-neutral font-ubuntu-regular tracking-widest"
+                        onChangeText={handleDescriptionChange}
+                        value={descriptionInput}
+                        scrollEnabled={true}
+                        cursorColor={Colors.secondary}
+                        multiline={true}
+                        placeholder="Enter description..."
+                        placeholderTextColor={Colors.tertiaryRei}
+                    />
+                </View>
+                <IconButton
+                    disabled={descriptionInput ? false : true}
+                    onPress={() => descriptionOnBlurRef.current?.blur()}
+                    className={`${descriptionInput ? 'opacity-1' : 'opacity-0'}`}
+                    IconSet="Feather"
+                    iconName="send"
+                    iconSize={25}
+                    iconColor={Colors.tertiary}
+                />
+            </View>
+        );
+    };
+    /**
+     * @description Renders the caption input view logic
+     */
+    const renderCaptionView = () => {
+        return (
+            <View className="flex w-[85%] h-[30%] border-[0.5px] border-tertiary rounded-xl justify-evenly items-center">
+                <View className="basis-auto w-[85%] max-h-[50%] overflow-hidden justify-evenly items-center">
+                    <ScrollView className="">
+                        <View className="justify-center items-center m-1 flex-row flex-wrap">
+                            {captions.length > 0 ? (
+                                captions.map((caption, index) => (
+                                    <Text
+                                        onPress={() => handleDeleteCaption(caption)}
+                                        key={index}
+                                        className="text-neutral p-1 font-handjet-light tracking-wide"
+                                    >
+                                        {`#${caption}`}
+                                    </Text>
+                                ))
+                            ) : (
+                                <View className="basis-2/3 w-[85%] justify-evenly items-center">
+                                    <Text className="text-neutral p-1 font-handjet-light tracking-wide">
+                                        No captions...
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                    </ScrollView>
+                </View>
+                <View className="basis-1/3 w-[85%] flex-row justify-center items-center">
+                    <View className="w-[85%] flex-wrap overflow-hidden">
+                        <TextInput
+                            cursorColor={Colors.secondary}
+                            onChangeText={handleCaptionChange}
+                            className="w-[100%] text-neutral font-ubuntu-regular tracking-widest"
+                            value={captionInput}
+                            multiline={true}
+                            placeholder="Enter captions..."
+                            placeholderTextColor={Colors.tertiaryRei}
+                        />
+                    </View>
+
+                    <IconButton
+                        disabled={captionInput ? false : true}
+                        className={`${captionInput ? 'opacity-1' : 'opacity-0'}`}
+                        onPress={handleCaptionPress}
+                        IconSet="Feather"
+                        iconName="send"
+                        iconSize={25}
+                        iconColor={Colors.tertiary}
+                    />
+                </View>
+            </View>
         );
     };
 
