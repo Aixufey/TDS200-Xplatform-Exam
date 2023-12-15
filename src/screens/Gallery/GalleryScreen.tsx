@@ -36,6 +36,7 @@ const GalleryScreen: React.FC = () => {
     const { fetchBucketList } = useFetchBucketList();
     const { pickImage, image } = useImagePicker();
     const { getLocation } = useLocation();
+    const [isFetch, setIsFetch] = useState<boolean>(true);
     const isFocused = useIsFocused();
     const { Colors } = DesignSystem();
 
@@ -64,7 +65,9 @@ const GalleryScreen: React.FC = () => {
         checkPermission();
         // console.info('Mounted Gallery Screen');
         fetchData();
-    }, [isFocused, hasPermission]);
+        // Flag for fetching data after uploading an image from local.
+        setIsFetch(false);
+    }, [isFocused, hasPermission, isFetch]);
 
     useEffect(() => {
         // Observing changes in the data - GalleryContext is the source of truth
@@ -157,11 +160,13 @@ const GalleryScreen: React.FC = () => {
                     [],
                     new Date()
                 );
-                setIsUpload(false);
+                setIsFetch(true);
             }
         } catch {
             console.log('error');
+            setIsUpload(false);
         }
+        setIsUpload(false);
     };
 
     /**
