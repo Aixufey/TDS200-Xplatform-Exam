@@ -151,11 +151,11 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
      * @param input selected pictures to be deleted from firebase storage
      */
     const deletePictures = async (input: MergedImageType[]) => {
-        await deleteFirebasePictures(input);
-
-        await deleteOnCascade(input);
-
-        await handleDeletePicture(input);
+        await Promise.all([
+            await deleteFirebasePictures(input),
+            await deleteOnCascade(input),
+            await handleDeletePicture(input),
+        ]);
     };
 
     /**
@@ -164,18 +164,19 @@ const GalleryContextProvider: React.FC<GalleryContextProviderProp> = ({ children
      */
     const deleteFirebasePictures = async (input: MergedImageType[]) => {
         if (!Array.isArray(input) || input.length === 0) return;
-        await Promise.all(
-            input.map(async (picture) => {
-                let path = bucketURl.concat(picture.id).concat('.jpg');
-                const pictureRef = ref(storageRef, path);
-                //console.log('pictureRef', pictureRef);
-                try {
+        try {
+            await Promise.all(
+                input.map(async (picture) => {
+                    let path = bucketURl.concat(picture.id).concat('.jpg');
+                    const pictureRef = ref(storageRef, path);
+
+                    //console.log('pictureRef', pictureRef);
                     await deleteObject(pictureRef);
-                } catch (e) {
-                    console.error(`Failed to delete picture with id ${picture.id}`, e);
-                }
-            })
-        );
+                })
+            );
+        } catch (e) {
+            console.error(`Failed to delete pictures`, e);
+        }
     };
 
     /**
